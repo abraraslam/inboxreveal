@@ -1,0 +1,297 @@
+import OpenAI from "openai";
+import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
+});
+
+type AnalyzeResponse = {
+  intent:
+    | "complaint"
+    | "refund_request"
+    | "cancellation_risk"
+    | "sales_opportunity"
+    | "urgent"
+    | "general";
+  priority: "high" | "medium" | "low";
+  keywords: string[];
+  matchedPhrases: string[];
+  reason: string;
+  summary: string;
+  recommendedAction: string;
+  shouldAlert: boolean;
+  alertReason: string;
+};
+
+const FALLBACK_RESPONSE: AnalyzeResponse = {
+  intent: "general",
+  priority: "low",
+  keywords: [],
+  matchedPhrases: [],
+  reason: "No important issue detected in the email body.",
+  summary: "General email with no urgent business signal detected.",
+  recommendedAction: "Review normally.",
+  shouldAlert: false,
+  alertReason: "",
+};
+
+function safeStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 8);
+}
+
+function normalizeIntent(value: unknown): AnalyzeResponse["intent"] {
+  const allowed: AnalyzeResponse["intent"][] = [
+    "complaint",
+    "refund_request",
+    "cancellation_risk",
+    "sales_opportunity",
+    "urgent",
+    "general",
+  ];
+
+  return allowed.includes(value as AnalyzeResponse["intent"])
+    ? (value as AnalyzeResponse["intent"])
+    : "general";
+}
+
+function normalizePriority(value: unknown): AnalyzeResponse["priority"] {
+  const allowed: AnalyzeResponse["priority"][] = ["high", "medium", "low"];
+  return allowed.includes(value as AnalyzeResponse["priority"])
+    ? (value as AnalyzeResponse["priority"])
+    : "low";
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function extractMatchedKeywordPhrases(
+  text: string,
+  keywords: string[]
+): { matchedKeywords: string[]; matchedPhrases: string[] } {
+  const normalizedText = text || "";
+  const lowerText = normalizedText.toLowerCase();
+
+  const matchedKeywords = keywords.filter((keyword) =>
+    lowerText.includes(keyword.toLowerCase())
+  );
+
+  const matchedPhrases = matchedKeywords.map((keyword) => {
+    const regex = new RegExp(`(.{0,30}${escapeRegExp(keyword)}.{0,30})`, "i");
+    const match = normalizedText.match(regex);
+    return match ? match[1].trim() : keyword;
+  });
+
+  return {
+    matchedKeywords: [...new Set(matchedKeywords)],
+    matchedPhrases: [...new Set(matchedPhrases)].slice(0, 5),
+  };
+}
+
+function buildAlertDecision(
+  intent: AnalyzeResponse["intent"],
+  priority: AnalyzeResponse["priority"],
+  matchedKeywords: string[]
+): { shouldAlert: boolean; alertReason: string } {
+  if (priority === "high" && intent === "refund_request") {
+    return {
+      shouldAlert: true,
+      alertReason: "High-priority refund request detected.",
+    };
+  }
+
+  if (priority === "high" && intent === "cancellation_risk") {
+    return {
+      shouldAlert: true,
+      alertReason: "High-risk cancellation signal detected.",
+    };
+  }
+
+  if (priority === "high" && intent === "complaint") {
+    return {
+      shouldAlert: true,
+      alertReason: "High-priority complaint detected.",
+    };
+  }
+
+  if (intent === "urgent") {
+    return {
+      shouldAlert: true,
+      alertReason: "Urgent email requires attention.",
+    };
+  }
+
+  if (priority === "high") {
+    return {
+      shouldAlert: true,
+      alertReason: "High-priority email detected.",
+    };
+  }
+
+  if (matchedKeywords.length > 0) {
+    return {
+      shouldAlert: true,
+      alertReason: `Matched custom keywords: ${matchedKeywords.join(", ")}`,
+    };
+  }
+
+  return {
+    shouldAlert: false,
+    alertReason: "",
+  };
+}
+
+export async function POST(req: Request) {
+  try {
+    const { messageId, text, customKeywords = [] } = await req.json();
+
+    const emailText = typeof text === "string" ? text.trim() : "";
+    const safeMessageId =
+      typeof messageId === "string" ? messageId.trim() : "";
+
+    if (!emailText) {
+      return NextResponse.json(FALLBACK_RESPONSE);
+    }
+
+    const cleanedCustomKeywords = safeStringArray(customKeywords);
+
+    const { matchedKeywords, matchedPhrases } = extractMatchedKeywordPhrases(
+      emailText,
+      cleanedCustomKeywords
+    );
+
+    const response = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      response_format: { type: "json_object" },
+      temperature: 0.2,
+      messages: [
+        {
+          role: "system",
+          content: `
+You analyze email BODY content for InboxIntel.
+
+Return valid JSON only with this exact shape:
+{
+  "intent": "complaint" | "refund_request" | "cancellation_risk" | "sales_opportunity" | "urgent" | "general",
+  "priority": "high" | "medium" | "low",
+  "keywords": string[],
+  "matchedPhrases": string[],
+  "reason": string,
+  "summary": string,
+  "recommendedAction": string
+}
+
+Rules:
+- Analyze BODY content only, not subject.
+- Be concise and practical.
+- "reason" must be under 20 words.
+- "summary" should be one short sentence.
+- "recommendedAction" should be one short sentence.
+- "matchedPhrases" should contain short exact or near-exact phrases from the body when possible.
+- Use "general" if no strong signal exists.
+- Use "high" for urgent/refund/cancellation cases when clearly time-sensitive or negative.
+- Use "sales_opportunity" for pricing, demo, quote, proposal, interest, partnership, or buying signals.
+- Use "complaint" for dissatisfaction, frustration, poor experience, or service/product issues.
+- Use "refund_request" for refund, reimbursement, chargeback, return-money style requests.
+- Use "cancellation_risk" for cancel, churn, terminate, unsubscribe, stop service, leave, or downgrade intent.
+- Use "urgent" for immediate response needs, deadlines, severe operational problems, or escalation.
+`,
+        },
+        {
+          role: "user",
+          content: JSON.stringify({
+            body: emailText,
+            customKeywords: cleanedCustomKeywords,
+            alreadyMatchedCustomKeywords: matchedKeywords,
+            alreadyMatchedPhrases: matchedPhrases,
+          }),
+        },
+      ],
+    });
+
+    const content = response.choices[0]?.message?.content || "{}";
+    const parsed = JSON.parse(content);
+
+    const aiKeywords = safeStringArray(parsed.keywords);
+    const aiMatchedPhrases = safeStringArray(parsed.matchedPhrases);
+
+    const mergedKeywords = [...new Set([...aiKeywords, ...matchedKeywords])].slice(
+      0,
+      8
+    );
+
+    const mergedMatchedPhrases = [
+      ...new Set([...aiMatchedPhrases, ...matchedPhrases]),
+    ].slice(0, 5);
+
+    const normalizedIntent = normalizeIntent(parsed.intent);
+    const normalizedPriority = normalizePriority(parsed.priority);
+
+    const alertDecision = buildAlertDecision(
+      normalizedIntent,
+      normalizedPriority,
+      matchedKeywords
+    );
+
+    const finalResponse: AnalyzeResponse = {
+      intent: normalizedIntent,
+      priority: normalizedPriority,
+      keywords: mergedKeywords,
+      matchedPhrases: mergedMatchedPhrases,
+      reason:
+        typeof parsed.reason === "string" && parsed.reason.trim()
+          ? parsed.reason.trim().slice(0, 120)
+          : FALLBACK_RESPONSE.reason,
+      summary:
+        typeof parsed.summary === "string" && parsed.summary.trim()
+          ? parsed.summary.trim().slice(0, 220)
+          : FALLBACK_RESPONSE.summary,
+      recommendedAction:
+        typeof parsed.recommendedAction === "string" &&
+        parsed.recommendedAction.trim()
+          ? parsed.recommendedAction.trim().slice(0, 220)
+          : FALLBACK_RESPONSE.recommendedAction,
+      shouldAlert: alertDecision.shouldAlert,
+      alertReason: alertDecision.alertReason,
+    };
+
+    if (safeMessageId) {
+      const { error: saveError } = await supabase.from("email_analysis").upsert(
+        {
+          message_id: safeMessageId,
+          intent: finalResponse.intent,
+          priority: finalResponse.priority,
+          keywords: finalResponse.keywords,
+          matched_phrases: finalResponse.matchedPhrases,
+          reason: finalResponse.reason,
+          summary: finalResponse.summary,
+          recommended_action: finalResponse.recommendedAction,
+          should_alert: finalResponse.shouldAlert,
+          alert_reason: finalResponse.alertReason,
+          analyzed_at: new Date().toISOString(),
+        },
+        { onConflict: "message_id" }
+      );
+
+      if (saveError) {
+        console.error("Supabase save analysis error:", saveError);
+      }
+    }
+
+    return NextResponse.json(finalResponse);
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        error: "Failed to analyze email",
+        message: error?.message || "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
+}
