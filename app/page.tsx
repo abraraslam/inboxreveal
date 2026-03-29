@@ -130,6 +130,9 @@ export default function Home() {
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeMinimized, setIsComposeMinimized] = useState(false);
 
+  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+  const [isPreferencesMinimized, setIsPreferencesMinimized] = useState(false);
+
   const [reviewingReplyId, setReviewingReplyId] = useState<string | null>(null);
   const [replyReviews, setReplyReviews] = useState<
     Record<string, DraftReviewResponse>
@@ -353,6 +356,17 @@ export default function Home() {
     loadEmails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
+
+  // Auto-dismiss notice after 5 seconds
+  useEffect(() => {
+    if (!notice) return;
+
+    const timer = setTimeout(() => {
+      setNotice(null);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [notice]);
 
   const loadMoreEmails = async () => {
     if (!nextPageToken) return;
@@ -830,15 +844,15 @@ export default function Home() {
     }`;
 
   const buttonBase =
-    "inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60";
+    "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60";
 
-  const primaryButton = `${buttonBase} bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow hover:from-blue-700 hover:to-indigo-700`;
-  const secondaryButton = `${buttonBase} border border-slate-300 bg-white text-slate-700 shadow-sm hover:bg-slate-50`;
-  const successButton = `${buttonBase} bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow hover:from-emerald-600 hover:to-teal-600`;
-  const warningButton = `${buttonBase} bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow hover:from-amber-600 hover:to-orange-600`;
-  const dangerButton = `${buttonBase} bg-gradient-to-r from-rose-500 to-red-500 text-white shadow hover:from-rose-600 hover:to-red-600`;
+  const primaryButton = `${buttonBase} bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg`;
+  const secondaryButton = `${buttonBase} border border-slate-300 bg-white text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-400`;
+  const successButton = `${buttonBase} bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md hover:from-emerald-600 hover:to-teal-600 hover:shadow-lg`;
+  const warningButton = `${buttonBase} bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md hover:from-amber-600 hover:to-orange-600 hover:shadow-lg`;
+  const dangerButton = `${buttonBase} bg-gradient-to-r from-rose-500 to-red-500 text-white shadow-md hover:from-rose-600 hover:to-red-600 hover:shadow-lg`;
   const ghostButton =
-    "inline-flex items-center justify-center rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition";
+    "inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition";
 
   const priorityBadgeClass = (priority?: Analysis["priority"]) => {
     switch (priority) {
@@ -854,43 +868,66 @@ export default function Home() {
 
   if (!session) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-10">
-        <div className="mx-auto flex max-w-md flex-col items-center rounded-3xl border border-white/60 bg-white/80 p-10 text-center shadow-2xl backdrop-blur">
-          <div className="mb-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white">
-            InboxIntel
+      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="rounded-2xl border border-slate-700 bg-slate-800/50 p-8 shadow-2xl backdrop-blur-xl">
+            <div className="mb-6 text-center">
+              <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div className="mb-4 inline-flex rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-3 py-1 text-xs font-semibold text-white">
+                InboxIntel
+              </div>
+              <h1 className="text-3xl font-bold tracking-tight text-white">Welcome back</h1>
+              <p className="mt-3 text-sm text-slate-400">
+                AI-powered email intelligence to prioritize, analyze, and respond faster
+              </p>
+            </div>
+            <button
+              onClick={() => signIn("google")}
+              className="w-full inline-flex items-center justify-center rounded-xl px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg hover:from-blue-700 hover:to-indigo-700 transition duration-200"
+            >
+              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+              </svg>
+              Sign in with Google
+            </button>
+            <p className="mt-4 text-center text-xs text-slate-500">
+              Secure sign-in powered by NextAuth
+            </p>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900">Welcome back</h1>
-          <p className="mt-3 text-sm text-slate-600">
-            Sign in to analyze inbox activity, surface important emails, and
-            draft replies faster.
-          </p>
-          <button
-            onClick={() => signIn("google")}
-            className={`${primaryButton} mt-6 w-full`}
-          >
-            Sign in with email provider
-          </button>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-indigo-100">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
       <div className="mx-auto max-w-7xl p-6">
-        <div className="mb-8 rounded-3xl border border-white/60 bg-white/80 p-6 shadow-xl backdrop-blur">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <div className="inline-flex rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-3 py-1 text-xs font-semibold text-white shadow">
-                Smart Inbox Dashboard
+        {/* Header Section */}
+        <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex-1">
+              <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 px-3 py-1">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                <span className="text-xs font-semibold text-blue-700">Smart Inbox Dashboard</span>
               </div>
-              <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
-                InboxIntel
-              </h1>
-              <p className="mt-2 text-sm text-slate-600">
-                AI-powered email intelligence with prioritization, body-level
-                insights, assisted replies, and AI-reviewed drafts.
-              </p>
+              <div className="flex items-center gap-3">
+                <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold tracking-tight text-slate-900">InboxIntel</h1>
+                  <p className="text-sm text-slate-600">AI-powered email prioritization and intelligent replies</p>
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-3">
@@ -902,6 +939,9 @@ export default function Home() {
                   setIsComposeMinimized(false);
                 }}
               >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
                 Compose Email
               </button>
 
@@ -911,7 +951,25 @@ export default function Home() {
                 type="button"
                 disabled={analyzing || loadingEmails}
               >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M 4 5 l 4 0 l 0 4 l -4 0 l 0 -4 M 4 13 l 4 0 l 0 4 l -4 0 l 0 -4 M 12 5 l 4 0 l 0 4 l -4 0 l 0 -4 M 12 13 l 4 0 l 0 4 l -4 0 l 0 -4" />
+                </svg>
                 {analyzing ? "Analyzing..." : "Re-run analysis"}
+              </button>
+
+              <button
+                className={secondaryButton}
+                onClick={() => {
+                  setIsPreferencesOpen(true);
+                  setIsPreferencesMinimized(false);
+                }}
+                type="button"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Preferences
               </button>
 
               <button
@@ -926,232 +984,201 @@ export default function Home() {
         </div>
 
         {notice && (
-          <div
-            className={`mb-6 rounded-2xl border p-4 shadow-sm ${
-              notice.type === "success"
-                ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                : "border-rose-200 bg-rose-50 text-rose-800"
-            }`}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-medium">{notice.message}</p>
+          <div className="fixed top-6 right-6 z-40 w-full max-w-md toast-enter">
+            <div
+              className={`rounded-xl border p-4 shadow-2xl backdrop-blur flex items-start justify-between gap-4 ${
+                notice.type === "success"
+                  ? "border-emerald-300 bg-emerald-50/95 text-emerald-900"
+                  : "border-rose-300 bg-rose-50/95 text-rose-900"
+              }`}
+            >
+              <div className="flex items-start gap-4 flex-1">
+                {notice.type === "success" ? (
+                  <div className="flex-shrink-0 mt-0.5">
+                    <svg className="w-6 h-6 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                    </svg>
+                  </div>
+                ) : (
+                  <div className="flex-shrink-0 mt-0.5">
+                    <svg className="w-6 h-6 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+                    </svg>
+                  </div>
+                )}
+                <div className="flex-1">
+                  <p className="font-semibold text-sm mb-1">
+                    {notice.type === "success" ? "Summary" : "Error"}
+                  </p>
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{notice.message}</p>
+                </div>
+              </div>
               <button
                 type="button"
-                className="rounded-lg px-2 py-1 text-xs font-semibold hover:bg-white/60"
+                className="flex-shrink-0 rounded-lg p-1 hover:bg-white/30 transition"
                 onClick={() => setNotice(null)}
               >
-                Dismiss
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                </svg>
               </button>
             </div>
           </div>
         )}
 
-        <div className="mb-8 rounded-3xl border border-white/60 bg-white/80 p-6 shadow-xl backdrop-blur">
-          <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900">
-              Inbox display preferences
-            </h2>
-            <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-              Personalize detection
-            </div>
-          </div>
-
-          <div className="space-y-5">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Keyword tracking rules
-              </label>
-              <input
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-                value={keywordInput}
-                onChange={(e) => setKeywordInput(e.target.value)}
-                placeholder="refund, cancel, pricing, meetings"
-              />
-              <p className="mt-2 text-xs text-slate-500">
-                Enter comma-separated terms to detect in email body content.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              <label className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
-                <input
-                  type="checkbox"
-                  checked={alertUrgent}
-                  onChange={(e) => setAlertUrgent(e.target.checked)}
-                />
-                Show urgent emails
-              </label>
-
-              <label className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-medium text-rose-700">
-                <input
-                  type="checkbox"
-                  checked={alertComplaint}
-                  onChange={(e) => setAlertComplaint(e.target.checked)}
-                />
-                Show complaint emails
-              </label>
-
-              <label className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700">
-                <input
-                  type="checkbox"
-                  checked={alertSales}
-                  onChange={(e) => setAlertSales(e.target.checked)}
-                />
-                Show sales emails
-              </label>
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              <button
-                className={primaryButton}
-                type="button"
-                onClick={async () => {
-                  try {
-                    setNotice(null);
-
-                    const res = await fetch("/api/preferences", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({
-                        email: session?.user?.email,
-                        keywords: customKeywords,
-                        alertUrgent,
-                        alertComplaint,
-                        alertSales,
-                      }),
-                    });
-
-                    if (!res.ok) {
-                      throw new Error("Failed to save preferences");
-                    }
-
-                    setNotice({
-                      type: "success",
-                      message: "Preferences saved.",
-                    });
-                  } catch {
-                    setNotice({
-                      type: "error",
-                      message: "Failed to save preferences.",
-                    });
-                  }
-                }}
-              >
-                Save preferences
-              </button>
-
-              <button
-                className={secondaryButton}
-                onClick={rerunAnalysis}
-                type="button"
-                disabled={analyzing || loadingEmails}
-              >
-                {analyzing ? "Analyzing..." : "Refresh insights"}
-              </button>
-            </div>
-          </div>
-        </div>
-
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-6">
           <button
             type="button"
-            className={statCardClass("all")}
+            className={`${statCardClass("all")} flex flex-col justify-between h-full`}
             onClick={() => setActiveFilter("all")}
           >
-            <p className="text-sm text-slate-500">All Emails</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
-              {emails.length}
-            </p>
-            <p className="mt-3 text-xs font-medium text-slate-500">
-              {activeFilter === "all" ? "Selected" : "Show all"}
-            </p>
+            <div>
+              <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-600 mb-3">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <p className="text-sm font-medium text-slate-600">All Emails</p>
+            </div>
+            <div>
+              <p className="mt-4 text-3xl font-bold text-slate-900">
+                {emails.length}
+              </p>
+              <p className="mt-2 text-xs font-medium text-slate-500">
+                {activeFilter === "all" ? "Currently selected" : "Click to view"}
+              </p>
+            </div>
           </button>
 
           <button
             type="button"
-            className={statCardClass("alerted")}
+            className={`${statCardClass("alerted")} flex flex-col justify-between h-full`}
             onClick={() => setActiveFilter("alerted")}
           >
-            <p className="text-sm text-slate-500">Alerted Emails</p>
-            <p className="mt-2 text-3xl font-bold text-orange-600">
-              {alertedCount}
-            </p>
-            <p className="mt-3 text-xs font-medium text-slate-500">
-              {activeFilter === "alerted" ? "Selected" : "Show only these"}
-            </p>
+            <div>
+              <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 text-orange-600 mb-3">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                </svg>
+              </div>
+              <p className="text-sm font-medium text-slate-600">Alerted</p>
+            </div>
+            <div>
+              <p className="mt-4 text-3xl font-bold text-orange-600">
+                {alertedCount}
+              </p>
+              <p className="mt-2 text-xs font-medium text-slate-500">
+                {activeFilter === "alerted" ? "Currently selected" : "Needs review"}
+              </p>
+            </div>
           </button>
 
           <button
             type="button"
-            className={statCardClass("high_priority")}
+            className={`${statCardClass("high_priority")} flex flex-col justify-between h-full`}
             onClick={() => setActiveFilter("high_priority")}
           >
-            <p className="text-sm text-slate-500">High Priority</p>
-            <p className="mt-2 text-3xl font-bold text-red-600">
-              {highPriorityCount}
-            </p>
-            <p className="mt-3 text-xs font-medium text-slate-500">
-              {activeFilter === "high_priority"
-                ? "Selected"
-                : "Show only these"}
-            </p>
+            <div>
+              <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-100 text-red-600 mb-3">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+                </svg>
+              </div>
+              <p className="text-sm font-medium text-slate-600">High Priority</p>
+            </div>
+            <div>
+              <p className="mt-4 text-3xl font-bold text-red-600">
+                {highPriorityCount}
+              </p>
+              <p className="mt-2 text-xs font-medium text-slate-500">
+                {activeFilter === "high_priority" ? "Currently selected" : "Act soon"}
+              </p>
+            </div>
           </button>
 
           <button
             type="button"
-            className={statCardClass("complaint")}
+            className={`${statCardClass("complaint")} flex flex-col justify-between h-full`}
             onClick={() => setActiveFilter("complaint")}
           >
-            <p className="text-sm text-slate-500">Complaints</p>
-            <p className="mt-2 text-3xl font-bold text-rose-600">
-              {complaintCount}
-            </p>
-            <p className="mt-3 text-xs font-medium text-slate-500">
-              {activeFilter === "complaint" ? "Selected" : "Show only these"}
-            </p>
+            <div>
+              <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-100 text-rose-600 mb-3">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4v2m0 0a9 9 0 090-18 9 9 0 090 18z" />
+                </svg>
+              </div>
+              <p className="text-sm font-medium text-slate-600">Complaints</p>
+            </div>
+            <div>
+              <p className="mt-4 text-3xl font-bold text-rose-600">
+                {complaintCount}
+              </p>
+              <p className="mt-2 text-xs font-medium text-slate-500">
+                {activeFilter === "complaint" ? "Currently selected" : "Need response"}
+              </p>
+            </div>
           </button>
 
           <button
             type="button"
-            className={statCardClass("sales_opportunity")}
+            className={`${statCardClass("sales_opportunity")} flex flex-col justify-between h-full`}
             onClick={() => setActiveFilter("sales_opportunity")}
           >
-            <p className="text-sm text-slate-500">Sales Opportunities</p>
-            <p className="mt-2 text-3xl font-bold text-emerald-600">
-              {salesCount}
-            </p>
-            <p className="mt-3 text-xs font-medium text-slate-500">
-              {activeFilter === "sales_opportunity"
-                ? "Selected"
-                : "Show only these"}
-            </p>
+            <div>
+              <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 mb-3">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <p className="text-sm font-medium text-slate-600">Sales Ops</p>
+            </div>
+            <div>
+              <p className="mt-4 text-3xl font-bold text-emerald-600">
+                {salesCount}
+              </p>
+              <p className="mt-2 text-xs font-medium text-slate-500">
+                {activeFilter === "sales_opportunity" ? "Currently selected" : "Take action"}
+              </p>
+            </div>
           </button>
 
           <button
             type="button"
-            className={statCardClass("keyword_hits")}
+            className={`${statCardClass("keyword_hits")} flex flex-col justify-between h-full`}
             onClick={() => setActiveFilter("keyword_hits")}
           >
-            <p className="text-sm text-slate-500">Keyword Hits</p>
-            <p className="mt-2 text-3xl font-bold text-indigo-600">
-              {keywordHitsCount}
-            </p>
-            <p className="mt-3 text-xs font-medium text-slate-500">
-              {activeFilter === "keyword_hits" ? "Selected" : "Show only these"}
-            </p>
+            <div>
+              <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 mb-3">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                </svg>
+              </div>
+              <p className="text-sm font-medium text-slate-600">Keywords</p>
+            </div>
+            <div>
+              <p className="mt-4 text-3xl font-bold text-indigo-600">
+                {keywordHitsCount}
+              </p>
+              <p className="mt-2 text-xs font-medium text-slate-500">
+                {activeFilter === "keyword_hits" ? "Currently selected" : "Matched"}
+              </p>
+            </div>
           </button>
         </div>
 
-        <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-white/60 bg-white/70 p-4 shadow-sm backdrop-blur md:flex-row md:items-center md:justify-between">
-          <p className="text-sm text-slate-600">
-            Showing:{" "}
-            <span className="font-semibold text-slate-900">
+        <div className="mb-5 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white/70 p-4 shadow-sm backdrop-blur md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-slate-600">
+              Showing:
+            </p>
+            <span className="font-semibold text-slate-900 inline-flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
               {filterLabel(activeFilter)}
-            </span>{" "}
-            <span className="text-slate-400">({filteredEmails.length})</span>
-          </p>
+            </span>
+            <span className="text-slate-400 text-sm">
+              ({filteredEmails.length})
+            </span>
+          </div>
 
           {activeFilter !== "all" && (
             <button
@@ -1165,8 +1192,14 @@ export default function Home() {
         </div>
 
         {loadingEmails ? (
-          <div className="rounded-3xl border border-white/60 bg-white/80 p-8 text-center shadow-xl backdrop-blur">
-            <p className="text-sm font-medium text-slate-500">Loading emails...</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 mb-4">
+              <svg className="w-6 h-6 text-blue-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </div>
+            <p className="text-sm font-medium text-slate-600">Loading your emails...</p>
+            <p className="text-xs text-slate-500 mt-2">This may take a moment</p>
           </div>
         ) : (
           <>
@@ -1319,15 +1352,28 @@ export default function Home() {
                             )
                           }
                         >
-                          {expandedEmailId === email.id
-                            ? "Hide full email"
-                            : "View full email"}
+                          {expandedEmailId === email.id ? (
+                            <>
+                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-4.803c1.608-2.712 4.72-4.517 8.313-4.517.5 0 .997.05 1.479.15A10 10 0 0022 12z" />
+                              </svg>
+                              Hide full email
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                              View full email
+                            </>
+                          )}
                         </button>
 
                         <button
                           type="button"
                           className={secondaryButton}
-                          disabled={isSummarizing}
+                          disabled={isSummarizing || isGeneratingReply || isSavingDraft || isSending}
                           onClick={async () => {
                             try {
                               setLoadingId(email.id);
@@ -1357,7 +1403,8 @@ export default function Home() {
                                 type: "success",
                                 message: data.summary,
                               });
-                            } catch {
+                            } catch (error) {
+                              console.error("Summarize error:", error);
                               setNotice({
                                 type: "error",
                                 message: "Something went wrong while summarizing.",
@@ -1367,7 +1414,21 @@ export default function Home() {
                             }
                           }}
                         >
-                          {isSummarizing ? "Summarizing..." : "Summarize"}
+                          {isSummarizing ? (
+                            <>
+                              <svg className="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              </svg>
+                              Summarizing...
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              </svg>
+                              Summarize
+                            </>
+                          )}
                         </button>
 
                         <button
@@ -1689,10 +1750,14 @@ export default function Home() {
             </div>
 
             {!loadingEmails && filteredEmails.length === 0 && (
-              <div className="mt-6 rounded-3xl border border-white/60 bg-white/80 p-8 text-center shadow-xl backdrop-blur">
-                <p className="text-sm font-medium text-slate-500">
-                  No emails match this filter.
-                </p>
+              <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-4">
+                  <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  </svg>
+                </div>
+                <p className="text-sm font-medium text-slate-600">No emails match this filter</p>
+                <p className="text-xs text-slate-500 mt-2">Try adjusting your preferences or clearing the filter</p>
               </div>
             )}
 
@@ -1704,10 +1769,13 @@ export default function Home() {
                   type="button"
                   disabled={loadingMore}
                 >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
                   {loadingMore ? "Loading more..." : "Load more emails"}
                 </button>
               ) : (
-                <p className="text-sm text-slate-500">No more emails</p>
+                <p className="text-sm text-slate-500">No more emails to load</p>
               )}
             </div>
           </>
@@ -1970,6 +2038,163 @@ export default function Home() {
                     </div>
                   </div>
                 )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {isPreferencesOpen && (
+        <div className="fixed bottom-6 right-6 z-50 px-4 sm:px-0 w-full max-w-2xl">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+            <div className="flex items-center justify-between bg-slate-900 px-4 py-3 text-white">
+              <div>
+                <p className="text-sm font-semibold">Preferences</p>
+                <p className="text-[11px] text-slate-300">
+                  Configure email analysis and alert settings
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="rounded-lg px-2 py-1 text-sm hover:bg-white/10"
+                  onClick={() => setIsPreferencesMinimized((prev) => !prev)}
+                >
+                  {isPreferencesMinimized ? "Expand" : "Minimize"}
+                </button>
+
+                <button
+                  type="button"
+                  className="rounded-lg px-2 py-1 text-sm hover:bg-white/10"
+                  onClick={() => setIsPreferencesOpen(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+
+            {!isPreferencesMinimized && (
+              <div className="p-6 max-h-[600px] overflow-y-auto">
+                <div className="space-y-6">
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-slate-900">Keyword Tracking Rules</label>
+                    <p className="mb-3 text-sm text-slate-600">Enter comma-separated terms to detect in email body content</p>
+                    <input
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400"
+                      value={keywordInput}
+                      onChange={(e) => setKeywordInput(e.target.value)}
+                      placeholder="e.g., refund, cancel, pricing, urgent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-3 block text-sm font-semibold text-slate-900">Alert Categories</label>
+                    <div className="space-y-2">
+                      <label className="inline-flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer transition w-full">
+                        <input
+                          type="checkbox"
+                          checked={alertUrgent}
+                          onChange={(e) => setAlertUrgent(e.target.checked)}
+                          className="w-4 h-4 rounded border-slate-300 text-blue-600"
+                        />
+                        <div className="flex items-center gap-2">
+                          <div className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 text-blue-600">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+                            </svg>
+                          </div>
+                          <span>Show urgent emails</span>
+                        </div>
+                      </label>
+
+                      <label className="inline-flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer transition w-full">
+                        <input
+                          type="checkbox"
+                          checked={alertComplaint}
+                          onChange={(e) => setAlertComplaint(e.target.checked)}
+                          className="w-4 h-4 rounded border-slate-300 text-rose-600"
+                        />
+                        <div className="flex items-center gap-2">
+                          <div className="inline-flex items-center justify-center w-5 h-5 rounded bg-rose-100 text-rose-600">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4v2" />
+                            </svg>
+                          </div>
+                          <span>Show complaint emails</span>
+                        </div>
+                      </label>
+
+                      <label className="inline-flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer transition w-full">
+                        <input
+                          type="checkbox"
+                          checked={alertSales}
+                          onChange={(e) => setAlertSales(e.target.checked)}
+                          className="w-4 h-4 rounded border-slate-300 text-emerald-600"
+                        />
+                        <div className="flex items-center gap-2">
+                          <div className="inline-flex items-center justify-center w-5 h-5 rounded bg-emerald-100 text-emerald-600">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                          </div>
+                          <span>Show sales opportunities</span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-slate-200 pt-6 flex flex-wrap gap-3">
+                    <button
+                      className={primaryButton}
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          setNotice(null);
+
+                          const res = await fetch("/api/preferences", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                              email: session?.user?.email,
+                              keywords: customKeywords,
+                              alertUrgent,
+                              alertComplaint,
+                              alertSales,
+                            }),
+                          });
+
+                          if (!res.ok) {
+                            throw new Error("Failed to save preferences");
+                          }
+
+                          setNotice({
+                            type: "success",
+                            message: "Preferences saved successfully.",
+                          });
+                        } catch {
+                          setNotice({
+                            type: "error",
+                            message: "Failed to save preferences.",
+                          });
+                        }
+                      }}
+                    >
+                      Save Preferences
+                    </button>
+
+                    <button
+                      className={secondaryButton}
+                      onClick={rerunAnalysis}
+                      type="button"
+                      disabled={analyzing || loadingEmails}
+                    >
+                      {analyzing ? "Analyzing..." : "Refresh Insights"}
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>
