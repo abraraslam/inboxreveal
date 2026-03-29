@@ -7,14 +7,36 @@ export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.accessToken) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    console.log("Session data:", {
+      user: session?.user?.email,
+      hasAccessToken: !!session?.accessToken,
+      provider: session?.provider,
+      token: session?.accessToken ? "EXISTS" : "MISSING",
+    });
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "Not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    if (!session.accessToken) {
+      console.error("Access token missing in session");
+      return NextResponse.json(
+        {
+          error: "No access token in session",
+          message:
+            "Please sign out and sign in again to refresh your authentication",
+        },
+        { status: 401 }
+      );
     }
 
     const pageToken = req.nextUrl.searchParams.get("pageToken") || undefined;
 
     const provider = getEmailProvider({
-      provider: session.provider || "gmail",
+      provider: (session.provider as "gmail" | "outlook") || "gmail",
       accessToken: session.accessToken,
     });
 
