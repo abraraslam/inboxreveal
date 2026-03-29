@@ -357,17 +357,6 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
-  // Auto-dismiss notice after 5 seconds
-  useEffect(() => {
-    if (!notice) return;
-
-    const timer = setTimeout(() => {
-      setNotice(null);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [notice]);
-
   const loadMoreEmails = async () => {
     if (!nextPageToken) return;
 
