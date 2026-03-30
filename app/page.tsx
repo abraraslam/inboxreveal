@@ -3,6 +3,7 @@
 import { useSession, signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import BrandLogo from "@/components/BrandLogo";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import {
@@ -55,7 +56,7 @@ export default function Home() {
               </h1>
 
               <p className="mb-8 text-base leading-relaxed text-slate-600 sm:text-lg md:text-xl">
-                InboxReveal detects hidden intent inside email bodies and helps you act instantly. Spot risk, uncover opportunity, and respond with confidence before important emails slip past you.
+                InboxReveal detects hidden intent inside email bodies and helps you act faster. Spot risk, uncover opportunity, and respond with confidence before important emails slip past you.
               </p>
 
               <div className="flex flex-col gap-4 sm:flex-row">
@@ -75,7 +76,7 @@ export default function Home() {
               </div>
 
               <p className="mt-6 text-sm text-slate-500">
-                Gmail and Outlook support • Real-time alerts • AI summaries • No credit card required
+                Gmail and Outlook support • Dashboard alerts • AI summaries • No credit card required
               </p>
             </div>
 
@@ -101,7 +102,7 @@ export default function Home() {
                     <Zap className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-400" />
                     <div>
                       <p className="text-sm font-semibold text-white">Recommended Action</p>
-                      <p className="mt-1 text-xs text-slate-400">Respond within 2 hours to reduce churn risk</p>
+                      <p className="mt-1 text-xs text-slate-400">Suggested next step: respond soon to address churn risk</p>
                     </div>
                   </div>
                 </div>
@@ -151,7 +152,7 @@ export default function Home() {
           <div className="mb-12 text-center">
             <h2 className="mb-4 text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">How InboxReveal Helps</h2>
             <p className="mx-auto max-w-2xl text-base text-slate-600 sm:text-lg md:text-xl">
-              Understand every email faster by answering three questions instantly.
+              Understand every email faster by answering three questions clearly.
             </p>
           </div>
 
@@ -224,14 +225,14 @@ export default function Home() {
                 <CheckCircle2 className="mt-1 h-6 w-6 flex-shrink-0 text-emerald-400" />
                 <div>
                   <h3 className="mb-2 text-lg font-semibold text-white">Improve response time</h3>
-                  <p className="text-slate-300">Real-time alerts tell you what needs attention now, not after the damage is done.</p>
+                  <p className="text-slate-300">Dashboard alerts and priority tags help you see what needs attention first.</p>
                 </div>
               </div>
               <div className="flex gap-4">
                 <CheckCircle2 className="mt-1 h-6 w-6 flex-shrink-0 text-emerald-400" />
                 <div>
-                  <h3 className="mb-2 text-lg font-semibold text-white">Save hours every week</h3>
-                  <p className="text-slate-300">Spend less time triaging messages and more time acting on what matters.</p>
+                  <h3 className="mb-2 text-lg font-semibold text-white">Spend less time triaging</h3>
+                  <p className="text-slate-300">Spend less time sorting messages and more time acting on what matters.</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -276,9 +277,7 @@ export default function Home() {
             </button>
 
             <div className="mb-6 text-center">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600">
-                <Mail className="h-6 w-6 text-white" />
-              </div>
+              <BrandLogo size="lg" showText={false} className="mb-4 justify-center" />
               <h2 className="text-2xl font-bold text-slate-900">Sign in to InboxReveal</h2>
               <p className="mt-2 text-sm text-slate-600">Connect your email account to start using AI-powered inbox intelligence.</p>
             </div>

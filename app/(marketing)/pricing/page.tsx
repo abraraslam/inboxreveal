@@ -1,5 +1,3 @@
-"use client";
-
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import Link from "next/link";
@@ -10,7 +8,7 @@ const plans = [
     name: "Basic",
     price: "Free",
     period: "forever",
-    description: "Perfect for getting started with smarter email workflows.",
+    description: "Perfect for individuals who want clear inbox priorities without extra complexity.",
     icon: Star,
     accent: "from-slate-500 to-slate-700",
     border: "border-slate-200",
@@ -28,7 +26,7 @@ const plans = [
     name: "Premium",
     price: "\u00a33.99",
     period: "per month",
-    description: "For professionals who need speed, clarity, and better decisions.",
+    description: "For professionals who want AI summaries, smarter reply drafting, and more control over busy inboxes.",
     icon: Sparkles,
     accent: "from-blue-600 to-indigo-600",
     border: "border-blue-300",
@@ -48,7 +46,7 @@ const plans = [
     name: "Gold",
     price: "\u00a38.99",
     period: "per month",
-    description: "Full power for advanced users and growing teams.",
+    description: "For advanced users who want the full AI workflow, including Gold-only draft review tools.",
     icon: Crown,
     accent: "from-amber-500 to-orange-600",
     border: "border-amber-300",
@@ -56,12 +54,93 @@ const plans = [
     cta: "Go Gold",
     features: [
       "Everything in Premium",
-      "Unlimited connected inboxes",
-      "Advanced priority tuning",
-      "Team collaboration-ready insights",
-      "Fast-track support",
+      "Gold-only AI draft review",
+      "Professional, shorter, polite, and persuasive rewrite actions",
+      "Compose draft AI review tools",
       "Unlimited analyzed emails",
     ],
+  },
+];
+
+const upgradeReasons = [
+  {
+    title: "Planned for Premium",
+    description:
+      "These are the next workflow upgrades that fit the Premium tier and are planned as future additions.",
+    items: [
+      "Smart follow-up reminders for unanswered threads",
+      "Weekly AI insight digest with top risks and opportunities",
+      "Multi-inbox unified view for freelancers and agencies",
+      "SLA risk alerts for time-sensitive emails",
+    ],
+  },
+  {
+    title: "Planned for Gold",
+    description:
+      "These are larger team and analytics features we would place in Gold as future additions.",
+    items: [
+      "Shared workspace with assignments and internal notes",
+      "Approval workflow for AI-generated replies",
+      "Custom AI playbooks for tone and escalation rules",
+      "Advanced analytics across intent, response speed, and outcomes",
+    ],
+  },
+];
+
+const comparisonRows = [
+  {
+    feature: "Connected inboxes",
+    basic: "1 Gmail inbox",
+    premium: "Gmail or Outlook",
+    gold: "Gmail or Outlook",
+  },
+  {
+    feature: "Monthly analysis volume",
+    basic: "100 emails",
+    premium: "2,000 emails",
+    gold: "Unlimited",
+  },
+  {
+    feature: "AI summaries",
+    basic: "-",
+    premium: "Included",
+    gold: "Included",
+  },
+  {
+    feature: "Suggested replies",
+    basic: "-",
+    premium: "Included",
+    gold: "Included",
+  },
+  {
+    feature: "Smart alert rules",
+    basic: "-",
+    premium: "Included",
+    gold: "Included",
+  },
+  {
+    feature: "AI review workflows",
+    basic: "-",
+    premium: "-",
+    gold: "Included",
+  },
+  {
+    feature: "Team collaboration",
+    basic: "-",
+    premium: "Planned",
+    gold: "Planned",
+  },
+  {
+    feature: "Advanced analytics",
+    basic: "Dashboard counts",
+    premium: "Dashboard counts",
+    gold: "Dashboard counts",
+  },
+  {
+    feature: "Support level",
+    basic: "Email support",
+    premium: "Email support",
+    gold: "Email support",
   },
 ];
 
@@ -126,6 +205,95 @@ export default function PricingPage() {
                 </article>
               );
             })}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 sm:pb-24">
+          <div className="mb-10 text-center">
+            <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">
+              Planned Paid Features
+            </h2>
+            <p className="mx-auto mt-4 max-w-3xl text-base text-slate-600 sm:text-lg">
+              These ideas are intentionally shown as roadmap items, not features that are already live in the dashboard today.
+            </p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            {upgradeReasons.map((group) => (
+              <div
+                key={group.title}
+                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+              >
+                <h3 className="text-xl font-bold text-slate-900">{group.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
+                  {group.description}
+                </p>
+
+                <ul className="mt-6 space-y-3">
+                  {group.items.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-sm text-slate-700 sm:text-base">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 sm:pb-24">
+          <div className="mb-10 text-center">
+            <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">
+              Compare Plans At A Glance
+            </h2>
+            <p className="mx-auto mt-4 max-w-3xl text-base text-slate-600 sm:text-lg">
+              A quick side-by-side breakdown of what each plan unlocks.
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="min-w-full border-collapse text-left">
+                <thead className="bg-slate-50">
+                  <tr>
+                    <th className="px-4 py-4 text-sm font-semibold text-slate-900 sm:px-6">
+                      Feature
+                    </th>
+                    <th className="px-4 py-4 text-sm font-semibold text-slate-900 sm:px-6">
+                      Basic
+                    </th>
+                    <th className="px-4 py-4 text-sm font-semibold text-blue-700 sm:px-6">
+                      Premium
+                    </th>
+                    <th className="px-4 py-4 text-sm font-semibold text-amber-700 sm:px-6">
+                      Gold
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonRows.map((row, index) => (
+                    <tr
+                      key={row.feature}
+                      className={index % 2 === 0 ? "bg-white" : "bg-slate-50/60"}
+                    >
+                      <td className="px-4 py-4 text-sm font-medium text-slate-900 sm:px-6">
+                        {row.feature}
+                      </td>
+                      <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">
+                        {row.basic}
+                      </td>
+                      <td className="px-4 py-4 text-sm text-slate-700 sm:px-6">
+                        {row.premium}
+                      </td>
+                      <td className="px-4 py-4 text-sm text-slate-700 sm:px-6">
+                        {row.gold}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
       </main>

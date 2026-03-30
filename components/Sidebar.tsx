@@ -1,14 +1,12 @@
+import BrandLogo from "@/components/BrandLogo";
+
 export default function Sidebar() {
   return (
     <aside className="w-64 bg-gradient-to-b from-slate-50 to-slate-100 border-r border-slate-200 p-4 flex flex-col">
       <div className="mb-8">
         <div className="inline-flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold text-slate-900">Gmail</h2>
+          <BrandLogo size="sm" showText={false} />
+          <h2 className="text-xl font-bold text-slate-900">InboxReveal</h2>
         </div>
       </div>
 

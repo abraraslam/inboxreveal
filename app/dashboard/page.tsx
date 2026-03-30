@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import BrandLogo from "@/components/BrandLogo";
 
 type Email = {
   id: string;
@@ -1165,11 +1166,7 @@ export default function Home() {
         <div className="w-full max-w-md">
           <div className="rounded-2xl border border-slate-700 bg-slate-800/50 p-8 shadow-2xl backdrop-blur-xl">
             <div className="mb-6 text-center">
-              <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
+              <BrandLogo size="lg" showText={false} className="mb-4 justify-center" />
               <div className="mb-4 inline-flex rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-3 py-1 text-xs font-semibold text-white">
                 InboxReveal
               </div>
@@ -1211,11 +1208,7 @@ export default function Home() {
                 <span className="text-xs font-semibold text-blue-700">Smart Inbox Dashboard</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
+                <BrandLogo showText={false} iconClassName="rounded-xl" />
                 <div>
                   <h1 className="text-3xl font-bold tracking-tight text-slate-900">
                     InboxReveal

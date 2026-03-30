@@ -20,7 +20,7 @@ export default function Services() {
       title: "Email Integration",
       description:
         "Seamlessly connect Gmail and Outlook accounts with secure API-based integration.",
-      details: ["One-click authentication", "Secure OAuth connection", "Multi-account support"],
+      details: ["One-click authentication", "Secure OAuth connection", "Gmail and Outlook support"],
     },
     {
       icon: Search,
@@ -43,10 +43,10 @@ export default function Services() {
     },
     {
       icon: Bell,
-      title: "Real-Time Alerts",
+      title: "Dashboard Alerts",
       description:
-        "Get instant notifications when important signals are detected in your inbox.",
-      details: ["Priority tagging", "Instant notifications", "Customizable alert types"],
+        "See important signals surfaced inside your dashboard while you review your inbox.",
+      details: ["Priority tagging", "Alerted email filter", "Customizable alert categories"],
     },
     {
       icon: MessageSquare,
@@ -64,7 +64,7 @@ export default function Services() {
         "Dashboard filtering",
         "Email prioritization",
         "Activity overview",
-        "Analytics view",
+        "Saved analysis history",
       ],
     },
   ];
@@ -192,12 +192,12 @@ export default function Services() {
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3">Smart Alerts</h3>
                 <p className="text-slate-700 mb-4">
-                  Real-time notifications ensure you're always aware of important signals.
+                  Important signals are surfaced directly in the dashboard so you can review them faster.
                 </p>
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2 text-slate-700">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    Instant notifications
+                    Dashboard alerts
                   </li>
                   <li className="flex items-center gap-2 text-slate-700">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -255,9 +255,9 @@ export default function Services() {
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Customer Support Manager</h3>
               <p className="text-slate-600 mb-4">
-                "I used to spend 30 minutes scanning each support ticket. Now InboxReveal surfaces urgent complaints and refund requests in seconds. I respond 3x faster."
+                "InboxReveal helps support teams surface urgent complaints and refund requests faster, so important issues are easier to prioritize."
               </p>
-              <p className="text-sm text-slate-500 font-medium">Impact: 70% reduction in response time</p>
+              <p className="text-sm text-slate-500 font-medium">Example use case: faster complaint triage</p>
             </div>
 
             <div className="p-6 sm:p-8 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition">
@@ -266,9 +266,9 @@ export default function Services() {
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Sales Professional</h3>
               <p className="text-slate-600 mb-4">
-                "Leads were getting buried in my inbox. InboxReveal flags buying intent and sales opportunities. I never miss a lead anymore."
+                "InboxReveal helps sales teams spot buying intent and sales opportunities that might otherwise stay buried in long threads."
               </p>
-              <p className="text-sm text-slate-500 font-medium">Impact: 45% increase in qualified leads followed up</p>
+              <p className="text-sm text-slate-500 font-medium">Example use case: clearer lead prioritization</p>
             </div>
 
             <div className="p-6 sm:p-8 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition">
@@ -277,9 +277,9 @@ export default function Services() {
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Small Business Owner</h3>
               <p className="text-slate-600 mb-4">
-                "I wear many hats. InboxReveal helps me prioritize what's truly urgent so I can focus on growing my business instead of drowning in emails."
+                "InboxReveal helps busy owners prioritize what feels most urgent so they can spend less energy manually sorting the inbox."
               </p>
-              <p className="text-sm text-slate-500 font-medium">Impact: 10+ hours per week saved</p>
+              <p className="text-sm text-slate-500 font-medium">Example use case: less inbox triage overhead</p>
             </div>
 
             <div className="p-6 sm:p-8 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition">
@@ -288,9 +288,9 @@ export default function Services() {
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Freelance Consultant</h3>
               <p className="text-slate-600 mb-4">
-                "Managing multiple client projects via email was chaos. InboxReveal categorizes and prioritizes everything. Now I'm organized and professional."
+                "InboxReveal helps consultants keep client conversations more organized by surfacing priority and intent in one dashboard."
               </p>
-              <p className="text-sm text-slate-500 font-medium">Impact: Better client satisfaction & retention</p>
+              <p className="text-sm text-slate-500 font-medium">Example use case: more consistent client follow-through</p>
             </div>
           </div>
         </section>
@@ -354,7 +354,7 @@ export default function Services() {
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 mb-2">Receive Intelligent Alerts</h3>
                   <p className="text-slate-600">
-                    Get instant notifications about important emails. View a prioritized dashboard. Read AI-generated summaries. Get actionable recommendations.
+                    Review important emails through dashboard alerts, prioritized views, AI-generated summaries, and actionable recommendations.
                   </p>
                 </div>
               </div>
