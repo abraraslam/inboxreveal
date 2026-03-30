@@ -6,8 +6,8 @@ import { Mail, Heart, Share } from "lucide-react";
 export default function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-slate-50">
-      <div className="mx-auto max-w-7xl px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
@@ -91,11 +91,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-slate-200 pt-8 flex flex-col md:flex-row md:items-center md:justify-between">
-          <p className="text-sm text-slate-600">
+        <div className="border-t border-slate-200 pt-6 sm:pt-8 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <p className="text-sm text-slate-600 text-center md:text-left">
             © 2026 InboxReveal. All rights reserved.
           </p>
-          <div className="flex items-center gap-4 mt-4 md:mt-0">
+          <div className="flex items-center justify-center gap-4 md:justify-end">
             <a href="#" className="text-slate-600 hover:text-blue-600 transition">
               <Heart className="w-5 h-5" />
             </a>

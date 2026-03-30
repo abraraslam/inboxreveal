@@ -38,23 +38,23 @@ export default function Contact() {
       <Navigation />
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
         {/* Hero Section */}
-        <section className="px-6 py-20 max-w-7xl mx-auto">
+        <section className="px-4 py-14 max-w-7xl mx-auto sm:px-6 sm:py-20">
           <div className="text-center mb-12">
-            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-6">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6">
               Get in <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Touch</span>
             </h1>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
               Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
             </p>
           </div>
         </section>
 
         {/* Contact Section */}
-        <section className="px-6 py-16 md:py-24">
-          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24">
+          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 sm:gap-12">
             {/* Left Column - Contact Info */}
             <div>
-              <h2 className="text-3xl font-bold text-slate-900 mb-8">Contact Information</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-8">Contact Information</h2>
 
               <div className="space-y-6 mb-12">
                 <div className="flex gap-4">
@@ -125,8 +125,8 @@ export default function Contact() {
 
             {/* Right Column - Contact Form */}
             <div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-                <h2 className="text-3xl font-bold text-slate-900 mb-6">Send us a message</h2>
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+                <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">Send us a message</h2>
 
                 {submitted ? (
                   <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 text-center">
@@ -219,11 +219,11 @@ export default function Contact() {
         </section>
 
         {/* FAQ Section */}
-        <section className="px-6 py-16 md:py-24 bg-white">
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 bg-white">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h2>
-              <p className="text-xl text-slate-600">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h2>
+              <p className="text-base sm:text-lg md:text-xl text-slate-600">
                 Find answers to common questions about InboxReveal
               </p>
             </div>

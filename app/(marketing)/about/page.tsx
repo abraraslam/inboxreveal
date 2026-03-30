@@ -10,23 +10,23 @@ export default function About() {
       <Navigation />
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
         {/* Hero Section */}
-        <section className="px-6 py-20 max-w-7xl mx-auto">
+        <section className="px-4 py-14 max-w-7xl mx-auto sm:px-6 sm:py-20">
           <div className="text-center mb-12">
-            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-6">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6">
               About <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">InboxReveal</span>
             </h1>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
               We're building the intelligence layer for email — helping professionals and businesses understand what truly matters inside their inbox.
             </p>
           </div>
         </section>
 
         {/* Our Story */}
-        <section className="px-6 py-16 md:py-24 bg-white">
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 bg-white">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold text-slate-900 mb-8">Our Story</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-8">Our Story</h2>
 
-            <div className="prose prose-lg text-slate-600 space-y-6">
+            <div className="prose text-slate-600 space-y-6 sm:prose-lg">
               <p>
                 InboxReveal was born from a simple observation: <strong>the most critical message is often buried inside the email body, not highlighted in the subject line.</strong>
               </p>
@@ -70,20 +70,20 @@ export default function About() {
         </section>
 
         {/* Founder Insight */}
-        <section className="px-6 py-16 md:py-24 max-w-4xl mx-auto">
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 max-w-4xl mx-auto">
           <div className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-8 md:p-12">
             <Lightbulb className="w-10 h-10 text-blue-600 mb-4" />
-            <h3 className="text-2xl font-bold text-slate-900 mb-4">The Core Insight</h3>
-            <p className="text-lg text-slate-700">
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4">The Core Insight</h3>
+            <p className="text-base sm:text-lg text-slate-700">
               "Email tools show messages — but they don't understand them. InboxReveal bridges that gap by detecting intent, highlighting urgency, and recommending actions. We transform email from a passive communication tool into an active decision-support system."
             </p>
           </div>
         </section>
 
         {/* Vision & Values */}
-        <section className="px-6 py-16 md:py-24 bg-white">
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto">
-            <div className="grid md:grid-cols-4 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="p-8 rounded-xl border border-slate-200 text-center">
                 <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-4">
                   <Eye className="w-6 h-6 text-blue-600" />
@@ -128,8 +128,8 @@ export default function About() {
         </section>
 
         {/* Why Choose Us */}
-        <section className="px-6 py-16 md:py-24 max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-slate-900 mb-8">Why Choose InboxReveal?</h2>
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-8">Why Choose InboxReveal?</h2>
 
           <div className="space-y-6">
             <div className="p-6 rounded-lg border border-slate-200 bg-white hover:shadow-lg transition">
@@ -170,11 +170,11 @@ export default function About() {
         </section>
 
         {/* Target Audience */}
-        <section className="px-6 py-16 md:py-24 bg-white">
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-4xl font-bold text-slate-900 mb-8 text-center">Who Uses InboxReveal?</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-8 text-center">Who Uses InboxReveal?</h2>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               <div className="p-6 rounded-xl border border-slate-200 hover:border-blue-300 transition">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Small Business Owners</h3>
                 <p className="text-slate-600 text-sm mb-4">
@@ -221,12 +221,12 @@ export default function About() {
         </section>
 
         {/* CTA */}
-        <section className="px-6 py-16 md:py-24 max-w-4xl mx-auto">
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 max-w-4xl mx-auto">
           <div className="relative rounded-2xl overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-90" />
-            <div className="relative p-12 text-center text-white">
-              <h2 className="text-4xl font-bold mb-4">Join the InboxReveal Community</h2>
-              <p className="text-xl text-blue-100 mb-6">
+            <div className="relative p-6 text-center text-white sm:p-10 md:p-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Join the InboxReveal Community</h2>
+              <p className="text-base sm:text-lg md:text-xl text-blue-100 mb-6">
                 Experience the future of email intelligence today
               </p>
               <button className="px-8 py-3 rounded-lg bg-white text-blue-600 font-semibold hover:shadow-lg transition">
