@@ -162,7 +162,7 @@ export async function POST(req: Request) {
 
     const rateLimit = applyRateLimit({
       key: buildRateLimitKey(req, session.user.email, "analyze"),
-      limit: 30,
+      limit: 60,
       windowMs: 60_000,
     });
 

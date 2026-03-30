@@ -27,58 +27,19 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    let data: Array<{
-      message_id?: string | null;
-      gmail_message_id?: string | null;
-      intent?: string | null;
-      priority?: string | null;
-      keywords?: unknown;
-      matched_phrases?: unknown;
-      reason?: string | null;
-      summary?: string | null;
-      recommended_action?: string | null;
-      should_alert?: boolean | null;
-      alert_reason?: string | null;
-    }> | null = null;
-
+    let data: Array<Record<string, unknown>> | null = null;
     let error: Error | null = null;
 
     const scopedResult = await supabase
       .from("email_analysis")
-      .select(
-        `
-        gmail_message_id,
-        intent,
-        priority,
-        keywords,
-        matched_phrases,
-        reason,
-        summary,
-        recommended_action,
-        should_alert,
-        alert_reason
-      `
-      )
+      .select("*")
       .eq("user_email", session.user.email)
       .in("gmail_message_id", messageIds);
 
     if (scopedResult.error && /user_email|gmail_message_id/i.test(scopedResult.error.message || "")) {
       const legacyResult = await supabase
         .from("email_analysis")
-        .select(
-          `
-          message_id,
-          intent,
-          priority,
-          keywords,
-          matched_phrases,
-          reason,
-          summary,
-          recommended_action,
-          should_alert,
-          alert_reason
-        `
-        )
+        .select("*")
         .in("message_id", messageIds);
 
       data = legacyResult.data;
@@ -89,7 +50,11 @@ export async function GET(req: NextRequest) {
     }
 
     if (error) {
-      throw error;
+      console.warn("GET /api/get-analysis fallback to empty response:", error);
+      return NextResponse.json({
+        analysis: {},
+        totalReturned: 0,
+      });
     }
 
     const analysisByMessageId = (data || []).reduce<
@@ -109,24 +74,33 @@ export async function GET(req: NextRequest) {
       >
     >(
       (acc, row) => {
-        const messageId = row.gmail_message_id || row.message_id;
+        const gmailMessageId =
+          typeof row.gmail_message_id === "string" ? row.gmail_message_id : null;
+        const legacyMessageId =
+          typeof row.message_id === "string" ? row.message_id : null;
+        const messageId = gmailMessageId || legacyMessageId;
 
         if (!messageId) {
           return acc;
         }
 
         acc[messageId] = {
-          intent: row.intent || "general",
-          priority: row.priority || "low",
-          keywords: Array.isArray(row.keywords) ? row.keywords : [],
-          matchedPhrases: Array.isArray(row.matched_phrases)
-            ? row.matched_phrases
+          intent: typeof row.intent === "string" ? row.intent : "general",
+          priority: typeof row.priority === "string" ? row.priority : "low",
+          keywords: Array.isArray(row.keywords)
+            ? row.keywords.filter((item): item is string => typeof item === "string")
             : [],
-          reason: row.reason || "",
-          summary: row.summary || "",
-          recommendedAction: row.recommended_action || "",
-          shouldAlert: row.should_alert ?? false,
-          alertReason: row.alert_reason || "",
+          matchedPhrases: Array.isArray(row.matched_phrases)
+            ? row.matched_phrases.filter((item): item is string => typeof item === "string")
+            : [],
+          reason: typeof row.reason === "string" ? row.reason : "",
+          summary: typeof row.summary === "string" ? row.summary : "",
+          recommendedAction:
+            typeof row.recommended_action === "string"
+              ? row.recommended_action
+              : "",
+          shouldAlert: typeof row.should_alert === "boolean" ? row.should_alert : false,
+          alertReason: typeof row.alert_reason === "string" ? row.alert_reason : "",
         };
 
         return acc;
