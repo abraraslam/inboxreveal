@@ -1,6 +1,9 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
+import { applyRateLimit, buildRateLimitKey } from "@/lib/security/rate-limit";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -149,9 +152,37 @@ function buildAlertDecision(
 
 export async function POST(req: Request) {
   try {
+    const supabase = getSupabaseServerClient();
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rateLimit = applyRateLimit({
+      key: buildRateLimitKey(req, session.user.email, "analyze"),
+      limit: 60,
+      windowMs: 60_000,
+    });
+
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          error: "Too many analysis requests",
+          message: `Try again in ${rateLimit.retryAfterSeconds} seconds.`,
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(rateLimit.retryAfterSeconds),
+          },
+        }
+      );
+    }
+
     const { messageId, text, customKeywords = [] } = await req.json();
 
-    const emailText = typeof text === "string" ? text.trim() : "";
+    const emailText = typeof text === "string" ? text.trim().slice(0, 12000) : "";
     const safeMessageId =
       typeof messageId === "string" ? messageId.trim() : "";
 
@@ -174,7 +205,7 @@ export async function POST(req: Request) {
         {
           role: "system",
           content: `
-You analyze email BODY content for InboxIntel.
+You analyze email BODY content for InboxReveal.
 
 Return valid JSON only with this exact shape:
 {
@@ -262,8 +293,10 @@ Rules:
     };
 
     if (safeMessageId) {
-      const { error: saveError } = await supabase.from("email_analysis").upsert(
+      const scopedSave = await supabase.from("email_analysis").upsert(
         {
+          user_email: session.user.email,
+          gmail_message_id: safeMessageId,
           message_id: safeMessageId,
           intent: finalResponse.intent,
           priority: finalResponse.priority,
@@ -276,8 +309,31 @@ Rules:
           alert_reason: finalResponse.alertReason,
           analyzed_at: new Date().toISOString(),
         },
-        { onConflict: "message_id" }
+        { onConflict: "user_email,gmail_message_id" }
       );
+
+      let saveError = scopedSave.error;
+
+      if (saveError && /user_email|gmail_message_id/i.test(saveError.message || "")) {
+        const legacySave = await supabase.from("email_analysis").upsert(
+          {
+            message_id: safeMessageId,
+            intent: finalResponse.intent,
+            priority: finalResponse.priority,
+            keywords: finalResponse.keywords,
+            matched_phrases: finalResponse.matchedPhrases,
+            reason: finalResponse.reason,
+            summary: finalResponse.summary,
+            recommended_action: finalResponse.recommendedAction,
+            should_alert: finalResponse.shouldAlert,
+            alert_reason: finalResponse.alertReason,
+            analyzed_at: new Date().toISOString(),
+          },
+          { onConflict: "message_id" }
+        );
+
+        saveError = legacySave.error;
+      }
 
       if (saveError) {
         console.error("Supabase save analysis error:", saveError);
@@ -285,11 +341,14 @@ Rules:
     }
 
     return NextResponse.json(finalResponse);
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
       {
         error: "Failed to analyze email",
-        message: error?.message || "Unknown error",
+        message:
+          error instanceof Error && error.message
+            ? error.message
+            : "Unknown error",
       },
       { status: 500 }
     );

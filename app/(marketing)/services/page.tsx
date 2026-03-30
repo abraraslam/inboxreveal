@@ -216,7 +216,7 @@ export default function Services() {
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900 mb-3">Decision Support</h3>
                 <p className="text-slate-700 mb-4">
-                  InboxIntel provides guidance, not just data, to help you act with confidence.
+                  InboxReveal provides guidance, not just data, to help you act with confidence.
                 </p>
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2 text-slate-700">
@@ -244,7 +244,7 @@ export default function Services() {
               Real-World Use Cases
             </h2>
             <p className="text-xl text-slate-600">
-              See how different professionals benefit from InboxIntel
+              See how different professionals benefit from InboxReveal
             </p>
           </div>
 
@@ -255,7 +255,7 @@ export default function Services() {
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Customer Support Manager</h3>
               <p className="text-slate-600 mb-4">
-                "I used to spend 30 minutes scanning each support ticket. Now InboxIntel surfaces urgent complaints and refund requests in seconds. I respond 3x faster."
+                "I used to spend 30 minutes scanning each support ticket. Now InboxReveal surfaces urgent complaints and refund requests in seconds. I respond 3x faster."
               </p>
               <p className="text-sm text-slate-500 font-medium">Impact: 70% reduction in response time</p>
             </div>
@@ -266,7 +266,7 @@ export default function Services() {
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Sales Professional</h3>
               <p className="text-slate-600 mb-4">
-                "Leads were getting buried in my inbox. InboxIntel flags buying intent and sales opportunities. I never miss a lead anymore."
+                "Leads were getting buried in my inbox. InboxReveal flags buying intent and sales opportunities. I never miss a lead anymore."
               </p>
               <p className="text-sm text-slate-500 font-medium">Impact: 45% increase in qualified leads followed up</p>
             </div>
@@ -277,7 +277,7 @@ export default function Services() {
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Small Business Owner</h3>
               <p className="text-slate-600 mb-4">
-                "I wear many hats. InboxIntel helps me prioritize what's truly urgent so I can focus on growing my business instead of drowning in emails."
+                "I wear many hats. InboxReveal helps me prioritize what's truly urgent so I can focus on growing my business instead of drowning in emails."
               </p>
               <p className="text-sm text-slate-500 font-medium">Impact: 10+ hours per week saved</p>
             </div>
@@ -288,7 +288,7 @@ export default function Services() {
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-3">Freelance Consultant</h3>
               <p className="text-slate-600 mb-4">
-                "Managing multiple client projects via email was chaos. InboxIntel categorizes and prioritizes everything. Now I'm organized and professional."
+                "Managing multiple client projects via email was chaos. InboxReveal categorizes and prioritizes everything. Now I'm organized and professional."
               </p>
               <p className="text-sm text-slate-500 font-medium">Impact: Better client satisfaction & retention</p>
             </div>
@@ -299,7 +299,7 @@ export default function Services() {
         <section className="px-6 py-16 md:py-24 bg-white">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold text-slate-900 mb-12 text-center">
-              How InboxIntel Works
+              How InboxReveal Works
             </h2>
 
             <div className="space-y-8">
@@ -312,7 +312,7 @@ export default function Services() {
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 mb-2">Connect Your Email</h3>
                   <p className="text-slate-600">
-                    Sign in with your Gmail or Outlook account. The connection is secure and encrypted. InboxIntel never stores your passwords.
+                    Sign in with your Gmail or Outlook account. The connection is secure and encrypted. InboxReveal never stores your passwords.
                   </p>
                 </div>
               </div>
@@ -340,7 +340,7 @@ export default function Services() {
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 mb-2">AI Analysis Begins</h3>
                   <p className="text-slate-600">
-                    InboxIntel scans your inbox and analyzes email bodies for intent, keywords, and urgency. This happens continuously and intelligently.
+                    InboxReveal scans your inbox and analyzes email bodies for intent, keywords, and urgency. This happens continuously and intelligently.
                   </p>
                 </div>
               </div>
@@ -368,7 +368,7 @@ export default function Services() {
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 mb-2">Act Immediately</h3>
                   <p className="text-slate-600">
-                    Respond to emails faster and more strategically. With InboxIntel, you know what matters and why. You can act with clarity and confidence.
+                    Respond to emails faster and more strategically. With InboxReveal, you know what matters and why. You can act with clarity and confidence.
                   </p>
                 </div>
               </div>
@@ -383,7 +383,7 @@ export default function Services() {
             <div className="relative p-12 text-center text-white">
               <h2 className="text-4xl font-bold mb-4">Experience Email Intelligence Today</h2>
               <p className="text-xl text-blue-100 mb-6">
-                Sign up for free and see how InboxIntel transforms your inbox
+                Sign up for free and see how InboxReveal transforms your inbox
               </p>
               <button className="px-8 py-3 rounded-lg bg-white text-blue-600 font-semibold hover:shadow-lg hover:scale-105 transition inline-flex items-center gap-2">
                 Get Started Free

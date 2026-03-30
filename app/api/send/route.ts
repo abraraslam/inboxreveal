@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { getEmailProvider } from "@/lib/email/get-provider";
+import { applyRateLimit, buildRateLimitKey } from "@/lib/security/rate-limit";
+
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
 
 export async function POST(req: Request) {
   try {
@@ -14,11 +19,47 @@ export async function POST(req: Request) {
       );
     }
 
+    const rateLimit = applyRateLimit({
+      key: buildRateLimitKey(req, session.user?.email, "send-email"),
+      limit: 10,
+      windowMs: 60_000,
+    });
+
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          error: "Too many send requests",
+          message: `Try again in ${rateLimit.retryAfterSeconds} seconds.`,
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(rateLimit.retryAfterSeconds),
+          },
+        }
+      );
+    }
+
     const { to, subject, body, threadId } = await req.json();
 
-    if (!to || !body) {
+    const safeTo = typeof to === "string" ? to.trim() : "";
+    const safeBody = typeof body === "string" ? body.trim().slice(0, 20000) : "";
+    const safeSubject =
+      typeof subject === "string" && subject.trim()
+        ? subject.trim().slice(0, 255)
+        : "No subject";
+    const safeThreadId = typeof threadId === "string" ? threadId.trim() : undefined;
+
+    if (!safeTo || !safeBody) {
       return NextResponse.json(
         { error: "Missing recipient or body" },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidEmail(safeTo)) {
+      return NextResponse.json(
+        { error: "Invalid recipient email" },
         { status: 400 }
       );
     }
@@ -29,10 +70,10 @@ export async function POST(req: Request) {
     });
 
     const result = await provider.sendEmail({
-      to,
-      subject: subject || "No subject",
-      body,
-      threadId,
+      to: safeTo,
+      subject: safeSubject,
+      body: safeBody,
+      threadId: safeThreadId,
     });
 
     return NextResponse.json({
@@ -40,13 +81,16 @@ export async function POST(req: Request) {
       id: result.id || null,
       threadId: result.threadId || null,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Send email error:", error);
 
     return NextResponse.json(
       {
         error: "Failed to send email",
-        message: error?.message || "Unknown error",
+        message:
+          error instanceof Error && error.message
+            ? error.message
+            : "Unknown error",
       },
       { status: 500 }
     );

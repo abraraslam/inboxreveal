@@ -1,5 +1,8 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
+import { applyRateLimit, buildRateLimitKey } from "@/lib/security/rate-limit";
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -7,7 +10,42 @@ const client = new OpenAI({
 
 export async function POST(req: Request) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rateLimit = applyRateLimit({
+      key: buildRateLimitKey(req, session.user.email, "summarize"),
+      limit: 30,
+      windowMs: 60_000,
+    });
+
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          error: "Too many summary requests",
+          message: `Try again in ${rateLimit.retryAfterSeconds} seconds.`,
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(rateLimit.retryAfterSeconds),
+          },
+        }
+      );
+    }
+
     const { text } = await req.json();
+    const safeText = typeof text === "string" ? text.trim().slice(0, 12000) : "";
+
+    if (!safeText) {
+      return NextResponse.json(
+        { error: "Missing text" },
+        { status: 400 }
+      );
+    }
 
     const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
@@ -18,7 +56,7 @@ export async function POST(req: Request) {
         },
         {
           role: "user",
-          content: text,
+          content: safeText,
         },
       ],
     });
@@ -26,9 +64,14 @@ export async function POST(req: Request) {
     return NextResponse.json({
       summary: response.choices[0].message.content,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: error.message || "Something went wrong" },
+      {
+        error:
+          error instanceof Error && error.message
+            ? error.message
+            : "Something went wrong",
+      },
       { status: 500 }
     );
   }

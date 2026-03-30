@@ -1,17 +1,20 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 export async function POST(req: Request) {
   try {
+    const supabase = getSupabaseServerClient();
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
 
     const {
-      userEmail,
       gmailMessageId,
       intent,
       priority,
@@ -22,14 +25,21 @@ export async function POST(req: Request) {
       recommendedAction,
     } = body;
 
+    if (typeof gmailMessageId !== "string" || !gmailMessageId.trim()) {
+      return NextResponse.json(
+        { error: "Missing gmail message id" },
+        { status: 400 }
+      );
+    }
+
     const { error } = await supabase.from("email_analysis").upsert(
       {
-        user_email: userEmail,
-        gmail_message_id: gmailMessageId,
+        user_email: session.user.email,
+        gmail_message_id: gmailMessageId.trim(),
         intent,
         priority,
-        keywords,
-        matched_phrases: matchedPhrases || [],
+        keywords: Array.isArray(keywords) ? keywords : [],
+        matched_phrases: Array.isArray(matchedPhrases) ? matchedPhrases : [],
         reason,
         summary: summary || "",
         recommended_action: recommendedAction,
@@ -40,9 +50,14 @@ export async function POST(req: Request) {
     if (error) throw error;
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: error.message || "Failed to save analysis" },
+      {
+        error:
+          error instanceof Error && error.message
+            ? error.message
+            : "Failed to save analysis",
+      },
       { status: 500 }
     );
   }

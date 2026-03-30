@@ -13,7 +13,7 @@ export default function About() {
         <section className="px-6 py-20 max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-6">
-              About <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">InboxIntel</span>
+              About <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">InboxReveal</span>
             </h1>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               We're building the intelligence layer for email — helping professionals and businesses understand what truly matters inside their inbox.
@@ -28,7 +28,7 @@ export default function About() {
 
             <div className="prose prose-lg text-slate-600 space-y-6">
               <p>
-                InboxIntel was born from a simple observation: <strong>the most critical message is often buried inside the email body, not highlighted in the subject line.</strong>
+                InboxReveal was born from a simple observation: <strong>the most critical message is often buried inside the email body, not highlighted in the subject line.</strong>
               </p>
 
               <p>
@@ -63,7 +63,7 @@ export default function About() {
               </p>
 
               <p>
-                That's where InboxIntel comes in. We built InboxIntel as a new layer on top of email: <strong>an AI-powered intelligence system that reads, understands, and acts on what's really inside your emails.</strong>
+                That's where InboxReveal comes in. We built InboxReveal as a new layer on top of email: <strong>an AI-powered intelligence system that reads, understands, and acts on what's really inside your emails.</strong>
               </p>
             </div>
           </div>
@@ -75,7 +75,7 @@ export default function About() {
             <Lightbulb className="w-10 h-10 text-blue-600 mb-4" />
             <h3 className="text-2xl font-bold text-slate-900 mb-4">The Core Insight</h3>
             <p className="text-lg text-slate-700">
-              "Email tools show messages — but they don't understand them. InboxIntel bridges that gap by detecting intent, highlighting urgency, and recommending actions. We transform email from a passive communication tool into an active decision-support system."
+              "Email tools show messages — but they don't understand them. InboxReveal bridges that gap by detecting intent, highlighting urgency, and recommending actions. We transform email from a passive communication tool into an active decision-support system."
             </p>
           </div>
         </section>
@@ -129,13 +129,13 @@ export default function About() {
 
         {/* Why Choose Us */}
         <section className="px-6 py-16 md:py-24 max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-slate-900 mb-8">Why Choose InboxIntel?</h2>
+          <h2 className="text-4xl font-bold text-slate-900 mb-8">Why Choose InboxReveal?</h2>
 
           <div className="space-y-6">
             <div className="p-6 rounded-lg border border-slate-200 bg-white hover:shadow-lg transition">
               <h3 className="text-lg font-bold text-slate-900 mb-2">Built for Real Problems</h3>
               <p className="text-slate-600">
-                InboxIntel isn't theoretical. It's built to solve the specific challenges professionals face with high-volume, complex email communication.
+                InboxReveal isn't theoretical. It's built to solve the specific challenges professionals face with high-volume, complex email communication.
               </p>
             </div>
 
@@ -163,7 +163,7 @@ export default function About() {
             <div className="p-6 rounded-lg border border-slate-200 bg-white hover:shadow-lg transition">
               <h3 className="text-lg font-bold text-slate-900 mb-2">Continuously Improving</h3>
               <p className="text-slate-600">
-                Our AI learns and improves over time. The more you use InboxIntel, the better it understands your priorities and context.
+                Our AI learns and improves over time. The more you use InboxReveal, the better it understands your priorities and context.
               </p>
             </div>
           </div>
@@ -172,7 +172,7 @@ export default function About() {
         {/* Target Audience */}
         <section className="px-6 py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-4xl font-bold text-slate-900 mb-8 text-center">Who Uses InboxIntel?</h2>
+            <h2 className="text-4xl font-bold text-slate-900 mb-8 text-center">Who Uses InboxReveal?</h2>
 
             <div className="grid md:grid-cols-3 gap-8">
               <div className="p-6 rounded-xl border border-slate-200 hover:border-blue-300 transition">
@@ -225,7 +225,7 @@ export default function About() {
           <div className="relative rounded-2xl overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-90" />
             <div className="relative p-12 text-center text-white">
-              <h2 className="text-4xl font-bold mb-4">Join the InboxIntel Community</h2>
+              <h2 className="text-4xl font-bold mb-4">Join the InboxReveal Community</h2>
               <p className="text-xl text-blue-100 mb-6">
                 Experience the future of email intelligence today
               </p>
