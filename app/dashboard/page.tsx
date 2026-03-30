@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 
 type Email = {
   id: string;
@@ -76,12 +77,15 @@ type DraftReviewResponse = {
   suggestions?: string[];
 };
 
+type PlanTier = "basic" | "premium" | "gold";
+
 type UserPreferences = {
   keywords?: string[];
   alert_urgent?: boolean;
   alert_complaint?: boolean;
   alert_sales?: boolean;
   hide_preferences_prompt?: boolean;
+  plan_tier?: PlanTier;
   updated_at?: string;
 };
 
@@ -134,6 +138,7 @@ export default function Home() {
   const [alertUrgent, setAlertUrgent] = useState(true);
   const [alertComplaint, setAlertComplaint] = useState(true);
   const [alertSales, setAlertSales] = useState(true);
+  const [planTier, setPlanTier] = useState<PlanTier>("basic");
 
   const [composeTo, setComposeTo] = useState("");
   const [composeSubject, setComposeSubject] = useState("");
@@ -171,6 +176,40 @@ export default function Home() {
         .filter(Boolean),
     [keywordInput]
   );
+
+  const planCapabilities = useMemo(() => {
+    if (planTier === "gold") {
+      return {
+        canUseSummaries: true,
+        canUseSuggestedReplies: true,
+        canUseSmartAlerts: true,
+        canUseAiDraftReview: true,
+      };
+    }
+
+    if (planTier === "premium") {
+      return {
+        canUseSummaries: true,
+        canUseSuggestedReplies: true,
+        canUseSmartAlerts: true,
+        canUseAiDraftReview: false,
+      };
+    }
+
+    return {
+      canUseSummaries: false,
+      canUseSuggestedReplies: false,
+      canUseSmartAlerts: false,
+      canUseAiDraftReview: false,
+    };
+  }, [planTier]);
+
+  const showUpgradeNotice = (feature: string, requiredPlan: "premium" | "gold") => {
+    setNotice({
+      type: "error",
+      message: `${feature} is available on ${requiredPlan === "premium" ? "Premium or Gold" : "Gold"} plan.`,
+    });
+  };
 
   const getPreferencePromptStorageKey = (email: string) =>
     `hide-preferences-prompt:${email.toLowerCase()}`;
@@ -228,10 +267,14 @@ export default function Home() {
     try {
       const ids = emailList.map((email) => email.id).join(",");
       const res = await fetch(`/api/get-analysis?ids=${encodeURIComponent(ids)}`);
-      const data: SavedAnalysisResponse = await res.json();
+      const data: SavedAnalysisResponse & { error?: string } = await res.json();
 
       if (!res.ok) {
-        throw new Error("Failed to load saved analysis");
+        console.warn(
+          "Saved analysis unavailable:",
+          data.error || "Failed to load saved analysis"
+        );
+        return {} as Record<string, Analysis>;
       }
 
       const savedAnalysis = data.analysis || {};
@@ -265,16 +308,50 @@ export default function Home() {
   ) => {
     if (!data.length) return;
 
+    const wait = (ms: number) =>
+      new Promise<void>((resolve) => {
+        setTimeout(resolve, ms);
+      });
+
+    const analyzeOne = async (
+      email: Email,
+      attempt = 0
+    ): Promise<Analysis | null> => {
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messageId: email.id,
+          text: email.body || email.snippet,
+          subject: email.subject,
+          from: email.from,
+          customKeywords: keywordsToUse,
+        }),
+      });
+
+      const result: Analysis & { error?: string } = await res.json();
+
+      if (res.status === 429 && attempt < 2) {
+        const retryAfterSeconds = Number(res.headers.get("Retry-After") || "0");
+        const waitMs = retryAfterSeconds > 0 ? retryAfterSeconds * 1000 : 1200;
+        await wait(waitMs);
+        return analyzeOne(email, attempt + 1);
+      }
+
+      if (!res.ok) {
+        throw new Error(result.error || "Failed to analyze email");
+      }
+
+      return result;
+    };
+
     try {
       setAnalyzing(true);
 
       const batchSize = 3;
-      const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
       for (let i = 0; i < data.length; i += batchSize) {
         const batch = data.slice(i, i + batchSize);
-
-        if (i > 0) await sleep(300);
 
         await Promise.all(
           batch.map(async (email) => {
@@ -284,22 +361,10 @@ export default function Home() {
                 [email.id]: true,
               }));
 
-              const res = await fetch("/api/analyze", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  messageId: email.id,
-                  text: email.body || email.snippet,
-                  subject: email.subject,
-                  from: email.from,
-                  customKeywords: keywordsToUse,
-                }),
-              });
+              const result = await analyzeOne(email);
 
-              const result = await res.json();
-
-              if (!res.ok) {
-                throw new Error(result.error || "Failed to analyze email");
+              if (!result) {
+                return;
               }
 
               setAnalysis((prev) => ({
@@ -307,7 +372,14 @@ export default function Home() {
                 [email.id]: result,
               }));
             } catch (error) {
-              console.error("Analyze failed for email:", email.id, error);
+              const message =
+                error instanceof Error ? error.message : "Failed to analyze email";
+
+              if (/too many analysis requests/i.test(message)) {
+                console.warn("Analyze hit rate limit for email:", email.id);
+              } else {
+                console.error("Analyze failed for email:", email.id, error);
+              }
             } finally {
               setAnalyzingIds((prev) => {
                 const next = { ...prev };
@@ -317,6 +389,10 @@ export default function Home() {
             }
           })
         );
+
+        if (i + batchSize < data.length) {
+          await wait(300);
+        }
       }
     } finally {
       setAnalyzing(false);
@@ -352,10 +428,18 @@ export default function Home() {
           return;
         }
 
+        const incomingPlan: PlanTier =
+          data.plan_tier === "premium" || data.plan_tier === "gold"
+            ? data.plan_tier
+            : "basic";
+
+        setPlanTier(incomingPlan);
         setKeywordInput((data.keywords || []).join(","));
-        setAlertUrgent(data.alert_urgent ?? true);
-        setAlertComplaint(data.alert_complaint ?? true);
-        setAlertSales(data.alert_sales ?? true);
+        setAlertUrgent(incomingPlan === "basic" ? false : (data.alert_urgent ?? true));
+        setAlertComplaint(
+          incomingPlan === "basic" ? false : (data.alert_complaint ?? true)
+        );
+        setAlertSales(incomingPlan === "basic" ? false : (data.alert_sales ?? true));
         setPreferencesUpdatedAt(data.updated_at || null);
         setIsPreferenceSetupRequired(false);
 
@@ -368,6 +452,14 @@ export default function Home() {
         console.error("Failed to load preferences:", error);
       });
   }, [session]);
+
+  useEffect(() => {
+    if (planTier === "basic") {
+      setAlertUrgent(false);
+      setAlertComplaint(false);
+      setAlertSales(false);
+    }
+  }, [planTier]);
 
   const savePreferences = async () => {
     if (!session?.user?.email) {
@@ -390,9 +482,10 @@ export default function Home() {
         body: JSON.stringify({
           email: session.user.email,
           keywords: customKeywords,
-          alertUrgent,
-          alertComplaint,
-          alertSales,
+          alertUrgent: planCapabilities.canUseSmartAlerts ? alertUrgent : false,
+          alertComplaint: planCapabilities.canUseSmartAlerts ? alertComplaint : false,
+          alertSales: planCapabilities.canUseSmartAlerts ? alertSales : false,
+          planTier,
           hidePreferencesPrompt: dontShowPreferencesNextTime,
         }),
       });
@@ -422,10 +515,43 @@ export default function Home() {
       }
 
       return true;
-    } catch {
+    } catch (error: unknown) {
+      try {
+        const verifyRes = await fetch("/api/preferences");
+        const verifyData: UserPreferences | null = await verifyRes.json();
+
+        const verifiedPlan: PlanTier =
+          verifyData?.plan_tier === "premium" || verifyData?.plan_tier === "gold"
+            ? verifyData.plan_tier
+            : "basic";
+
+        if (verifyRes.ok && verifyData && verifiedPlan === planTier) {
+          setPreferencesUpdatedAt(verifyData.updated_at || new Date().toISOString());
+          setNotice({
+            type: "success",
+            message: "Preferences saved successfully.",
+          });
+
+          if (isPreferenceSetupRequired) {
+            setIsPreferenceSetupRequired(false);
+            setIsPreferencesOpen(false);
+            setIsPreferencesMinimized(false);
+          }
+
+          return true;
+        }
+      } catch {
+        // Ignore verification errors and show original failure below.
+      }
+
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : "Failed to save preferences.";
+
       setNotice({
         type: "error",
-        message: "Failed to save preferences.",
+        message,
       });
       return false;
     } finally {
@@ -581,6 +707,11 @@ export default function Home() {
   };
 
   const generateReply = async (email: Email, mode: ReplyMode) => {
+    if (!planCapabilities.canUseSuggestedReplies) {
+      showUpgradeNotice("Suggested replies", "premium");
+      return;
+    }
+
     try {
       setReplyId(email.id);
       setNotice(null);
@@ -681,6 +812,11 @@ export default function Home() {
   };
 
   const reviewComposeDraft = async (action: ReviewAction = "general") => {
+    if (!planCapabilities.canUseAiDraftReview) {
+      showUpgradeNotice("AI draft review", "gold");
+      return;
+    }
+
     if (!composeBody.trim()) {
       setNotice({
         type: "error",
@@ -844,6 +980,11 @@ export default function Home() {
     email: Email,
     action: ReviewAction = "general"
   ) => {
+    if (!planCapabilities.canUseAiDraftReview) {
+      showUpgradeNotice("AI draft review", "gold");
+      return;
+    }
+
     const currentReply = replies[email.id];
 
     if (!currentReply?.trim()) {
@@ -980,7 +1121,7 @@ export default function Home() {
     }`;
 
   const buttonBase =
-    "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60";
+    "inline-flex w-full sm:w-auto items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60";
 
   const primaryButton = `${buttonBase} bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg`;
   const secondaryButton = `${buttonBase} border border-slate-300 bg-white text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-400`;
@@ -988,7 +1129,23 @@ export default function Home() {
   const warningButton = `${buttonBase} bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md hover:from-amber-600 hover:to-orange-600 hover:shadow-lg`;
   const dangerButton = `${buttonBase} bg-gradient-to-r from-rose-500 to-red-500 text-white shadow-md hover:from-rose-600 hover:to-red-600 hover:shadow-lg`;
   const ghostButton =
-    "inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition";
+    "inline-flex w-full sm:w-auto items-center justify-center rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition";
+  const upgradeLinkClass =
+    "inline-flex w-full sm:w-auto items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100";
+
+  const planBadgeClass =
+    planTier === "gold"
+      ? "border-amber-300 bg-amber-50 text-amber-800"
+      : planTier === "premium"
+      ? "border-blue-300 bg-blue-50 text-blue-800"
+      : "border-slate-300 bg-slate-100 text-slate-700";
+
+  const planBadgeLabel =
+    planTier === "gold"
+      ? "Gold"
+      : planTier === "premium"
+      ? "Premium"
+      : "Basic";
 
   const priorityBadgeClass = (priority?: Analysis["priority"]) => {
     switch (priority) {
@@ -1044,7 +1201,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
-      <div className="mx-auto max-w-7xl p-6">
+      <div className="mx-auto max-w-7xl p-4 sm:p-6">
         {/* Header Section */}
         <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -1060,13 +1217,24 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight text-slate-900">InboxReveal</h1>
+                  <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+                    InboxReveal
+                    <span className={`ml-2 inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold align-middle ${planBadgeClass}`}>
+                      {planBadgeLabel} Plan
+                    </span>
+                  </h1>
                   <p className="text-sm text-slate-600">AI-powered email prioritization and intelligent replies</p>
                 </div>
               </div>
             </div>
 
             <div className="flex flex-wrap gap-3">
+              {planTier !== "gold" && (
+                <Link href="/pricing?from=dashboard-header" className={upgradeLinkClass}>
+                  Upgrade Plan
+                </Link>
+              )}
+
               <button
                 className={primaryButton}
                 type="button"
@@ -1120,7 +1288,7 @@ export default function Home() {
         </div>
 
         {notice && (
-          <div className="fixed top-6 right-6 z-40 w-full max-w-md toast-enter">
+          <div className="fixed inset-x-4 top-4 z-40 w-auto sm:inset-x-auto sm:right-6 sm:top-6 sm:w-full sm:max-w-md toast-enter">
             <div
               className={`rounded-xl border p-4 shadow-2xl backdrop-blur flex items-start justify-between gap-4 ${
                 notice.type === "success"
@@ -1361,7 +1529,7 @@ export default function Home() {
                           <p className="truncate text-sm font-semibold text-slate-800">
                             {email.from}
                           </p>
-                          <p className="mt-1 text-lg font-semibold text-slate-900">
+                          <p className="mt-1 break-words text-base font-semibold text-slate-900 sm:text-lg">
                             {email.subject || "No subject"}
                           </p>
                           <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -1478,7 +1646,7 @@ export default function Home() {
                         </div>
                       )}
 
-                      <div className="mt-5 flex flex-wrap gap-3">
+                      <div className="mt-5 flex flex-wrap gap-2 sm:gap-3">
                         <button
                           type="button"
                           className={secondaryButton}
@@ -1509,8 +1677,19 @@ export default function Home() {
                         <button
                           type="button"
                           className={secondaryButton}
-                          disabled={isSummarizing || isGeneratingReply || isSavingDraft || isSending}
+                          disabled={
+                            !planCapabilities.canUseSummaries ||
+                            isSummarizing ||
+                            isGeneratingReply ||
+                            isSavingDraft ||
+                            isSending
+                          }
                           onClick={async () => {
+                            if (!planCapabilities.canUseSummaries) {
+                              showUpgradeNotice("AI summaries", "premium");
+                              return;
+                            }
+
                             try {
                               setLoadingId(email.id);
                               setNotice(null);
@@ -1570,7 +1749,12 @@ export default function Home() {
                         <button
                           type="button"
                           className={successButton}
-                          disabled={isGeneratingReply || isSavingDraft || isSending}
+                          disabled={
+                            !planCapabilities.canUseSuggestedReplies ||
+                            isGeneratingReply ||
+                            isSavingDraft ||
+                            isSending
+                          }
                           onClick={() => generateReply(email, "positive")}
                         >
                           {isGeneratingReply &&
@@ -1582,7 +1766,12 @@ export default function Home() {
                         <button
                           type="button"
                           className={primaryButton}
-                          disabled={isGeneratingReply || isSavingDraft || isSending}
+                          disabled={
+                            !planCapabilities.canUseSuggestedReplies ||
+                            isGeneratingReply ||
+                            isSavingDraft ||
+                            isSending
+                          }
                           onClick={() => generateReply(email, "neutral")}
                         >
                           {isGeneratingReply &&
@@ -1594,7 +1783,12 @@ export default function Home() {
                         <button
                           type="button"
                           className={warningButton}
-                          disabled={isGeneratingReply || isSavingDraft || isSending}
+                          disabled={
+                            !planCapabilities.canUseSuggestedReplies ||
+                            isGeneratingReply ||
+                            isSavingDraft ||
+                            isSending
+                          }
                           onClick={() => generateReply(email, "negative")}
                         >
                           {isGeneratingReply &&
@@ -1602,6 +1796,18 @@ export default function Home() {
                             ? "Writing negative..."
                             : "Negative Reply"}
                         </button>
+
+                        {!planCapabilities.canUseSummaries && (
+                          <Link href="/pricing?feature=summaries" className={upgradeLinkClass}>
+                            Upgrade for Summaries
+                          </Link>
+                        )}
+
+                        {!planCapabilities.canUseSuggestedReplies && (
+                          <Link href="/pricing?feature=suggested-replies" className={upgradeLinkClass}>
+                            Upgrade for Suggested Replies
+                          </Link>
+                        )}
                       </div>
 
                       {expandedEmailId === email.id && email.body && (
@@ -1644,11 +1850,16 @@ export default function Home() {
                             }}
                           />
 
-                          <div className="mt-4 flex flex-wrap gap-3">
+                          <div className="mt-4 flex flex-wrap gap-2 sm:gap-3">
                             <button
                               type="button"
                               className={secondaryButton}
-                              disabled={isReviewingReply || isSavingDraft || isSending}
+                              disabled={
+                                !planCapabilities.canUseAiDraftReview ||
+                                isReviewingReply ||
+                                isSavingDraft ||
+                                isSending
+                              }
                               onClick={() => reviewReplyDraft(email, "general")}
                             >
                               {isReviewingReply ? "Reviewing..." : "AI Review Reply"}
@@ -1657,7 +1868,12 @@ export default function Home() {
                             <button
                               type="button"
                               className={secondaryButton}
-                              disabled={isReviewingReply || isSavingDraft || isSending}
+                              disabled={
+                                !planCapabilities.canUseAiDraftReview ||
+                                isReviewingReply ||
+                                isSavingDraft ||
+                                isSending
+                              }
                               onClick={() => reviewReplyDraft(email, "professional")}
                             >
                               Make more professional
@@ -1666,7 +1882,12 @@ export default function Home() {
                             <button
                               type="button"
                               className={secondaryButton}
-                              disabled={isReviewingReply || isSavingDraft || isSending}
+                              disabled={
+                                !planCapabilities.canUseAiDraftReview ||
+                                isReviewingReply ||
+                                isSavingDraft ||
+                                isSending
+                              }
                               onClick={() => reviewReplyDraft(email, "shorter")}
                             >
                               Make shorter
@@ -1675,7 +1896,12 @@ export default function Home() {
                             <button
                               type="button"
                               className={secondaryButton}
-                              disabled={isReviewingReply || isSavingDraft || isSending}
+                              disabled={
+                                !planCapabilities.canUseAiDraftReview ||
+                                isReviewingReply ||
+                                isSavingDraft ||
+                                isSending
+                              }
                               onClick={() => reviewReplyDraft(email, "polite")}
                             >
                               Make polite
@@ -1684,11 +1910,22 @@ export default function Home() {
                             <button
                               type="button"
                               className={secondaryButton}
-                              disabled={isReviewingReply || isSavingDraft || isSending}
+                              disabled={
+                                !planCapabilities.canUseAiDraftReview ||
+                                isReviewingReply ||
+                                isSavingDraft ||
+                                isSending
+                              }
                               onClick={() => reviewReplyDraft(email, "persuasive")}
                             >
                               Make persuasive
                             </button>
+
+                            {!planCapabilities.canUseAiDraftReview && (
+                              <Link href="/pricing?feature=ai-review" className={upgradeLinkClass}>
+                                Upgrade for AI Review
+                              </Link>
+                            )}
 
                             <button
                               type="button"
@@ -1919,8 +2156,8 @@ export default function Home() {
       </div>
 
       {isComposeOpen && (
-        <div className={`fixed bottom-6 right-6 z-50 px-4 sm:px-0 ${composeReview ? "w-full max-w-6xl" : "w-full max-w-2xl"}`}>
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+        <div className={`fixed bottom-0 left-0 right-0 z-50 w-full px-0 pb-[max(env(safe-area-inset-bottom),0.5rem)] sm:bottom-6 sm:left-auto sm:right-6 sm:px-4 sm:pb-0 ${composeReview ? "sm:max-w-6xl" : "sm:max-w-2xl"}`}>
+          <div className="max-h-[88vh] overflow-hidden rounded-t-2xl border border-slate-200 bg-white shadow-2xl sm:max-h-none sm:rounded-2xl">
             <div className="flex items-center justify-between bg-slate-900 px-4 py-3 text-white">
               <div>
                 <p className="text-sm font-semibold">New Message</p>
@@ -1949,9 +2186,9 @@ export default function Home() {
             </div>
 
             {!isComposeMinimized && (
-              <div className={`flex ${composeReview ? "gap-0" : ""}`}>
+              <div className={`flex flex-col xl:flex-row ${composeReview ? "gap-0" : ""}`}>
                 {/* Compose Form - Left/Center */}
-                <div className={`p-4 ${composeReview ? "flex-1 border-r border-slate-200" : "w-full"}`}>
+                <div className={`p-4 ${composeReview ? "flex-1 xl:border-r xl:border-slate-200" : "w-full"}`}>
                   <div className="space-y-4">
                     <div>
                       <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -1998,6 +2235,7 @@ export default function Home() {
                         type="button"
                         className={secondaryButton}
                         disabled={
+                          !planCapabilities.canUseAiDraftReview ||
                           composeReviewLoading || composeSaving || composeSending
                         }
                         onClick={() => reviewComposeDraft("general")}
@@ -2009,6 +2247,7 @@ export default function Home() {
                         type="button"
                         className={secondaryButton}
                         disabled={
+                          !planCapabilities.canUseAiDraftReview ||
                           composeReviewLoading || composeSaving || composeSending
                         }
                         onClick={() => reviewComposeDraft("professional")}
@@ -2020,6 +2259,7 @@ export default function Home() {
                         type="button"
                         className={secondaryButton}
                         disabled={
+                          !planCapabilities.canUseAiDraftReview ||
                           composeReviewLoading || composeSaving || composeSending
                         }
                         onClick={() => reviewComposeDraft("shorter")}
@@ -2031,6 +2271,7 @@ export default function Home() {
                         type="button"
                         className={secondaryButton}
                         disabled={
+                          !planCapabilities.canUseAiDraftReview ||
                           composeReviewLoading || composeSaving || composeSending
                         }
                         onClick={() => reviewComposeDraft("polite")}
@@ -2042,12 +2283,19 @@ export default function Home() {
                         type="button"
                         className={secondaryButton}
                         disabled={
+                          !planCapabilities.canUseAiDraftReview ||
                           composeReviewLoading || composeSaving || composeSending
                         }
                         onClick={() => reviewComposeDraft("persuasive")}
                       >
                         Make persuasive
                       </button>
+
+                      {!planCapabilities.canUseAiDraftReview && (
+                        <Link href="/pricing?feature=ai-review" className={upgradeLinkClass}>
+                          Upgrade for AI Review
+                        </Link>
+                      )}
 
                       <button
                         type="button"
@@ -2087,7 +2335,7 @@ export default function Home() {
 
                 {/* AI Review Panel - Right Sidebar */}
                 {composeReview && (
-                  <div className="max-h-[600px] w-96 overflow-y-auto bg-indigo-50/70 p-4">
+                  <div className="max-h-[320px] w-full overflow-y-auto bg-indigo-50/70 p-4 xl:max-h-[600px] xl:w-96">
                     <div className="mb-4 flex items-center justify-between gap-2 sticky top-0 bg-indigo-50/70 pb-2">
                       <p className="text-sm font-semibold text-slate-800">
                         AI suggestions
@@ -2182,13 +2430,13 @@ export default function Home() {
 
       {isPreferencesOpen && (
         <div
-          className={`fixed z-50 px-4 sm:px-0 w-full max-w-2xl ${
+          className={`fixed z-50 w-full px-0 pb-[max(env(safe-area-inset-bottom),0.5rem)] sm:max-w-2xl sm:px-4 sm:pb-0 ${
             isPreferenceSetupRequired
-              ? "inset-0 mx-auto flex items-center justify-center bg-slate-900/35"
-              : "bottom-6 right-6"
+              ? "inset-0 mx-auto flex items-center justify-center bg-slate-900/35 p-4"
+              : "bottom-0 left-0 right-0 sm:bottom-6 sm:left-auto sm:right-6"
           }`}
         >
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+          <div className="max-h-[88vh] overflow-hidden rounded-t-2xl border border-slate-200 bg-white shadow-2xl sm:max-h-none sm:rounded-2xl">
             <div className="flex items-center justify-between bg-slate-900 px-4 py-3 text-white">
               <div>
                 <p className="text-sm font-semibold">Preferences</p>
@@ -2235,13 +2483,44 @@ export default function Home() {
                   )}
 
                   <div>
+                    <label className="mb-2 block text-sm font-semibold text-slate-900">
+                      Subscription Plan
+                    </label>
+                    <p className="mb-3 text-sm text-slate-600">
+                      Choose your current plan to lock or unlock features.
+                    </p>
+                    <select
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                      value={planTier}
+                      onChange={(e) => setPlanTier(e.target.value as PlanTier)}
+                    >
+                      <option value="basic">Basic - Free</option>
+                      <option value="premium">Premium - £3.99/month</option>
+                      <option value="gold">Gold - £8.99/month</option>
+                    </select>
+                  </div>
+
+                  <div>
                     <label className="mb-2 block text-sm font-semibold text-slate-900">Keyword Tracking Rules</label>
-                    <p className="mb-3 text-sm text-slate-600">Enter comma-separated terms to detect in email body content</p>
+                    <p className="mb-3 text-sm text-slate-600">
+                      Enter comma-separated terms to detect in email body content
+                      {!planCapabilities.canUseSmartAlerts
+                        ? " (Premium/Gold only)."
+                        : ""}
+                    </p>
+                    {!planCapabilities.canUseSmartAlerts && (
+                      <div className="mb-3">
+                        <Link href="/pricing?feature=smart-alerts" className={upgradeLinkClass}>
+                          Upgrade for Smart Alerts
+                        </Link>
+                      </div>
+                    )}
                     <input
                       className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400"
                       value={keywordInput}
                       onChange={(e) => setKeywordInput(e.target.value)}
                       placeholder="e.g., refund, cancel, pricing, urgent"
+                      disabled={!planCapabilities.canUseSmartAlerts}
                     />
                   </div>
 
@@ -2254,6 +2533,7 @@ export default function Home() {
                           checked={alertUrgent}
                           onChange={(e) => setAlertUrgent(e.target.checked)}
                           className="w-4 h-4 rounded border-slate-300 text-blue-600"
+                          disabled={!planCapabilities.canUseSmartAlerts}
                         />
                         <div className="flex items-center gap-2">
                           <div className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 text-blue-600">
@@ -2271,6 +2551,7 @@ export default function Home() {
                           checked={alertComplaint}
                           onChange={(e) => setAlertComplaint(e.target.checked)}
                           className="w-4 h-4 rounded border-slate-300 text-rose-600"
+                          disabled={!planCapabilities.canUseSmartAlerts}
                         />
                         <div className="flex items-center gap-2">
                           <div className="inline-flex items-center justify-center w-5 h-5 rounded bg-rose-100 text-rose-600">
@@ -2288,6 +2569,7 @@ export default function Home() {
                           checked={alertSales}
                           onChange={(e) => setAlertSales(e.target.checked)}
                           className="w-4 h-4 rounded border-slate-300 text-emerald-600"
+                          disabled={!planCapabilities.canUseSmartAlerts}
                         />
                         <div className="flex items-center gap-2">
                           <div className="inline-flex items-center justify-center w-5 h-5 rounded bg-emerald-100 text-emerald-600">

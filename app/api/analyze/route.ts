@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { applyRateLimit, buildRateLimitKey } from "@/lib/security/rate-limit";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { getPlanCapabilities, getUserPlanTier } from "@/lib/plans";
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -186,11 +187,53 @@ export async function POST(req: Request) {
     const safeMessageId =
       typeof messageId === "string" ? messageId.trim() : "";
 
+    const planTier = await getUserPlanTier(supabase, session.user.email);
+    const capabilities = getPlanCapabilities(planTier);
+
+    if (capabilities.analyzeMonthlyLimit !== null) {
+      let hasExistingRecord = false;
+
+      if (safeMessageId) {
+        const { data: existingRecord } = await supabase
+          .from("email_analysis")
+          .select("gmail_message_id")
+          .eq("user_email", session.user.email)
+          .eq("gmail_message_id", safeMessageId)
+          .maybeSingle();
+
+        hasExistingRecord = Boolean(existingRecord);
+      }
+
+      if (!hasExistingRecord) {
+        const monthStart = new Date();
+        monthStart.setDate(1);
+        monthStart.setHours(0, 0, 0, 0);
+
+        const { count } = await supabase
+          .from("email_analysis")
+          .select("*", { head: true, count: "exact" })
+          .eq("user_email", session.user.email)
+          .gte("analyzed_at", monthStart.toISOString());
+
+        if ((count || 0) >= capabilities.analyzeMonthlyLimit) {
+          return NextResponse.json(
+            {
+              error: `Monthly analysis limit reached for ${planTier} plan.`,
+              requiredPlan: planTier === "basic" ? "premium" : "gold",
+            },
+            { status: 403 }
+          );
+        }
+      }
+    }
+
     if (!emailText) {
       return NextResponse.json(FALLBACK_RESPONSE);
     }
 
-    const cleanedCustomKeywords = safeStringArray(customKeywords);
+    const cleanedCustomKeywords = capabilities.canUseSmartAlerts
+      ? safeStringArray(customKeywords)
+      : [];
 
     const { matchedKeywords, matchedPhrases } = extractMatchedKeywordPhrases(
       emailText,

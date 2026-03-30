@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { applyRateLimit, buildRateLimitKey } from "@/lib/security/rate-limit";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { getPlanCapabilities, getUserPlanTier } from "@/lib/plans";
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -83,6 +85,20 @@ export async function POST(req: Request) {
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const supabase = getSupabaseServerClient();
+    const planTier = await getUserPlanTier(supabase, session.user.email);
+    const capabilities = getPlanCapabilities(planTier);
+
+    if (!capabilities.canUseSuggestedReplies) {
+      return NextResponse.json(
+        {
+          error: "Suggested replies are available on Premium and Gold plans.",
+          requiredPlan: "premium",
+        },
+        { status: 403 }
+      );
     }
 
     const rateLimit = applyRateLimit({

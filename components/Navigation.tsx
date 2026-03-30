@@ -57,6 +57,9 @@ export default function Navigation() {
             <Link href="/services" className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
               Services
             </Link>
+            <Link href="/pricing" className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
+              Pricing
+            </Link>
             <Link href="/contact" className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
               Contact
             </Link>
@@ -110,6 +113,9 @@ export default function Navigation() {
             </Link>
             <Link href="/services" className="block text-sm font-medium text-slate-700 hover:text-blue-600 transition py-2">
               Services
+            </Link>
+            <Link href="/pricing" className="block text-sm font-medium text-slate-700 hover:text-blue-600 transition py-2">
+              Pricing
             </Link>
             <Link href="/contact" className="block text-sm font-medium text-slate-700 hover:text-blue-600 transition py-2">
               Contact

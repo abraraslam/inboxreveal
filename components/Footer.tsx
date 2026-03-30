@@ -38,9 +38,9 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-sm text-slate-600 hover:text-blue-600 transition">
+                <Link href="/pricing" className="text-sm text-slate-600 hover:text-blue-600 transition">
                   Pricing
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

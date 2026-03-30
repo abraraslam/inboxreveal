@@ -3,6 +3,8 @@ import OpenAI from "openai";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { applyRateLimit, buildRateLimitKey } from "@/lib/security/rate-limit";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { getPlanCapabilities, getUserPlanTier } from "@/lib/plans";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -51,6 +53,20 @@ export async function POST(req: Request) {
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const supabase = getSupabaseServerClient();
+    const planTier = await getUserPlanTier(supabase, session.user.email);
+    const capabilities = getPlanCapabilities(planTier);
+
+    if (!capabilities.canUseAiDraftReview) {
+      return NextResponse.json(
+        {
+          error: "AI draft review is available on the Gold plan.",
+          requiredPlan: "gold",
+        },
+        { status: 403 }
+      );
     }
 
     const rateLimit = applyRateLimit({
