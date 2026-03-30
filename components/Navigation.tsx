@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
 import { Menu, X, LogOut } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 
 export default function Navigation() {
   const { data: session } = useSession();
@@ -15,35 +16,7 @@ export default function Navigation() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-700 shadow-[0_8px_22px_rgba(37,99,235,0.35)]">
-              <svg
-                viewBox="0 0 48 48"
-                className="w-6 h-6"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <rect x="7" y="11" width="34" height="26" rx="6" fill="rgba(255,255,255,0.16)" />
-                <path
-                  d="M10.5 17.5L24 27.5L37.5 17.5"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="2.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <circle cx="16" cy="24" r="2.2" fill="white" />
-                <circle cx="32" cy="24" r="2.2" fill="white" />
-                <path
-                  d="M18.2 24H29.8"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-            <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-700 bg-clip-text text-transparent">
-              InboxReveal
-            </span>
+            <BrandLogo />
           </Link>
 
           {/* Desktop Navigation */}

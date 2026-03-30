@@ -77,9 +77,9 @@ export default function Contact() {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900">Chat Support</h3>
-                    <p className="text-slate-600">Available in the app dashboard</p>
-                    <p className="text-slate-500 text-sm mt-1">Monday - Friday, 9 AM - 5 PM GMT</p>
+                    <h3 className="text-lg font-semibold text-slate-900">Support</h3>
+                    <p className="text-slate-600">Email us for product or account questions</p>
+                    <p className="text-slate-500 text-sm mt-1">We reply as quickly as possible during business hours</p>
                   </div>
                 </div>
 
@@ -237,7 +237,7 @@ export default function Contact() {
                   </span>
                 </summary>
                 <p className="mt-4 text-slate-600">
-                  Yes! InboxReveal offers a free plan with basic keyword detection. Paid plans unlock advanced AI features, alerts, and analytics.
+                  Yes. InboxReveal offers a free plan with core analysis tools. Paid plans unlock AI summaries, suggested replies, smart alert rules, and Gold-only AI draft review.
                 </p>
               </details>
 
@@ -285,7 +285,7 @@ export default function Contact() {
                   </span>
                 </summary>
                 <p className="mt-4 text-slate-600">
-                  You can cancel anytime from your account settings. No questions asked. No cancellation fees.
+                  Subscription self-serve cancellation is not live yet. For now, contact support and we will help you cancel your plan.
                 </p>
               </details>
             </div>
