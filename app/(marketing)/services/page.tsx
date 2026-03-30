@@ -74,27 +74,27 @@ export default function Services() {
       <Navigation />
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
         {/* Hero Section */}
-        <section className="px-6 py-20 max-w-7xl mx-auto">
+        <section className="px-4 py-14 max-w-7xl mx-auto sm:px-6 sm:py-20">
           <div className="text-center mb-12">
-            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-6">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6">
               Features That Make a <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Difference</span>
             </h1>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
               Discover the powerful tools that transform your email communication into action-driven intelligence.
             </p>
           </div>
         </section>
 
         {/* Features Grid */}
-        <section className="px-6 py-16 md:py-24">
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24">
           <div className="max-w-7xl mx-auto">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
                   <div
                     key={index}
-                    className="group relative p-8 rounded-xl border border-slate-200 bg-white hover:border-blue-300 hover:shadow-lg transition duration-300"
+                    className="group relative p-6 sm:p-8 rounded-xl border border-slate-200 bg-white hover:border-blue-300 hover:shadow-lg transition duration-300"
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 opacity-0 group-hover:opacity-100 rounded-xl transition -z-10 duration-300" />
 
@@ -126,23 +126,23 @@ export default function Services() {
         </section>
 
         {/* Core Pillars */}
-        <section className="px-6 py-16 md:py-24 bg-white">
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4">
                 Built on Four Core Pillars
               </h2>
-              <p className="text-xl text-slate-600">
+              <p className="text-base sm:text-lg md:text-xl text-slate-600">
                 Each pillar works together to deliver complete email intelligence
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="relative p-8 rounded-xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100/50">
+            <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
+              <div className="relative p-6 sm:p-8 rounded-xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100/50">
                 <div className="absolute -top-4 -left-4 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
                   1
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-3">Body Intelligence</h3>
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3">Body Intelligence</h3>
                 <p className="text-slate-700 mb-4">
                   We focus on analyzing the full email content rather than relying on subject lines alone.
                 </p>
@@ -162,11 +162,11 @@ export default function Services() {
                 </ul>
               </div>
 
-              <div className="relative p-8 rounded-xl border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100/50">
+              <div className="relative p-6 sm:p-8 rounded-xl border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100/50">
                 <div className="absolute -top-4 -left-4 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold">
                   2
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-3">Hidden Intent Detection</h3>
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3">Hidden Intent Detection</h3>
                 <p className="text-slate-700 mb-4">
                   Our AI identifies intent categories to classify what each email truly means.
                 </p>
@@ -186,11 +186,11 @@ export default function Services() {
                 </ul>
               </div>
 
-              <div className="relative p-8 rounded-xl border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100/50">
+              <div className="relative p-6 sm:p-8 rounded-xl border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100/50">
                 <div className="absolute -top-4 -left-4 w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold">
                   3
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-3">Smart Alerts</h3>
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3">Smart Alerts</h3>
                 <p className="text-slate-700 mb-4">
                   Real-time notifications ensure you're always aware of important signals.
                 </p>
@@ -210,11 +210,11 @@ export default function Services() {
                 </ul>
               </div>
 
-              <div className="relative p-8 rounded-xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-amber-100/50">
+              <div className="relative p-6 sm:p-8 rounded-xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-amber-100/50">
                 <div className="absolute -top-4 -left-4 w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold">
                   4
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-3">Decision Support</h3>
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3">Decision Support</h3>
                 <p className="text-slate-700 mb-4">
                   InboxReveal provides guidance, not just data, to help you act with confidence.
                 </p>
@@ -238,18 +238,18 @@ export default function Services() {
         </section>
 
         {/* Use Cases */}
-        <section className="px-6 py-16 md:py-24 max-w-7xl mx-auto">
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               Real-World Use Cases
             </h2>
-            <p className="text-xl text-slate-600">
+            <p className="text-base sm:text-lg md:text-xl text-slate-600">
               See how different professionals benefit from InboxReveal
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="p-8 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
+            <div className="p-6 sm:p-8 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition">
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
                 <Mail className="w-6 h-6 text-blue-600" />
               </div>
@@ -260,7 +260,7 @@ export default function Services() {
               <p className="text-sm text-slate-500 font-medium">Impact: 70% reduction in response time</p>
             </div>
 
-            <div className="p-8 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition">
+            <div className="p-6 sm:p-8 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition">
               <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
                 <TrendingUp className="w-6 h-6 text-green-600" />
               </div>
@@ -271,7 +271,7 @@ export default function Services() {
               <p className="text-sm text-slate-500 font-medium">Impact: 45% increase in qualified leads followed up</p>
             </div>
 
-            <div className="p-8 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition">
+            <div className="p-6 sm:p-8 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition">
               <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-4">
                 <Zap className="w-6 h-6 text-purple-600" />
               </div>
@@ -282,7 +282,7 @@ export default function Services() {
               <p className="text-sm text-slate-500 font-medium">Impact: 10+ hours per week saved</p>
             </div>
 
-            <div className="p-8 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition">
+            <div className="p-6 sm:p-8 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition">
               <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
                 <Bell className="w-6 h-6 text-amber-600" />
               </div>
@@ -296,9 +296,9 @@ export default function Services() {
         </section>
 
         {/* How It Works */}
-        <section className="px-6 py-16 md:py-24 bg-white">
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 bg-white">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold text-slate-900 mb-12 text-center">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-10 sm:mb-12 text-center">
               How InboxReveal Works
             </h2>
 
