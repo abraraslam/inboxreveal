@@ -38,6 +38,9 @@ type GmailResponse = {
   emails: Email[];
   nextPageToken?: string | null;
   totalReturned?: number;
+  error?: string;
+  message?: string;
+  details?: string | null;
 };
 
 type SavedAnalysisResponse = {
@@ -240,6 +243,22 @@ export default function Home() {
     }
   };
 
+  const getEmailLoadErrorMessage = (data: GmailResponse | Email[]) => {
+    if (Array.isArray(data)) {
+      return "Failed to load emails.";
+    }
+
+    if (data.message) {
+      return data.message;
+    }
+
+    if (data.error) {
+      return data.error;
+    }
+
+    return "Failed to load emails.";
+  };
+
   const analyzeEmails = async (
     data: Email[],
     keywordsToUse: string[] = customKeywords
@@ -249,10 +268,13 @@ export default function Home() {
     try {
       setAnalyzing(true);
 
-      const batchSize = 5;
+      const batchSize = 3;
+      const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
       for (let i = 0; i < data.length; i += batchSize) {
         const batch = data.slice(i, i + batchSize);
+
+        if (i > 0) await sleep(300);
 
         await Promise.all(
           batch.map(async (email) => {
@@ -423,11 +445,16 @@ export default function Home() {
         const data: GmailResponse | Email[] = await res.json();
 
         if (!res.ok) {
-          throw new Error(
-            (data as { message?: string; error?: string })?.message ||
-              (data as { message?: string; error?: string })?.error ||
-              "Failed to load emails"
-          );
+          const errorMessage = getEmailLoadErrorMessage(data);
+
+          setEmails([]);
+          setNextPageToken(null);
+          setNotice({
+            type: "error",
+            message: errorMessage,
+          });
+
+          return;
         }
 
         const emailList = Array.isArray(data)
@@ -463,7 +490,10 @@ export default function Home() {
         setNextPageToken(null);
         setNotice({
           type: "error",
-          message: "Failed to load emails.",
+          message:
+            error instanceof Error && error.message
+              ? error.message
+              : "Failed to load emails.",
         });
       } finally {
         setLoadingEmails(false);

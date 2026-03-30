@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 function toErrorMessage(error: unknown, fallback: string) {
   if (error instanceof Error && error.message) {
@@ -16,10 +13,16 @@ function toErrorMessage(error: unknown, fallback: string) {
 
 export async function POST(req: Request) {
   try {
+    const supabase = getSupabaseServerClient();
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
 
     const {
-      email,
       keywords,
       alertUrgent,
       alertComplaint,
@@ -27,16 +30,22 @@ export async function POST(req: Request) {
       hidePreferencesPrompt,
     } = body;
 
-    if (!email) {
-      return NextResponse.json({ error: "Missing email" }, { status: 400 });
-    }
+    const email = session.user.email;
+
+    const safeKeywords = Array.isArray(keywords)
+      ? keywords
+          .filter((item): item is string => typeof item === "string")
+          .map((item) => item.trim())
+          .filter(Boolean)
+          .slice(0, 25)
+      : [];
 
     const payload = {
       email,
-      keywords,
-      alert_urgent: alertUrgent,
-      alert_complaint: alertComplaint,
-      alert_sales: alertSales,
+      keywords: safeKeywords,
+      alert_urgent: Boolean(alertUrgent),
+      alert_complaint: Boolean(alertComplaint),
+      alert_sales: Boolean(alertSales),
       hide_preferences_prompt: Boolean(hidePreferencesPrompt),
     };
 
@@ -69,14 +78,16 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(req.url);
-    const email = searchParams.get("email");
+    const supabase = getSupabaseServerClient();
+    const session = await getServerSession(authOptions);
 
-    if (!email) {
-      return NextResponse.json({ error: "Missing email" }, { status: 400 });
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const email = session.user.email;
 
     const { data, error } = await supabase
       .from("user_preferences")

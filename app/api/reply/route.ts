@@ -1,5 +1,8 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
+import { applyRateLimit, buildRateLimitKey } from "@/lib/security/rate-limit";
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -76,10 +79,37 @@ Rules:
 
 export async function POST(req: Request) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rateLimit = applyRateLimit({
+      key: buildRateLimitKey(req, session.user.email, "reply"),
+      limit: 20,
+      windowMs: 60_000,
+    });
+
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          error: "Too many reply generation requests",
+          message: `Try again in ${rateLimit.retryAfterSeconds} seconds.`,
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(rateLimit.retryAfterSeconds),
+          },
+        }
+      );
+    }
+
     const body = await req.json();
 
     const subject = typeof body.subject === "string" ? body.subject : "";
-    const text = typeof body.text === "string" ? body.text : "";
+    const text = typeof body.text === "string" ? body.text.slice(0, 12000) : "";
     const replyMode: ReplyMode =
       body.replyMode === "positive" ||
       body.replyMode === "negative" ||
@@ -137,12 +167,15 @@ Output requirements:
       reply,
       replyMode,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Reply route error:", error);
 
     return NextResponse.json(
       {
-        error: error?.message || "Something went wrong",
+        error:
+          error instanceof Error && error.message
+            ? error.message
+            : "Something went wrong",
       },
       { status: 500 }
     );

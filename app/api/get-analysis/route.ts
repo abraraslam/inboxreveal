@@ -1,19 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 export async function GET(req: NextRequest) {
   try {
+    const supabase = getSupabaseServerClient();
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const idsParam = req.nextUrl.searchParams.get("ids");
 
     const messageIds = (idsParam || "")
       .split(",")
       .map((id) => id.trim())
-      .filter(Boolean);
+      .filter(Boolean)
+      .slice(0, 100);
 
     if (messageIds.length === 0) {
       return NextResponse.json({
@@ -22,11 +27,27 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const { data, error } = await supabase
+    let data: Array<{
+      message_id?: string | null;
+      gmail_message_id?: string | null;
+      intent?: string | null;
+      priority?: string | null;
+      keywords?: unknown;
+      matched_phrases?: unknown;
+      reason?: string | null;
+      summary?: string | null;
+      recommended_action?: string | null;
+      should_alert?: boolean | null;
+      alert_reason?: string | null;
+    }> | null = null;
+
+    let error: Error | null = null;
+
+    const scopedResult = await supabase
       .from("email_analysis")
       .select(
         `
-        message_id,
+        gmail_message_id,
         intent,
         priority,
         keywords,
@@ -38,15 +59,63 @@ export async function GET(req: NextRequest) {
         alert_reason
       `
       )
-      .in("message_id", messageIds);
+      .eq("user_email", session.user.email)
+      .in("gmail_message_id", messageIds);
+
+    if (scopedResult.error && /user_email|gmail_message_id/i.test(scopedResult.error.message || "")) {
+      const legacyResult = await supabase
+        .from("email_analysis")
+        .select(
+          `
+          message_id,
+          intent,
+          priority,
+          keywords,
+          matched_phrases,
+          reason,
+          summary,
+          recommended_action,
+          should_alert,
+          alert_reason
+        `
+        )
+        .in("message_id", messageIds);
+
+      data = legacyResult.data;
+      error = legacyResult.error;
+    } else {
+      data = scopedResult.data;
+      error = scopedResult.error;
+    }
 
     if (error) {
       throw error;
     }
 
-    const analysisByMessageId = (data || []).reduce<Record<string, any>>(
+    const analysisByMessageId = (data || []).reduce<
+      Record<
+        string,
+        {
+          intent: string;
+          priority: string;
+          keywords: string[];
+          matchedPhrases: string[];
+          reason: string;
+          summary: string;
+          recommendedAction: string;
+          shouldAlert: boolean;
+          alertReason: string;
+        }
+      >
+    >(
       (acc, row) => {
-        acc[row.message_id] = {
+        const messageId = row.gmail_message_id || row.message_id;
+
+        if (!messageId) {
+          return acc;
+        }
+
+        acc[messageId] = {
           intent: row.intent || "general",
           priority: row.priority || "low",
           keywords: Array.isArray(row.keywords) ? row.keywords : [],
@@ -69,12 +138,15 @@ export async function GET(req: NextRequest) {
       analysis: analysisByMessageId,
       totalReturned: Object.keys(analysisByMessageId).length,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("GET /api/get-analysis error:", error);
 
     return NextResponse.json(
       {
-        error: error?.message || "Failed to load saved analysis",
+        error:
+          error instanceof Error && error.message
+            ? error.message
+            : "Failed to load saved analysis",
       },
       { status: 500 }
     );

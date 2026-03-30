@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
+import { applyRateLimit, buildRateLimitKey } from "@/lib/security/rate-limit";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -44,6 +47,33 @@ function extractJson(text: string) {
 
 export async function POST(req: Request) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rateLimit = applyRateLimit({
+      key: buildRateLimitKey(req, session.user.email, "review-draft"),
+      limit: 20,
+      windowMs: 60_000,
+    });
+
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          error: "Too many draft review requests",
+          message: `Try again in ${rateLimit.retryAfterSeconds} seconds.`,
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(rateLimit.retryAfterSeconds),
+          },
+        }
+      );
+    }
+
     const { to, subject, body, action } = (await req.json()) as {
       to?: string;
       subject?: string;
@@ -51,7 +81,9 @@ export async function POST(req: Request) {
       action?: ReviewAction;
     };
 
-    if (!body || !String(body).trim()) {
+    const normalizedBody = typeof body === "string" ? body.trim().slice(0, 12000) : "";
+
+    if (!normalizedBody) {
       return NextResponse.json(
         { error: "Draft body is required." },
         { status: 400 }
@@ -86,7 +118,7 @@ Email draft:
 To: ${to || ""}
 Subject: ${subject || ""}
 Body:
-${body}
+${normalizedBody}
 `;
 
     const response = await openai.chat.completions.create({
@@ -105,7 +137,7 @@ ${body}
 
     return NextResponse.json({
       improvedSubject: parsed.improvedSubject || subject || "",
-      improvedBody: parsed.improvedBody || body,
+      improvedBody: parsed.improvedBody || normalizedBody,
       suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions : [],
     });
   } catch (error) {
