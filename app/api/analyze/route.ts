@@ -174,7 +174,7 @@ export async function POST(req: Request) {
         {
           role: "system",
           content: `
-You analyze email BODY content for InboxIntel.
+You analyze email BODY content for InboxReveal.
 
 Return valid JSON only with this exact shape:
 {

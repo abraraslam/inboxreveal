@@ -15,7 +15,7 @@ export default function Footer() {
                 <Mail className="w-6 h-6 text-white" />
               </div>
               <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                InboxIntel
+                InboxReveal
               </span>
             </div>
             <p className="text-sm text-slate-600">
@@ -72,7 +72,7 @@ export default function Footer() {
             <h4 className="text-sm font-semibold text-slate-900 mb-4">Support</h4>
             <ul className="space-y-2">
               <li>
-                <a href="mailto:support@inboxintel.co.uk" className="text-sm text-slate-600 hover:text-blue-600 transition">
+                <a href="mailto:support@inboxreveal.co.uk" className="text-sm text-slate-600 hover:text-blue-600 transition">
                   Email Support
                 </a>
               </li>
@@ -93,7 +93,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="border-t border-slate-200 pt-8 flex flex-col md:flex-row md:items-center md:justify-between">
           <p className="text-sm text-slate-600">
-            © 2026 InboxIntel. All rights reserved.
+            © 2026 InboxReveal. All rights reserved.
           </p>
           <div className="flex items-center gap-4 mt-4 md:mt-0">
             <a href="#" className="text-slate-600 hover:text-blue-600 transition">
@@ -102,7 +102,7 @@ export default function Footer() {
             <a href="#" className="text-slate-600 hover:text-blue-600 transition">
               <Share className="w-5 h-5" />
             </a>
-            <a href="mailto:hello@inboxintel.co.uk" className="text-slate-600 hover:text-blue-600 transition">
+            <a href="mailto:hello@inboxreveal.co.uk" className="text-slate-600 hover:text-blue-600 transition">
               <Mail className="w-5 h-5" />
             </a>
           </div>

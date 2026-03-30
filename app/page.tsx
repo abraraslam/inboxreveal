@@ -55,7 +55,7 @@ export default function Home() {
               </h1>
 
               <p className="mb-8 text-xl leading-relaxed text-slate-600">
-                InboxIntel detects hidden intent inside email bodies and helps you act instantly. Spot risk, uncover opportunity, and respond with confidence before important emails slip past you.
+                InboxReveal detects hidden intent inside email bodies and helps you act instantly. Spot risk, uncover opportunity, and respond with confidence before important emails slip past you.
               </p>
 
               <div className="flex flex-col gap-4 sm:flex-row">
@@ -149,7 +149,7 @@ export default function Home() {
 
         <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
           <div className="mb-12 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-slate-900">How InboxIntel Helps</h2>
+            <h2 className="mb-4 text-4xl font-bold text-slate-900">How InboxReveal Helps</h2>
             <p className="mx-auto max-w-2xl text-xl text-slate-600">
               Understand every email faster by answering three questions instantly.
             </p>
@@ -279,7 +279,7 @@ export default function Home() {
               <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600">
                 <Mail className="h-6 w-6 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900">Sign in to InboxIntel</h2>
+              <h2 className="text-2xl font-bold text-slate-900">Sign in to InboxReveal</h2>
               <p className="mt-2 text-sm text-slate-600">Connect your email account to start using AI-powered inbox intelligence.</p>
             </div>
 

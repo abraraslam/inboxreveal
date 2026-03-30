@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     const actionInstruction = getActionInstruction(safeAction);
 
     const prompt = `
-You are an AI email reviewer for InboxIntel.
+You are an AI email reviewer for InboxReveal.
 
 Review this email draft and improve it.
 

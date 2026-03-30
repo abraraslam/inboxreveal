@@ -65,7 +65,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-slate-900">Email</h3>
-                    <p className="text-slate-600">support@inboxintel.co.uk</p>
+                    <p className="text-slate-600">support@inboxreveal.com</p>
                     <p className="text-slate-500 text-sm mt-1">We typically respond within 24 hours</p>
                   </div>
                 </div>
@@ -114,7 +114,7 @@ export default function Contact() {
                     <Share className="w-5 h-5" />
                   </a>
                   <a
-                    href="mailto:hello@inboxintel.co.uk"
+                    href="mailto:support@inboxreveal.com"
                     className="flex items-center justify-center w-12 h-12 rounded-lg border border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-600 transition"
                   >
                     <Mail className="w-5 h-5" />
@@ -224,20 +224,20 @@ export default function Contact() {
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h2>
               <p className="text-xl text-slate-600">
-                Find answers to common questions about InboxIntel
+                Find answers to common questions about InboxReveal
               </p>
             </div>
 
             <div className="space-y-4">
               <details className="group border border-slate-200 rounded-lg p-6 hover:border-blue-300 transition">
                 <summary className="flex items-center justify-between cursor-pointer font-semibold text-slate-900">
-                  Is InboxIntel free?
+                  Is InboxReveal free?
                   <span className="ml-4 text-slate-600 group-open:rotate-180 transition">
                     +
                   </span>
                 </summary>
                 <p className="mt-4 text-slate-600">
-                  Yes! InboxIntel offers a free plan with basic keyword detection. Paid plans unlock advanced AI features, alerts, and analytics.
+                  Yes! InboxReveal offers a free plan with basic keyword detection. Paid plans unlock advanced AI features, alerts, and analytics.
                 </p>
               </details>
 
@@ -267,7 +267,7 @@ export default function Contact() {
 
               <details className="group border border-slate-200 rounded-lg p-6 hover:border-blue-300 transition">
                 <summary className="flex items-center justify-between cursor-pointer font-semibold text-slate-900">
-                  Can I use InboxIntel on mobile?
+                  Can I use InboxReveal on mobile?
                   <span className="ml-4 text-slate-600 group-open:rotate-180 transition">
                     +
                   </span>

@@ -73,6 +73,20 @@ type DraftReviewResponse = {
   suggestions?: string[];
 };
 
+type UserPreferences = {
+  keywords?: string[];
+  alert_urgent?: boolean;
+  alert_complaint?: boolean;
+  alert_sales?: boolean;
+  hide_preferences_prompt?: boolean;
+  updated_at?: string;
+};
+
+type SavePreferencesResponse = {
+  success?: boolean;
+  error?: string;
+};
+
 function extractEmailAddress(value: string) {
   const match = value.match(/<([^>]+)>/);
   if (match?.[1]) return match[1].trim();
@@ -132,6 +146,14 @@ export default function Home() {
 
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [isPreferencesMinimized, setIsPreferencesMinimized] = useState(false);
+  const [isPreferenceSetupRequired, setIsPreferenceSetupRequired] =
+    useState(false);
+  const [dontShowPreferencesNextTime, setDontShowPreferencesNextTime] =
+    useState(false);
+  const [savingPreferences, setSavingPreferences] = useState(false);
+  const [preferencesUpdatedAt, setPreferencesUpdatedAt] = useState<
+    string | null
+  >(null);
 
   const [reviewingReplyId, setReviewingReplyId] = useState<string | null>(null);
   const [replyReviews, setReplyReviews] = useState<
@@ -146,6 +168,9 @@ export default function Home() {
         .filter(Boolean),
     [keywordInput]
   );
+
+  const getPreferencePromptStorageKey = (email: string) =>
+    `hide-preferences-prompt:${email.toLowerCase()}`;
 
   const shouldShowEmail = (item?: Analysis) => {
     if (!item) return true;
@@ -279,20 +304,112 @@ export default function Home() {
   useEffect(() => {
     if (!session?.user?.email) return;
 
+    const localStorageKey = getPreferencePromptStorageKey(session.user.email);
+    const localHidePrompt =
+      localStorage.getItem(localStorageKey) === "true";
+
     fetch(`/api/preferences?email=${encodeURIComponent(session.user.email)}`)
       .then((res) => res.json())
-      .then((data) => {
-        if (!data) return;
+      .then((data: UserPreferences | null) => {
+        const hidePrompt =
+          data?.hide_preferences_prompt === true || localHidePrompt;
+
+        setDontShowPreferencesNextTime(hidePrompt);
+
+        if (!data) {
+          setPreferencesUpdatedAt(null);
+          if (hidePrompt) {
+            setIsPreferenceSetupRequired(false);
+            setIsPreferencesOpen(false);
+            setIsPreferencesMinimized(false);
+          } else {
+            setIsPreferenceSetupRequired(true);
+            setIsPreferencesOpen(true);
+            setIsPreferencesMinimized(false);
+          }
+          return;
+        }
 
         setKeywordInput((data.keywords || []).join(","));
         setAlertUrgent(data.alert_urgent ?? true);
         setAlertComplaint(data.alert_complaint ?? true);
         setAlertSales(data.alert_sales ?? true);
+        setPreferencesUpdatedAt(data.updated_at || null);
+        setIsPreferenceSetupRequired(false);
+
+        if (!hidePrompt) {
+          setIsPreferencesOpen(true);
+          setIsPreferencesMinimized(false);
+        }
       })
       .catch((error) => {
         console.error("Failed to load preferences:", error);
       });
   }, [session]);
+
+  const savePreferences = async () => {
+    if (!session?.user?.email) {
+      setNotice({
+        type: "error",
+        message: "Sign in again to save preferences.",
+      });
+      return false;
+    }
+
+    try {
+      setNotice(null);
+      setSavingPreferences(true);
+
+      const res = await fetch("/api/preferences", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: session.user.email,
+          keywords: customKeywords,
+          alertUrgent,
+          alertComplaint,
+          alertSales,
+          hidePreferencesPrompt: dontShowPreferencesNextTime,
+        }),
+      });
+
+      const payload: SavePreferencesResponse = await res.json();
+
+      if (!res.ok) {
+        throw new Error(payload.error || "Failed to save preferences");
+      }
+
+      localStorage.setItem(
+        getPreferencePromptStorageKey(session.user.email),
+        String(dontShowPreferencesNextTime)
+      );
+
+      setPreferencesUpdatedAt(new Date().toISOString());
+
+      setNotice({
+        type: "success",
+        message: "Preferences saved successfully.",
+      });
+
+      if (isPreferenceSetupRequired) {
+        setIsPreferenceSetupRequired(false);
+        setIsPreferencesOpen(false);
+        setIsPreferencesMinimized(false);
+      }
+
+      return true;
+    } catch {
+      setNotice({
+        type: "error",
+        message: "Failed to save preferences.",
+      });
+      return false;
+    } finally {
+      setSavingPreferences(false);
+    }
+  };
 
   useEffect(() => {
     if (!session) return;
@@ -867,7 +984,7 @@ export default function Home() {
                 </svg>
               </div>
               <div className="mb-4 inline-flex rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-3 py-1 text-xs font-semibold text-white">
-                InboxIntel
+                InboxReveal
               </div>
               <h1 className="text-3xl font-bold tracking-tight text-white">Welcome back</h1>
               <p className="mt-3 text-sm text-slate-400">
@@ -913,7 +1030,7 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight text-slate-900">InboxIntel</h1>
+                  <h1 className="text-3xl font-bold tracking-tight text-slate-900">InboxReveal</h1>
                   <p className="text-sm text-slate-600">AI-powered email prioritization and intelligent replies</p>
                 </div>
               </div>
@@ -2034,7 +2151,13 @@ export default function Home() {
       )}
 
       {isPreferencesOpen && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 sm:px-0 w-full max-w-2xl">
+        <div
+          className={`fixed z-50 px-4 sm:px-0 w-full max-w-2xl ${
+            isPreferenceSetupRequired
+              ? "inset-0 mx-auto flex items-center justify-center bg-slate-900/35"
+              : "bottom-6 right-6"
+          }`}
+        >
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
             <div className="flex items-center justify-between bg-slate-900 px-4 py-3 text-white">
               <div>
@@ -2042,30 +2165,45 @@ export default function Home() {
                 <p className="text-[11px] text-slate-300">
                   Configure email analysis and alert settings
                 </p>
+                <p className="text-[11px] text-slate-400">
+                  {preferencesUpdatedAt
+                    ? `Last saved ${new Date(preferencesUpdatedAt).toLocaleString()}`
+                    : "Never saved yet"}
+                </p>
               </div>
 
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className="rounded-lg px-2 py-1 text-sm hover:bg-white/10"
-                  onClick={() => setIsPreferencesMinimized((prev) => !prev)}
-                >
-                  {isPreferencesMinimized ? "Expand" : "Minimize"}
-                </button>
+                {!isPreferenceSetupRequired && (
+                  <button
+                    type="button"
+                    className="rounded-lg px-2 py-1 text-sm hover:bg-white/10"
+                    onClick={() => setIsPreferencesMinimized((prev) => !prev)}
+                  >
+                    {isPreferencesMinimized ? "Expand" : "Minimize"}
+                  </button>
+                )}
 
-                <button
-                  type="button"
-                  className="rounded-lg px-2 py-1 text-sm hover:bg-white/10"
-                  onClick={() => setIsPreferencesOpen(false)}
-                >
-                  Close
-                </button>
+                {!isPreferenceSetupRequired && (
+                  <button
+                    type="button"
+                    className="rounded-lg px-2 py-1 text-sm hover:bg-white/10"
+                    onClick={() => setIsPreferencesOpen(false)}
+                  >
+                    Close
+                  </button>
+                )}
               </div>
             </div>
 
             {!isPreferencesMinimized && (
               <div className="p-6 max-h-[600px] overflow-y-auto">
                 <div className="space-y-6">
+                  {isPreferenceSetupRequired && (
+                    <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+                      Complete this one-time setup before using your dashboard.
+                    </div>
+                  )}
+
                   <div>
                     <label className="mb-2 block text-sm font-semibold text-slate-900">Keyword Tracking Rules</label>
                     <p className="mb-3 text-sm text-slate-600">Enter comma-separated terms to detect in email body content</p>
@@ -2133,45 +2271,24 @@ export default function Home() {
                     </div>
                   </div>
 
+                  <label className="inline-flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={dontShowPreferencesNextTime}
+                      onChange={(e) => setDontShowPreferencesNextTime(e.target.checked)}
+                      className="w-4 h-4 rounded border-slate-300 text-blue-600"
+                    />
+                    <span>Don&apos;t show this next time I log in</span>
+                  </label>
+
                   <div className="border-t border-slate-200 pt-6 flex flex-wrap gap-3">
                     <button
                       className={primaryButton}
                       type="button"
-                      onClick={async () => {
-                        try {
-                          setNotice(null);
-
-                          const res = await fetch("/api/preferences", {
-                            method: "POST",
-                            headers: {
-                              "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                              email: session?.user?.email,
-                              keywords: customKeywords,
-                              alertUrgent,
-                              alertComplaint,
-                              alertSales,
-                            }),
-                          });
-
-                          if (!res.ok) {
-                            throw new Error("Failed to save preferences");
-                          }
-
-                          setNotice({
-                            type: "success",
-                            message: "Preferences saved successfully.",
-                          });
-                        } catch {
-                          setNotice({
-                            type: "error",
-                            message: "Failed to save preferences.",
-                          });
-                        }
-                      }}
+                      onClick={savePreferences}
+                      disabled={savingPreferences}
                     >
-                      Save Preferences
+                      {savingPreferences ? "Saving..." : "Save Preferences"}
                     </button>
 
                     <button
