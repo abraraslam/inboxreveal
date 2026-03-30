@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { normalizePlanTier } from "@/lib/plans";
 
 function toErrorMessage(error: unknown, fallback: string) {
   if (error instanceof Error && error.message) {
@@ -28,6 +29,7 @@ export async function POST(req: Request) {
       alertComplaint,
       alertSales,
       hidePreferencesPrompt,
+      planTier,
     } = body;
 
     const email = session.user.email;
@@ -47,14 +49,18 @@ export async function POST(req: Request) {
       alert_complaint: Boolean(alertComplaint),
       alert_sales: Boolean(alertSales),
       hide_preferences_prompt: Boolean(hidePreferencesPrompt),
+      plan_tier: normalizePlanTier(planTier),
     };
 
     let { error } = await supabase
       .from("user_preferences")
       .upsert(payload, { onConflict: "email" });
 
-    // Support databases that have not run the hide_preferences_prompt migration yet.
-    if (error && /hide_preferences_prompt/i.test(error.message || "")) {
+    // Support databases that have not run one or more preference migrations yet.
+    if (
+      error &&
+      /hide_preferences_prompt|plan_tier/i.test(error.message || "")
+    ) {
       ({ error } = await supabase.from("user_preferences").upsert(
         {
           email,
