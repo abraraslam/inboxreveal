@@ -130,6 +130,15 @@ export const authOptions: NextAuthOptions = {
     error: "/?error=true",
   },
 
+  logger: {
+    error(code, metadata) {
+      console.error("[NextAuth][error]", code, JSON.stringify(metadata));
+    },
+    warn(code) {
+      console.warn("[NextAuth][warn]", code);
+    },
+  },
+
   trustHost: true,
   secret: process.env.NEXTAUTH_SECRET,
 };
