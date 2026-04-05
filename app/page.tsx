@@ -29,10 +29,41 @@ export default function Home() {
       return;
     }
 
-    const query = new URLSearchParams(window.location.search);
-    if (query.get("login") === "true") {
-      setShowLoginModal(true);
-    }
+    const syncLoginModalFromUrl = () => {
+      const query = new URLSearchParams(window.location.search);
+      setShowLoginModal(query.get("login") === "true");
+    };
+
+    const originalPushState = window.history.pushState;
+    const originalReplaceState = window.history.replaceState;
+
+    const dispatchLocationChange = () => {
+      window.dispatchEvent(new Event("locationchange"));
+    };
+
+    window.history.pushState = function (...args) {
+      originalPushState.apply(this, args);
+      dispatchLocationChange();
+    };
+
+    window.history.replaceState = function (...args) {
+      originalReplaceState.apply(this, args);
+      dispatchLocationChange();
+    };
+
+    syncLoginModalFromUrl();
+
+    window.addEventListener("popstate", syncLoginModalFromUrl);
+    window.addEventListener("hashchange", syncLoginModalFromUrl);
+    window.addEventListener("locationchange", syncLoginModalFromUrl);
+
+    return () => {
+      window.history.pushState = originalPushState;
+      window.history.replaceState = originalReplaceState;
+      window.removeEventListener("popstate", syncLoginModalFromUrl);
+      window.removeEventListener("hashchange", syncLoginModalFromUrl);
+      window.removeEventListener("locationchange", syncLoginModalFromUrl);
+    };
   }, []);
 
   useEffect(() => {

@@ -39,11 +39,6 @@ const nextConfig: NextConfig = {
             value: "camera=(), microphone=(), geolocation=()",
           },
           {
-            key: "Content-Security-Policy",
-            value:
-              "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; img-src 'self' data: https:; font-src 'self' data: https://*.tawk.to https://*.tawk.link https://wchat.freshchat.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://embed.tawk.to https://*.tawk.to https://*.tawk.link https://widget-mediator.zopim.com https://wchat.freshchat.com; connect-src 'self' https://*.tawk.to https://*.tawk.link wss://*.tawk.to wss://*.tawk.link https://widget-mediator.zopim.com https://wchat.freshchat.com wss://wss.freshchat.com; frame-src 'self' https://*.tawk.to https://*.tawk.link https://wchat.freshchat.com; upgrade-insecure-requests",
-          },
-          {
             key: "Cross-Origin-Opener-Policy",
             value: "same-origin",
           },
