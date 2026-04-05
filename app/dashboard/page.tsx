@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import BrandLogo from "@/components/BrandLogo";
 
@@ -1212,10 +1212,10 @@ export default function Home() {
 
     setIsSigningIn(true);
 
-    await signIn("google", {
-      callbackUrl: "/dashboard",
-      redirect: true,
-    });
+    if (typeof window !== "undefined") {
+      const callbackUrl = encodeURIComponent("/dashboard");
+      window.location.assign(`/api/auth/signin/google?callbackUrl=${callbackUrl}`);
+    }
   };
 
   if (!session) {
