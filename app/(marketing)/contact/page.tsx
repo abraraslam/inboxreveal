@@ -6,6 +6,10 @@ import { Mail, Phone, MapPin, Send, Share, MessageSquare } from "lucide-react";
 import { useState } from "react";
 
 export default function Contact() {
+  const supportUrl =
+    process.env.NEXT_PUBLIC_ZENDESK_SUPPORT_URL ||
+    "mailto:support@inboxreveal.com?subject=Online%20Support%20Request";
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -46,6 +50,16 @@ export default function Contact() {
             <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
               Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
             </p>
+            <div className="mt-6">
+              <a
+                href={supportUrl}
+                className="inline-flex items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-5 py-2.5 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-100"
+                target={supportUrl.startsWith("http") ? "_blank" : undefined}
+                rel={supportUrl.startsWith("http") ? "noopener noreferrer" : undefined}
+              >
+                Open Online Support (Zendesk)
+              </a>
+            </div>
           </div>
         </section>
 

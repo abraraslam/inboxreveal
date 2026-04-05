@@ -2,17 +2,29 @@ import GoogleProvider from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import type { NextAuthOptions } from "next-auth";
 
-export const authOptions: NextAuthOptions = {
-  session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const azureClientId = process.env.AZURE_AD_CLIENT_ID;
+const azureClientSecret = process.env.AZURE_AD_CLIENT_SECRET;
+const azureTenantId = process.env.AZURE_AD_TENANT_ID;
 
-  providers: [
+const providers = [];
+
+function isConfigured(value?: string) {
+  const normalized = value?.trim();
+
+  if (!normalized) return false;
+  if (/^your_/i.test(normalized)) return false;
+  if (/placeholder/i.test(normalized)) return false;
+
+  return true;
+}
+
+if (isConfigured(googleClientId) && isConfigured(googleClientSecret)) {
+  providers.push(
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      allowDangerousEmailAccountLinking: true,
+      clientId: googleClientId!.trim(),
+      clientSecret: googleClientSecret!.trim(),
       authorization: {
         params: {
           scope:
@@ -21,27 +33,42 @@ export const authOptions: NextAuthOptions = {
           prompt: "consent",
         },
       },
-    }),
+    })
+  );
+}
 
+if (
+  isConfigured(azureClientId) &&
+  isConfigured(azureClientSecret) &&
+  isConfigured(azureTenantId)
+) {
+  providers.push(
     AzureADProvider({
-      clientId: process.env.AZURE_AD_CLIENT_ID!,
-      clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-      tenantId: process.env.AZURE_AD_TENANT_ID!,
-      allowDangerousEmailAccountLinking: true,
+      clientId: azureClientId!.trim(),
+      clientSecret: azureClientSecret!.trim(),
+      tenantId: azureTenantId!.trim(),
       authorization: {
         params: {
           scope:
             "openid profile email offline_access User.Read Mail.Read Mail.ReadWrite Mail.Send",
         },
       },
-    }),
-  ],
+    })
+  );
+}
+
+export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+
+  providers,
 
   callbacks: {
     async jwt({ token, account, user }) {
       // Initial sign in
       if (account && user) {
-        console.log("JWT Callback - Initial signin with provider:", account.provider);
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
         token.provider = account.provider;
@@ -56,9 +83,8 @@ export const authOptions: NextAuthOptions = {
       }
 
       // If we reach here, the AT if expired, try refreshing it
-      if (token.refreshToken) {
+      if (token.provider === "google" && token.refreshToken) {
         try {
-          console.log("Attempting to refresh token for provider:", token.provider);
           const response = await fetch("https://oauth2.googleapis.com/token", {
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: new URLSearchParams({
@@ -92,11 +118,6 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      console.log("Session Callback - token:", {
-        hasAccessToken: !!token.accessToken,
-        provider: token.provider,
-      });
-
       session.accessToken = token.accessToken as string | undefined;
       session.refreshToken = token.refreshToken as string | undefined;
       session.provider = token.provider as string | undefined;
@@ -110,5 +131,6 @@ export const authOptions: NextAuthOptions = {
     error: "/?error=true",
   },
 
+  trustHost: process.env.AUTH_TRUST_HOST === "true",
   secret: process.env.NEXTAUTH_SECRET,
 };

@@ -69,6 +69,13 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## Deployment Workflow TODO
+
+- [ ] Set Vercel production branch to `master`.
+- [ ] Keep feature branch (`abraraslam/workingdir`) for local testing and preview checks only.
+- [ ] Merge into `master` to trigger live production deployment.
+- [ ] Verify domain (`www.inboxreveal.com`) points to production deployment only.
+
 ## Zoho Provider TODO (Master Checklist)
 
 Use this checklist when implementing Zoho support.
