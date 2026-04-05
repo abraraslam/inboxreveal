@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import BrandLogo from "@/components/BrandLogo";
@@ -34,10 +34,12 @@ export default function Home() {
 
     setSigningInProvider(provider);
 
-    await signIn(provider, {
-      callbackUrl: "/dashboard",
-      redirect: true,
-    });
+    if (typeof window !== "undefined") {
+      const callbackUrl = encodeURIComponent("/dashboard");
+      window.location.assign(
+        `/api/auth/signin/${provider}?callbackUrl=${callbackUrl}`
+      );
+    }
   };
 
   useEffect(() => {
