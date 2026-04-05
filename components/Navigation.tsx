@@ -9,8 +9,6 @@ import BrandLogo from "@/components/BrandLogo";
 export default function Navigation() {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const supportUrl = process.env.NEXT_PUBLIC_ZENDESK_SUPPORT_URL;
-  const hasSupportLink = Boolean(supportUrl);
 
   return (
     <header className="border-b border-slate-200 bg-white shadow-sm sticky top-0 z-40">
@@ -35,11 +33,6 @@ export default function Navigation() {
             <Link href="/pricing" className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
               Pricing
             </Link>
-            {hasSupportLink ? (
-              <Link href={supportUrl} className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
-                Online Support
-              </Link>
-            ) : null}
           </div>
 
           {/* Auth Buttons */}
@@ -94,11 +87,6 @@ export default function Navigation() {
             <Link href="/pricing" className="block text-sm font-medium text-slate-700 hover:text-blue-600 transition py-2">
               Pricing
             </Link>
-            {hasSupportLink ? (
-              <Link href={supportUrl} className="block text-sm font-medium text-slate-700 hover:text-blue-600 transition py-2">
-                Online Support
-              </Link>
-            ) : null}
             <div className="border-t border-slate-200 pt-3 flex flex-col gap-2">
               {session ? (
                 <>

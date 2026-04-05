@@ -35,10 +35,27 @@ export default function RootLayout({
         <Providers>{children}</Providers>
         {supportChatEnabled && isTawk && tawkScriptSrc ? (
           <Script
-            id="tawk-to-widget"
-            src={tawkScriptSrc}
-            strategy="lazyOnload"
-            crossOrigin="anonymous"
+            id="tawk-bootstrap"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.Tawk_API = window.Tawk_API || {};
+                window.Tawk_LoadStart = new Date();
+                (function() {
+                  const s1 = document.createElement("script");
+                  const s0 = document.getElementsByTagName("script")[0];
+                  s1.async = true;
+                  s1.src = "${tawkScriptSrc}";
+                  s1.charset = "UTF-8";
+                  s1.setAttribute("crossorigin", "*");
+                  if (s0 && s0.parentNode) {
+                    s0.parentNode.insertBefore(s1, s0);
+                  } else {
+                    document.head.appendChild(s1);
+                  }
+                })();
+              `,
+            }}
           />
         ) : null}
         {supportChatEnabled && isFreshchat && freshchatToken && freshchatHost ? (
