@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession, signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import BrandLogo from "@/components/BrandLogo";
 import Navigation from "@/components/Navigation";
@@ -15,19 +15,25 @@ import {
   CheckCircle2,
   Sparkles,
   Clock,
+  Settings2,
+  PlayCircle,
 } from "lucide-react";
 
 export default function Home() {
   const { data: session } = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get("login") === "true") {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const query = new URLSearchParams(window.location.search);
+    if (query.get("login") === "true") {
       setShowLoginModal(true);
     }
-  }, [searchParams]);
+  }, []);
 
   useEffect(() => {
     if (session) {
@@ -68,7 +74,7 @@ export default function Home() {
                   <ArrowRight className="h-5 w-5" />
                 </button>
                 <a
-                  href="/services"
+                  href="#how-it-works"
                   className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-6 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 sm:px-8"
                 >
                   Explore Features
@@ -106,6 +112,56 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="how-it-works" className="bg-white px-4 py-14 sm:px-6 sm:py-16 md:py-24">
+        import { useRouter } from "next/navigation";
+        import { useEffect, useState } from "react";
+              <h2 className="mb-4 text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">How It Works</h2>
+              <p className="mx-auto max-w-3xl text-base text-slate-600 sm:text-lg">
+                <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-blue-100">
+                  <PlayCircle className="h-6 w-6 text-blue-700" />
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-blue-700">Step 1</p>
+                <h3 className="mb-2 text-lg font-semibold text-slate-900">Connect your account</h3>
+                <p className="text-sm text-slate-600">
+            if (typeof window === "undefined") {
+              return;
+            }
+
+            const query = new URLSearchParams(window.location.search);
+            if (query.get("login") === "true") {
+                  your inbox securely.
+                </p>
+          }, []);
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+                <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100">
+                  <Settings2 className="h-6 w-6 text-emerald-700" />
+                </div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-emerald-700">Step 2</p>
+                <h3 className="mb-2 text-lg font-semibold text-slate-900">Set up Preferences</h3>
+                <ul className="space-y-2 text-sm text-slate-600">
+                  <li>Open Dashboard and click Preferences.</li>
+                  <li>Choose default reply tone: Professional, Friendly, or Direct.</li>
+                  <li>Select summary depth and preferred draft length.</li>
+                  <li>Turn auto-analyze on if you want instant intent detection.</li>
+                  <li>Save once to apply across summaries and drafts.</li>
+                </ul>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+                <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-violet-100">
+                  <CheckCircle2 className="h-6 w-6 text-violet-700" />
+                </div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-violet-700">Step 3</p>
+                <h3 className="mb-2 text-lg font-semibold text-slate-900">Review and respond faster</h3>
+                <p className="text-sm text-slate-600">
+                  InboxReveal now uses your saved preferences to rank priorities, generate clearer summaries,
+                  and suggest replies in your chosen style.
+                </p>
               </div>
             </div>
           </div>
