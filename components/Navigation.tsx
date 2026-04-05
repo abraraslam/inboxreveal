@@ -55,7 +55,7 @@ export default function Navigation() {
               </>
             ) : (
               <Link
-                href="/?login=true"
+                href="/api/auth/signin/google?callbackUrl=%2Fdashboard"
                 className="text-sm font-medium px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:from-blue-700 hover:to-indigo-700 transition"
               >
                 Sign In
@@ -105,7 +105,7 @@ export default function Navigation() {
                 </>
               ) : (
                 <Link
-                  href="/?login=true"
+                  href="/api/auth/signin/google?callbackUrl=%2Fdashboard"
                   className="text-sm font-medium px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-center"
                 >
                   Sign In
