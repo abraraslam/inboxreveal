@@ -131,6 +131,6 @@ export const authOptions: NextAuthOptions = {
     error: "/?error=true",
   },
 
-  trustHost: process.env.AUTH_TRUST_HOST === "true",
+  trustHost: true,
   secret: process.env.NEXTAUTH_SECRET,
 };
