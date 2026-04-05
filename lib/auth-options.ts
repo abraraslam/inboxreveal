@@ -127,7 +127,7 @@ export const authOptions: NextAuthOptions = {
 
   pages: {
     signIn: "/?login=true",
-    error: "/?login=true",
+    error: "/auth-error",
   },
 
   logger: {
