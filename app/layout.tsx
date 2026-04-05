@@ -33,32 +33,32 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>{children}</Providers>
-      </body>
-      {supportChatEnabled && isTawk && tawkScriptSrc ? (
-        <Script
-          id="tawk-to-widget"
-          src={tawkScriptSrc}
-          strategy="lazyOnload"
-          crossOrigin="anonymous"
-        />
-      ) : null}
-      {supportChatEnabled && isFreshchat && freshchatToken && freshchatHost ? (
-        <>
+        {supportChatEnabled && isTawk && tawkScriptSrc ? (
           <Script
-            id="freshchat-widget"
-            src={`${freshchatHost.replace(/\/$/, "")}/js/widget.js`}
+            id="tawk-to-widget"
+            src={tawkScriptSrc}
             strategy="lazyOnload"
             crossOrigin="anonymous"
           />
-          <Script
-            id="freshchat-init"
-            strategy="lazyOnload"
-            dangerouslySetInnerHTML={{
-              __html: `window.fcWidget && window.fcWidget.init({ token: "${freshchatToken}", host: "${freshchatHost}" });`,
-            }}
-          />
-        </>
-      ) : null}
+        ) : null}
+        {supportChatEnabled && isFreshchat && freshchatToken && freshchatHost ? (
+          <>
+            <Script
+              id="freshchat-widget"
+              src={`${freshchatHost.replace(/\/$/, "")}/js/widget.js`}
+              strategy="lazyOnload"
+              crossOrigin="anonymous"
+            />
+            <Script
+              id="freshchat-init"
+              strategy="lazyOnload"
+              dangerouslySetInnerHTML={{
+                __html: `window.fcWidget && window.fcWidget.init({ token: "${freshchatToken}", host: "${freshchatHost}" });`,
+              }}
+            />
+          </>
+        ) : null}
+      </body>
     </html>
   );
 }
