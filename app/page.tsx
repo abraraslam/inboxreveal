@@ -118,24 +118,28 @@ export default function Home() {
         </section>
 
         <section id="how-it-works" className="bg-white px-4 py-14 sm:px-6 sm:py-16 md:py-24">
-        import { useRouter } from "next/navigation";
-        import { useEffect, useState } from "react";
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-10 text-center">
               <h2 className="mb-4 text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">How It Works</h2>
               <p className="mx-auto max-w-3xl text-base text-slate-600 sm:text-lg">
+                InboxReveal is designed to be fully useful in minutes. Connect your mailbox,
+                set your preferences once, and the app applies your choices to every summary,
+                analysis, and draft.
+              </p>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-blue-100">
                   <PlayCircle className="h-6 w-6 text-blue-700" />
+                </div>
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-blue-700">Step 1</p>
                 <h3 className="mb-2 text-lg font-semibold text-slate-900">Connect your account</h3>
                 <p className="text-sm text-slate-600">
-            if (typeof window === "undefined") {
-              return;
-            }
-
-            const query = new URLSearchParams(window.location.search);
-            if (query.get("login") === "true") {
+                  Sign in with Google or Outlook, then allow access so InboxReveal can read and process
                   your inbox securely.
                 </p>
-          }, []);
+              </div>
 
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100">
