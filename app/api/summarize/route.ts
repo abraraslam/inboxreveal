@@ -6,9 +6,14 @@ import { applyRateLimit, buildRateLimitKey } from "@/lib/security/rate-limit";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getPlanCapabilities, getUserPlanTier } from "@/lib/plans";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
+function getOpenAIClient() {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("OPENAI_API_KEY is not configured.");
+  }
+
+  return new OpenAI({ apiKey });
+}
 
 export async function POST(req: Request) {
   try {
@@ -62,6 +67,8 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    const client = getOpenAIClient();
 
     const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
