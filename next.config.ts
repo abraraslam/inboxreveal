@@ -41,7 +41,7 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Security-Policy",
             value:
-              "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests",
+              "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://embed.tawk.to https://*.tawk.to https://widget-mediator.zopim.com https://wchat.freshchat.com; connect-src 'self' https://*.tawk.to wss://*.tawk.to https://wchat.freshchat.com wss://wss.freshchat.com; frame-src 'self' https://*.tawk.to https://wchat.freshchat.com; upgrade-insecure-requests",
           },
           {
             key: "Cross-Origin-Opener-Policy",
