@@ -6,9 +6,14 @@ import { applyRateLimit, buildRateLimitKey } from "@/lib/security/rate-limit";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getPlanCapabilities, getUserPlanTier } from "@/lib/plans";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+function getOpenAIClient() {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("OPENAI_API_KEY is not configured.");
+  }
+
+  return new OpenAI({ apiKey });
+}
 
 type ReviewAction =
   | "general"
@@ -108,6 +113,7 @@ export async function POST(req: Request) {
 
     const safeAction: ReviewAction = action || "general";
     const actionInstruction = getActionInstruction(safeAction);
+    const openai = getOpenAIClient();
 
     const prompt = `
 You are an AI email reviewer for InboxReveal.
