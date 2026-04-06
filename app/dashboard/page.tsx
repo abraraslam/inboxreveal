@@ -148,6 +148,9 @@ export default function Home() {
   const [analysis, setAnalysis] = useState<Record<string, Analysis>>({});
   const [analyzingIds, setAnalyzingIds] = useState<Record<string, boolean>>({});
   const [notice, setNotice] = useState<Notice | null>(null);
+  const noticeAutoHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
 
   const [keywordInput, setKeywordInput] = useState("refund,cancel,pricing");
   const [alertUrgent, setAlertUrgent] = useState(true);
@@ -186,6 +189,32 @@ export default function Home() {
   const [replyReviews, setReplyReviews] = useState<
     Record<string, DraftReviewResponse>
   >({});
+
+  useEffect(() => {
+    if (!notice) {
+      if (noticeAutoHideTimerRef.current) {
+        clearTimeout(noticeAutoHideTimerRef.current);
+        noticeAutoHideTimerRef.current = null;
+      }
+      return;
+    }
+
+    if (noticeAutoHideTimerRef.current) {
+      clearTimeout(noticeAutoHideTimerRef.current);
+    }
+
+    noticeAutoHideTimerRef.current = setTimeout(() => {
+      setNotice(null);
+      noticeAutoHideTimerRef.current = null;
+    }, 15000);
+
+    return () => {
+      if (noticeAutoHideTimerRef.current) {
+        clearTimeout(noticeAutoHideTimerRef.current);
+        noticeAutoHideTimerRef.current = null;
+      }
+    };
+  }, [notice]);
 
   const customKeywords = useMemo(
     () =>
