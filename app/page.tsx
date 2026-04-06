@@ -378,6 +378,7 @@ export default function Home() {
               <BrandLogo size="lg" showText={false} className="mb-4 justify-center" />
               <h2 className="text-2xl font-bold text-slate-900">Sign in to InboxReveal</h2>
               <p className="mt-2 text-sm text-slate-600">Connect your email account to start using AI-powered inbox intelligence.</p>
+              <p className="mt-1 text-xs text-slate-500">Supports both consumer and business accounts.</p>
             </div>
 
             <div className="space-y-3">
