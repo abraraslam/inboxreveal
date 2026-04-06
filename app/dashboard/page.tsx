@@ -111,6 +111,19 @@ function buildReplySubject(subject?: string) {
   return /^re:/i.test(clean) ? clean : `Re: ${clean}`;
 }
 
+function buildForwardSubject(subject?: string) {
+  const clean = (subject || "").trim();
+  if (!clean) return "Fwd: No subject";
+  return /^fwd?:/i.test(clean) ? clean : `Fwd: ${clean}`;
+}
+
+function buildForwardBody(email: Email) {
+  const forwardedContent = (email.body || email.snippet || "").trim();
+  const safeSubject = (email.subject || "No subject").trim() || "No subject";
+
+  return `\n\n---------- Forwarded message ---------\nFrom: ${email.from || "Unknown sender"}\nDate: ${email.date || "Unknown date"}\nSubject: ${safeSubject}\n\n${forwardedContent}`;
+}
+
 export default function Home() {
   const { data: session } = useSession();
   const [isSigningIn, setIsSigningIn] = useState(false);
@@ -899,6 +912,20 @@ export default function Home() {
     setNotice({
       type: "success",
       message: "Compose draft discarded.",
+    });
+  };
+
+  const openForwardDraft = (email: Email) => {
+    setComposeTo("");
+    setComposeSubject(buildForwardSubject(email.subject));
+    setComposeBody(buildForwardBody(email));
+    setComposeReview(null);
+    setIsComposeOpen(true);
+    setIsComposeMinimized(false);
+
+    setNotice({
+      type: "success",
+      message: "Forward draft opened in compose.",
     });
   };
 
@@ -1849,6 +1876,20 @@ export default function Home() {
                               Summarize
                             </>
                           )}
+                        </button>
+
+                        <button
+                          type="button"
+                          className={secondaryButton}
+                          disabled={
+                            isSummarizing ||
+                            isGeneratingReply ||
+                            isSavingDraft ||
+                            isSending
+                          }
+                          onClick={() => openForwardDraft(email)}
+                        >
+                          Forward
                         </button>
 
                         <button
