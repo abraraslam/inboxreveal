@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import BrandLogo from "@/components/BrandLogo";
@@ -157,6 +157,29 @@ export default function Home() {
 
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [isPreferencesMinimized, setIsPreferencesMinimized] = useState(false);
+  const prefAutoHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Auto-hide the preferences panel after 10 s when it opens on login.
+  // Cancelled if the user interacts (save / close) before the timer fires.
+  useEffect(() => {
+    if (!isPreferencesOpen) {
+      if (prefAutoHideTimerRef.current) {
+        clearTimeout(prefAutoHideTimerRef.current);
+        prefAutoHideTimerRef.current = null;
+      }
+      return;
+    }
+    prefAutoHideTimerRef.current = setTimeout(() => {
+      setIsPreferencesOpen(false);
+      prefAutoHideTimerRef.current = null;
+    }, 10000);
+    return () => {
+      if (prefAutoHideTimerRef.current) {
+        clearTimeout(prefAutoHideTimerRef.current);
+        prefAutoHideTimerRef.current = null;
+      }
+    };
+  }, [isPreferencesOpen]);
   const [isPreferenceSetupRequired, setIsPreferenceSetupRequired] =
     useState(false);
   const [dontShowPreferencesNextTime, setDontShowPreferencesNextTime] =
