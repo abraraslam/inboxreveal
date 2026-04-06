@@ -1395,6 +1395,12 @@ export default function Home() {
                 </Link>
               )}
 
+              {planTier !== "basic" && (
+                <Link href="/api/stripe/portal" className={upgradeLinkClass}>
+                  Manage Billing
+                </Link>
+              )}
+
               <button
                 className={primaryButton}
                 type="button"

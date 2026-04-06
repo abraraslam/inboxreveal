@@ -3,7 +3,22 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import { Check, Crown, Sparkles, Star } from "lucide-react";
 
-const plans = [
+type PricingPlan = {
+  name: "Basic" | "Premium" | "Gold";
+  price: string;
+  period: string;
+  description: string;
+  icon: typeof Star;
+  accent: string;
+  border: string;
+  bg: string;
+  cta: string;
+  checkoutPlan?: "premium" | "gold";
+  features: string[];
+  popular?: boolean;
+};
+
+const plans: PricingPlan[] = [
   {
     name: "Basic",
     price: "Free",
@@ -32,6 +47,7 @@ const plans = [
     border: "border-blue-300",
     bg: "bg-gradient-to-br from-blue-50 to-indigo-50",
     cta: "Choose Premium",
+    checkoutPlan: "premium",
     popular: true,
     features: [
       "Everything in Basic",
@@ -52,6 +68,7 @@ const plans = [
     border: "border-amber-300",
     bg: "bg-gradient-to-br from-amber-50 to-orange-50",
     cta: "Go Gold",
+    checkoutPlan: "gold",
     features: [
       "Everything in Premium",
       "Gold-only AI draft review",
@@ -204,7 +221,11 @@ export default function PricingPage() {
                   </ul>
 
                   <Link
-                    href="/?login=true"
+                    href={
+                      plan.checkoutPlan
+                        ? `/api/stripe/checkout?plan=${plan.checkoutPlan}`
+                        : "/dashboard"
+                    }
                     className={`mt-8 inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition shadow-md hover:shadow-lg bg-gradient-to-r ${plan.accent}`}
                   >
                     {plan.cta}
