@@ -95,11 +95,18 @@ export class OutlookProvider implements EmailProvider {
       throw new Error(`Microsoft Graph error (${response.status}): ${text}`);
     }
 
-    if (response.status === 204) {
+    // Graph endpoints like /me/sendMail commonly return 202 with no body.
+    if (response.status === 202 || response.status === 204 || response.status === 205) {
       return {} as T;
     }
 
-    return (await response.json()) as T;
+    const text = await response.text();
+
+    if (!text.trim()) {
+      return {} as T;
+    }
+
+    return JSON.parse(text) as T;
   }
 
   async listEmails(params?: {
