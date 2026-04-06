@@ -162,6 +162,8 @@ export default function Home() {
     useState(false);
   const [dontShowPreferencesNextTime, setDontShowPreferencesNextTime] =
     useState(false);
+  const [showSetupPreferencesWidget, setShowSetupPreferencesWidget] =
+    useState(false);
   const [savingPreferences, setSavingPreferences] = useState(false);
   const [preferencesUpdatedAt, setPreferencesUpdatedAt] = useState<
     string | null
@@ -522,6 +524,20 @@ export default function Home() {
         console.error("Failed to load preferences:", error);
       });
   }, [session]);
+
+  useEffect(() => {
+    if (!session?.user?.email) {
+      setShowSetupPreferencesWidget(false);
+      return;
+    }
+
+    setShowSetupPreferencesWidget(true);
+    const timer = setTimeout(() => {
+      setShowSetupPreferencesWidget(false);
+    }, 10000);
+
+    return () => clearTimeout(timer);
+  }, [session?.user?.email]);
 
   useEffect(() => {
     if (planTier === "basic") {
@@ -2714,7 +2730,7 @@ export default function Home() {
         </div>
       )}
 
-      {!isPreferencesOpen && (
+      {!isPreferencesOpen && showSetupPreferencesWidget && (
         <div className="fixed bottom-4 right-4 z-40 hidden w-80 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-2xl backdrop-blur lg:block">
           <div className="mb-3 flex items-center justify-between">
             <p className="text-sm font-semibold text-slate-900">Setup Preferences</p>
