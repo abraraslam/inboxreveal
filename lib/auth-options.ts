@@ -27,7 +27,8 @@ if (isConfigured(googleClientId) && isConfigured(googleClientSecret)) {
       clientSecret: googleClientSecret!.trim(),
       authorization: {
         params: {
-          scope: "openid email profile",
+          scope:
+            "openid email profile https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send",
           access_type: "offline",
           prompt: "consent",
         },
