@@ -3,8 +3,12 @@
 import Link from "next/link";
 import BrandLogo from "@/components/BrandLogo";
 import { Mail, Heart, Share } from "lucide-react";
+import { PUBLIC_URLS, isExternalUrl } from "@/lib/public-urls";
 
 export default function Footer() {
+  const privacyLink = PUBLIC_URLS.privacyPolicy;
+  const termsLink = PUBLIC_URLS.termsOfService;
+
   return (
     <footer className="border-t border-slate-200 bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
@@ -57,6 +61,38 @@ export default function Footer() {
                 <a href="#" className="text-sm text-slate-600 hover:text-blue-600 transition">
                   Blog
                 </a>
+              </li>
+              <li>
+                {isExternalUrl(privacyLink) ? (
+                  <a
+                    href={privacyLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-slate-600 hover:text-blue-600 transition"
+                  >
+                    Privacy Policy
+                  </a>
+                ) : (
+                  <Link href={privacyLink} className="text-sm text-slate-600 hover:text-blue-600 transition">
+                    Privacy Policy
+                  </Link>
+                )}
+              </li>
+              <li>
+                {isExternalUrl(termsLink) ? (
+                  <a
+                    href={termsLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-slate-600 hover:text-blue-600 transition"
+                  >
+                    Terms of Service
+                  </a>
+                ) : (
+                  <Link href={termsLink} className="text-sm text-slate-600 hover:text-blue-600 transition">
+                    Terms of Service
+                  </Link>
+                )}
               </li>
             </ul>
           </div>

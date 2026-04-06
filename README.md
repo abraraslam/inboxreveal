@@ -34,6 +34,22 @@ To disable support chat:
 NEXT_PUBLIC_ENABLE_SUPPORT_CHAT=false
 ```
 
+## Public Legal URLs
+
+Set these variables to control where your website links for legal pages point:
+
+```bash
+NEXT_PUBLIC_PRIVACY_POLICY_URL=/privacy-policy
+NEXT_PUBLIC_TERMS_OF_SERVICE_URL=/terms-of-service
+```
+
+You can also use fully-qualified URLs, for example:
+
+```bash
+NEXT_PUBLIC_PRIVACY_POLICY_URL=https://www.inboxreveal.com/privacy-policy
+NEXT_PUBLIC_TERMS_OF_SERVICE_URL=https://www.inboxreveal.com/terms-of-service
+```
+
 ## Getting Started
 
 First, run the development server:
