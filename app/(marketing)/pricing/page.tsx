@@ -30,7 +30,7 @@ const plans: PricingPlan[] = [
     bg: "bg-white",
     cta: "Start Free",
     features: [
-      "Connect 1 Gmail account",
+      "Connect 1 Google account (Gmail or Workspace)",
       "Email intent classification",
       "Priority tags (low, medium, high)",
       "Basic dashboard view",
@@ -51,7 +51,7 @@ const plans: PricingPlan[] = [
     popular: true,
     features: [
       "Everything in Basic",
-      "Connect Gmail + Outlook",
+      "Connect Google Workspace + Microsoft 365",
       "AI summaries for long threads",
       "Smart alert rules",
       "Suggested replies",
@@ -107,9 +107,9 @@ const upgradeReasons = [
 const comparisonRows = [
   {
     feature: "Connected inboxes",
-    basic: "1 Gmail inbox",
-    premium: "Gmail or Outlook",
-    gold: "Gmail or Outlook",
+    basic: "1 Google inbox",
+    premium: "Google Workspace or Microsoft 365",
+    gold: "Google Workspace or Microsoft 365",
   },
   {
     feature: "Monthly analysis volume",

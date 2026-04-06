@@ -120,7 +120,7 @@ export default function Home() {
               </div>
 
               <p className="mt-6 text-sm text-slate-500">
-                Gmail and Outlook support • Dashboard alerts • AI summaries • No credit card required
+                Google Workspace and Microsoft 365 support • Dashboard alerts • AI summaries • No credit card required
               </p>
             </div>
 
@@ -174,7 +174,7 @@ export default function Home() {
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-blue-700">Step 1</p>
                 <h3 className="mb-2 text-lg font-semibold text-slate-900">Connect your account</h3>
                 <p className="text-sm text-slate-600">
-                  Sign in with Google or Outlook, then allow access so InboxReveal can read and process
+                  Sign in with Google Workspace or Microsoft 365, then allow access so InboxReveal can read and process
                   your inbox securely.
                 </p>
               </div>
@@ -349,7 +349,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-95" />
             <div className="relative px-5 py-12 text-center sm:px-8 sm:py-16 md:py-20">
               <h2 className="mb-6 text-2xl font-bold text-white sm:text-3xl md:text-5xl">Turn your inbox into a decision engine</h2>
-              <p className="mx-auto mb-8 max-w-2xl text-base text-blue-100 sm:text-lg md:text-xl">Connect Gmail or Outlook in minutes and start seeing what your emails are really telling you.</p>
+              <p className="mx-auto mb-8 max-w-2xl text-base text-blue-100 sm:text-lg md:text-xl">Connect Google Workspace or Microsoft 365 in minutes and start seeing what your emails are really telling you.</p>
 
               <button
                 onClick={() => setShowLoginModal(true)}
@@ -392,7 +392,7 @@ export default function Home() {
                   <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                   <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                 </svg>
-                {signingProvider === "google" ? "Redirecting..." : "Sign in with Google"}
+                {signingProvider === "google" ? "Redirecting..." : "Sign in with Google Workspace"}
               </button>
 
               <button
@@ -405,7 +405,7 @@ export default function Home() {
                   <path fill="#7FBA00" d="M11.4 11.4H0V0h11.4v11.4z" />
                   <path fill="#FFB900" d="M24 11.4H12.6V0H24v11.4z" />
                 </svg>
-                {signingProvider === "azure-ad" ? "Redirecting..." : "Sign in with Outlook"}
+                {signingProvider === "azure-ad" ? "Redirecting..." : "Sign in with Microsoft 365"}
               </button>
             </div>
           </div>
