@@ -1,0 +1,17 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="InboxReveal logo">
+  <defs>
+    <linearGradient id="bg" x1="64" y1="64" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#06B6D4"/>
+      <stop offset="0.55" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#4338CA"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="56" y="56" width="400" height="400" rx="92" fill="url(#bg)"/>
+  <rect x="128" y="160" width="256" height="192" rx="42" fill="rgba(255,255,255,0.16)"/>
+
+  <path d="M154 208L256 282L358 208" stroke="white" stroke-width="21" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="196" cy="256" r="16" fill="white"/>
+  <circle cx="316" cy="256" r="16" fill="white"/>
+  <path d="M216 256H296" stroke="white" stroke-width="14" stroke-linecap="round"/>
+</svg>
