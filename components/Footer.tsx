@@ -102,7 +102,7 @@ export default function Footer() {
             <h4 className="text-sm font-semibold text-slate-900 mb-4">Support</h4>
             <ul className="space-y-2">
               <li>
-                <a href="mailto:support@inboxreveal.co.uk" className="text-sm text-slate-600 hover:text-blue-600 transition">
+                <a href="mailto:web@inboxreveal.com" className="text-sm text-slate-600 hover:text-blue-600 transition">
                   Email Support
                 </a>
               </li>
@@ -132,7 +132,7 @@ export default function Footer() {
             <a href="#" className="text-slate-600 hover:text-blue-600 transition">
               <Share className="w-5 h-5" />
             </a>
-            <a href="mailto:hello@inboxreveal.co.uk" className="text-slate-600 hover:text-blue-600 transition">
+            <a href="mailto:web@inboxreveal.com" className="text-slate-600 hover:text-blue-600 transition">
               <Mail className="w-5 h-5" />
             </a>
           </div>
