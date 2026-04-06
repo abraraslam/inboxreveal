@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { applyRateLimit, buildRateLimitKey } from "@/lib/security/rate-limit";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { getPlanCapabilities, getUserPlanTier } from "@/lib/plans";
+import { getEffectiveCapabilities, getUserPlanData } from "@/lib/plans";
 
 function getOpenAIClient() {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -61,8 +61,8 @@ export async function POST(req: Request) {
     }
 
     const supabase = getSupabaseServerClient();
-    const planTier = await getUserPlanTier(supabase, session.user.email);
-    const capabilities = getPlanCapabilities(planTier);
+    const { planTier, trialEndAt } = await getUserPlanData(supabase, session.user.email);
+    const capabilities = getEffectiveCapabilities(planTier, trialEndAt);
 
     if (!capabilities.canUseAiDraftReview) {
       return NextResponse.json(

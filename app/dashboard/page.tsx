@@ -141,6 +141,7 @@ export default function Home() {
   const [alertComplaint, setAlertComplaint] = useState(true);
   const [alertSales, setAlertSales] = useState(true);
   const [planTier, setPlanTier] = useState<PlanTier>("basic");
+  const [trialEndAt, setTrialEndAt] = useState<string | null>(null);
 
   const [composeTo, setComposeTo] = useState("");
   const [composeSubject, setComposeSubject] = useState("");
@@ -223,7 +224,22 @@ export default function Home() {
     (completedPreferenceSteps / preferenceChecklist.length) * 100
   );
 
+  const isInTrial = trialEndAt ? new Date(trialEndAt) > new Date() : false;
+  const trialDaysLeft = isInTrial
+    ? Math.ceil((new Date(trialEndAt!).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    : 0;
+
   const planCapabilities = useMemo(() => {
+    // During an active trial every user gets Gold-level access.
+    if (isInTrial) {
+      return {
+        canUseSummaries: true,
+        canUseSuggestedReplies: true,
+        canUseSmartAlerts: true,
+        canUseAiDraftReview: true,
+      };
+    }
+
     if (planTier === "gold") {
       return {
         canUseSummaries: true,
@@ -248,7 +264,7 @@ export default function Home() {
       canUseSmartAlerts: false,
       canUseAiDraftReview: false,
     };
-  }, [planTier]);
+  }, [planTier, isInTrial]);
 
   const showUpgradeNotice = (feature: string, requiredPlan: "premium" | "gold") => {
     setNotice({
@@ -480,6 +496,7 @@ export default function Home() {
             : "basic";
 
         setPlanTier(incomingPlan);
+        setTrialEndAt(data.trial_end_at ?? null);
         setKeywordInput((data.keywords || []).join(","));
         setAlertUrgent(incomingPlan === "basic" ? false : (data.alert_urgent ?? true));
         setAlertComplaint(
@@ -1249,6 +1266,23 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
       <div className="mx-auto max-w-7xl p-4 sm:p-6">
+        {/* Free Trial Banner */}
+        {isInTrial && (
+          <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-3 shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🎁</span>
+              <p className="text-sm font-semibold text-amber-800">
+                Free Trial — {trialDaysLeft} day{trialDaysLeft === 1 ? "" : "s"} remaining. You have full Gold access to all features.
+              </p>
+            </div>
+            <Link
+              href="/pricing"
+              className="shrink-0 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-amber-600 transition"
+            >
+              View Plans
+            </Link>
+          </div>
+        )}
         {/* Header Section */}
         <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">

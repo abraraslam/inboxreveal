@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type PlanTier = "basic" | "premium" | "gold";
 
-type PlanCapabilities = {
+export type PlanCapabilities = {
   analyzeMonthlyLimit: number | null;
   canUseSummaries: boolean;
   canUseSuggestedReplies: boolean;
@@ -46,6 +46,35 @@ export function getPlanCapabilities(plan: PlanTier): PlanCapabilities {
   return PLAN_CAPABILITIES[plan];
 }
 
+/** Returns true when the current timestamp is still within the trial window. */
+export function isUserInTrial(trialEndAt: string | null | undefined): boolean {
+  if (!trialEndAt) return false;
+  return new Date(trialEndAt) > new Date();
+}
+
+/**
+ * Returns how many full days remain in the trial (0 when expired or no trial).
+ */
+export function trialDaysRemaining(trialEndAt: string | null | undefined): number {
+  if (!trialEndAt) return 0;
+  const ms = new Date(trialEndAt).getTime() - Date.now();
+  return ms <= 0 ? 0 : Math.ceil(ms / (1000 * 60 * 60 * 24));
+}
+
+/**
+ * Returns Gold-level capabilities during an active trial; otherwise returns
+ * the capabilities for the user's actual plan tier.
+ */
+export function getEffectiveCapabilities(
+  plan: PlanTier,
+  trialEndAt: string | null | undefined
+): PlanCapabilities {
+  if (isUserInTrial(trialEndAt)) {
+    return PLAN_CAPABILITIES["gold"];
+  }
+  return PLAN_CAPABILITIES[plan];
+}
+
 export async function getUserPlanTier(
   supabase: SupabaseClient,
   email: string
@@ -61,4 +90,30 @@ export async function getUserPlanTier(
   }
 
   return normalizePlanTier(data?.plan_tier);
+}
+
+export type UserPlanData = {
+  planTier: PlanTier;
+  trialEndAt: string | null;
+};
+
+/** Fetches both plan tier and trial end date in a single query. */
+export async function getUserPlanData(
+  supabase: SupabaseClient,
+  email: string
+): Promise<UserPlanData> {
+  const { data, error } = await supabase
+    .from("user_preferences")
+    .select("plan_tier, trial_end_at")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (error) {
+    return { planTier: "basic", trialEndAt: null };
+  }
+
+  return {
+    planTier: normalizePlanTier(data?.plan_tier),
+    trialEndAt: data?.trial_end_at ?? null,
+  };
 }
