@@ -14,6 +14,18 @@ type PreferencePayload = {
   plan_tier?: "basic" | "premium" | "gold";
 };
 
+function getDefaultPreferencePayload(email: string): PreferencePayload {
+  return {
+    email,
+    keywords: [],
+    alert_urgent: false,
+    alert_complaint: false,
+    alert_sales: false,
+    hide_preferences_prompt: false,
+    plan_tier: "basic",
+  };
+}
+
 function isSchemaMismatchError(message: string) {
   return /hide_preferences_prompt|plan_tier/i.test(message || "");
 }
@@ -163,7 +175,7 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = getSupabaseServerClient({ requireServiceRole: true });
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
@@ -172,13 +184,53 @@ export async function GET() {
 
     const email = session.user.email;
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from("user_preferences")
       .select("*")
       .eq("email", email)
       .maybeSingle();
 
     if (error) throw error;
+
+    // Ensure every authenticated user has a preference row so database defaults
+    // (including trial_end_at) are applied on first login.
+    if (!data) {
+      const payload = getDefaultPreferencePayload(email);
+      const legacyPayload = {
+        email,
+        keywords: payload.keywords,
+        alert_urgent: payload.alert_urgent,
+        alert_complaint: payload.alert_complaint,
+        alert_sales: payload.alert_sales,
+      };
+
+      let createError = await supabase
+        .from("user_preferences")
+        .upsert(payload, { onConflict: "email" })
+        .then((result) => result.error);
+
+      if (createError && isSchemaMismatchError(createError.message || "")) {
+        createError = await supabase
+          .from("user_preferences")
+          .upsert(legacyPayload, { onConflict: "email" })
+          .then((result) => result.error);
+      }
+
+      if (createError && isUpsertConflictError(createError.message || "")) {
+        createError = await saveWithoutUpsert(supabase, payload);
+      }
+
+      if (createError) throw createError;
+
+      const refetch = await supabase
+        .from("user_preferences")
+        .select("*")
+        .eq("email", email)
+        .maybeSingle();
+
+      if (refetch.error) throw refetch.error;
+      data = refetch.data;
+    }
 
     return NextResponse.json(data || null);
   } catch (error: unknown) {
