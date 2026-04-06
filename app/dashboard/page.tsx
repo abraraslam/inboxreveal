@@ -158,28 +158,6 @@ export default function Home() {
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [isPreferencesMinimized, setIsPreferencesMinimized] = useState(false);
   const prefAutoHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Auto-hide the preferences panel after 10 s when it opens on login.
-  // Cancelled if the user interacts (save / close) before the timer fires.
-  useEffect(() => {
-    if (!isPreferencesOpen) {
-      if (prefAutoHideTimerRef.current) {
-        clearTimeout(prefAutoHideTimerRef.current);
-        prefAutoHideTimerRef.current = null;
-      }
-      return;
-    }
-    prefAutoHideTimerRef.current = setTimeout(() => {
-      setIsPreferencesOpen(false);
-      prefAutoHideTimerRef.current = null;
-    }, 10000);
-    return () => {
-      if (prefAutoHideTimerRef.current) {
-        clearTimeout(prefAutoHideTimerRef.current);
-        prefAutoHideTimerRef.current = null;
-      }
-    };
-  }, [isPreferencesOpen]);
   const [isPreferenceSetupRequired, setIsPreferenceSetupRequired] =
     useState(false);
   const [dontShowPreferencesNextTime, setDontShowPreferencesNextTime] =
@@ -532,6 +510,12 @@ export default function Home() {
         if (!hidePrompt) {
           setIsPreferencesOpen(true);
           setIsPreferencesMinimized(false);
+          // Auto-hide the panel after 10 seconds on login.
+          if (prefAutoHideTimerRef.current) clearTimeout(prefAutoHideTimerRef.current);
+          prefAutoHideTimerRef.current = setTimeout(() => {
+            setIsPreferencesOpen(false);
+            prefAutoHideTimerRef.current = null;
+          }, 10000);
         }
       })
       .catch((error) => {
@@ -548,6 +532,11 @@ export default function Home() {
   }, [planTier]);
 
   const savePreferences = async () => {
+    // User is actively interacting — cancel any pending auto-hide.
+    if (prefAutoHideTimerRef.current) {
+      clearTimeout(prefAutoHideTimerRef.current);
+      prefAutoHideTimerRef.current = null;
+    }
     if (!session?.user?.email) {
       setNotice({
         type: "error",
@@ -2565,7 +2554,13 @@ export default function Home() {
                   <button
                     type="button"
                     className="rounded-lg px-2 py-1 text-sm hover:bg-white/10"
-                    onClick={() => setIsPreferencesOpen(false)}
+                      onClick={() => {
+                        if (prefAutoHideTimerRef.current) {
+                          clearTimeout(prefAutoHideTimerRef.current);
+                          prefAutoHideTimerRef.current = null;
+                        }
+                        setIsPreferencesOpen(false);
+                      }}
                   >
                     Close
                   </button>
