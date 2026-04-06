@@ -57,6 +57,65 @@ if (
   );
 }
 
+async function refreshGoogleAccessToken(token: any) {
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: process.env.GOOGLE_CLIENT_ID!,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+      grant_type: "refresh_token",
+      refresh_token: token.refreshToken as string,
+    }),
+    method: "POST",
+  });
+
+  const refreshedTokens = await response.json();
+
+  if (!response.ok) {
+    throw refreshedTokens;
+  }
+
+  return {
+    ...token,
+    accessToken: refreshedTokens.access_token,
+    expiresAt: Date.now() + refreshedTokens.expires_in * 1000,
+    refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+  };
+}
+
+async function refreshAzureAccessToken(token: any) {
+  const tenant = isConfigured(azureTenantId) ? azureTenantId!.trim() : "common";
+
+  const response = await fetch(
+    `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`,
+    {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: process.env.AZURE_AD_CLIENT_ID!,
+        client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
+        grant_type: "refresh_token",
+        refresh_token: token.refreshToken as string,
+        scope:
+          "openid profile email offline_access User.Read Mail.Read Mail.ReadWrite Mail.Send",
+      }),
+      method: "POST",
+    }
+  );
+
+  const refreshedTokens = await response.json();
+
+  if (!response.ok) {
+    throw refreshedTokens;
+  }
+
+  return {
+    ...token,
+    accessToken: refreshedTokens.access_token,
+    expiresAt: Date.now() + refreshedTokens.expires_in * 1000,
+    refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+  };
+}
+
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
@@ -85,31 +144,23 @@ export const authOptions: NextAuthOptions = {
       // If we reach here, the AT if expired, try refreshing it
       if (token.provider === "google" && token.refreshToken) {
         try {
-          const response = await fetch("https://oauth2.googleapis.com/token", {
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({
-              client_id: process.env.GOOGLE_CLIENT_ID!,
-              client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-              grant_type: "refresh_token",
-              refresh_token: token.refreshToken as string,
-            }),
-            method: "POST",
-          });
-
-          const refreshedTokens = await response.json();
-
-          if (!response.ok) {
-            throw refreshedTokens;
-          }
-
-          return {
-            ...token,
-            accessToken: refreshedTokens.access_token,
-            expiresAt: Date.now() + refreshedTokens.expires_in * 1000,
-            refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
-          };
+          return await refreshGoogleAccessToken(token);
         } catch (error) {
-          console.error("Error refreshing access token", error);
+          console.error("Error refreshing Google access token", error);
+          return token;
+        }
+      }
+
+      if (
+        (token.provider === "azure-ad" ||
+          token.provider === "microsoft-entra-id" ||
+          token.provider === "outlook") &&
+        token.refreshToken
+      ) {
+        try {
+          return await refreshAzureAccessToken(token);
+        } catch (error) {
+          console.error("Error refreshing Azure access token", error);
           return token;
         }
       }
