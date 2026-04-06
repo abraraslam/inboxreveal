@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import BrandLogo from "@/components/BrandLogo";
+import { isUserInTrial, trialDaysRemaining } from "@/lib/plans";
 
 type Email = {
   id: string;
@@ -269,10 +270,8 @@ export default function Home() {
     (completedPreferenceSteps / preferenceChecklist.length) * 100
   );
 
-  const isInTrial = trialEndAt ? new Date(trialEndAt) > new Date() : false;
-  const trialDaysLeft = isInTrial
-    ? Math.ceil((new Date(trialEndAt!).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-    : 0;
+  const isInTrial = isUserInTrial(trialEndAt);
+  const trialDaysLeft = trialDaysRemaining(trialEndAt);
 
   const planCapabilities = useMemo(() => {
     // During an active trial every user gets Gold-level access.

@@ -53,12 +53,31 @@ export function isUserInTrial(trialEndAt: string | null | undefined): boolean {
 }
 
 /**
- * Returns how many full days remain in the trial (0 when expired or no trial).
+ * Returns remaining trial days as a calendar-day countdown.
+ *
+ * Example: signup day shows 7, next day shows 6, and so on.
+ * While still active on the final calendar day, this returns 1.
  */
 export function trialDaysRemaining(trialEndAt: string | null | undefined): number {
   if (!trialEndAt) return 0;
-  const ms = new Date(trialEndAt).getTime() - Date.now();
-  return ms <= 0 ? 0 : Math.ceil(ms / (1000 * 60 * 60 * 24));
+
+  const now = new Date();
+  const trialEnd = new Date(trialEndAt);
+
+  if (trialEnd <= now) return 0;
+
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const startOfTrialEndDay = new Date(trialEnd);
+  startOfTrialEndDay.setHours(0, 0, 0, 0);
+
+  const dayMs = 1000 * 60 * 60 * 24;
+  const calendarDays = Math.ceil(
+    (startOfTrialEndDay.getTime() - startOfToday.getTime()) / dayMs
+  );
+
+  return Math.max(1, calendarDays);
 }
 
 /**
