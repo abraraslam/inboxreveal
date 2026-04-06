@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
+import { useSession, signIn, signOut } from "next-auth/react";
 import { useState } from "react";
 import { Menu, X, LogOut } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
@@ -9,6 +9,13 @@ import BrandLogo from "@/components/BrandLogo";
 export default function Navigation() {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setIsSigningIn(true);
+    await signIn("google", { callbackUrl: "/dashboard" });
+    setIsSigningIn(false);
+  };
 
   return (
     <header className="border-b border-slate-200 bg-white shadow-sm sticky top-0 z-40">
@@ -54,12 +61,13 @@ export default function Navigation() {
                 </button>
               </>
             ) : (
-              <Link
-                href="/api/auth/signin/google?callbackUrl=%2Fdashboard"
+              <button
+                onClick={handleGoogleSignIn}
+                disabled={isSigningIn}
                 className="text-sm font-medium px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:from-blue-700 hover:to-indigo-700 transition"
               >
-                Sign In
-              </Link>
+                {isSigningIn ? "Redirecting..." : "Sign In"}
+              </button>
             )}
           </div>
 
@@ -104,12 +112,13 @@ export default function Navigation() {
                   </button>
                 </>
               ) : (
-                <Link
-                  href="/api/auth/signin/google?callbackUrl=%2Fdashboard"
+                <button
+                  onClick={handleGoogleSignIn}
+                  disabled={isSigningIn}
                   className="text-sm font-medium px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-center"
                 >
-                  Sign In
-                </Link>
+                  {isSigningIn ? "Redirecting..." : "Sign In"}
+                </button>
               )}
             </div>
           </div>

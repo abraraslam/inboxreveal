@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { signOut, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import BrandLogo from "@/components/BrandLogo";
 
@@ -113,6 +113,7 @@ function buildReplySubject(subject?: string) {
 
 export default function Home() {
   const { data: session } = useSession();
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   const [emails, setEmails] = useState<Email[]>([]);
   const [loadingEmails, setLoadingEmails] = useState(false);
@@ -1219,8 +1220,13 @@ export default function Home() {
                 AI-powered email intelligence to prioritize, analyze, and respond faster
               </p>
             </div>
-            <a
-              href="/api/auth/signin/google?callbackUrl=%2Fdashboard"
+            <button
+              onClick={async () => {
+                setIsSigningIn(true);
+                await signIn("google", { callbackUrl: "/dashboard" });
+                setIsSigningIn(false);
+              }}
+              disabled={isSigningIn}
               className="w-full inline-flex items-center justify-center rounded-xl px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg hover:from-blue-700 hover:to-indigo-700 transition duration-200"
             >
               <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
@@ -1229,8 +1235,8 @@ export default function Home() {
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
               </svg>
-              Sign in with Google
-            </a>
+              {isSigningIn ? "Redirecting..." : "Sign in with Google"}
+            </button>
             <p className="mt-4 text-center text-xs text-slate-500">
               Secure sign-in powered by NextAuth
             </p>
