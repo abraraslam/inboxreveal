@@ -101,10 +101,8 @@ async function syncCheckoutSession(checkout: Stripe.Checkout.Session) {
   const { error } = await supabase.from("user_preferences").upsert(
     {
       email,
-      plan_tier: "basic",
       stripe_customer_id: customerId || null,
       stripe_subscription_id: subscriptionId || null,
-      subscription_status: "checkout_completed",
     },
     { onConflict: "email" }
   );
