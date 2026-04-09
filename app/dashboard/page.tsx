@@ -200,6 +200,11 @@ export default function Home() {
     return emails.find((email) => email.id === activeReplyEmailId) || null;
   }, [emails, activeReplyEmailId]);
 
+  const activeReplyReview = useMemo(() => {
+    if (!activeReplyEmailId) return null;
+    return replyReviews[activeReplyEmailId] || null;
+  }, [activeReplyEmailId, replyReviews]);
+
   useEffect(() => {
     if (!activeReplyEmailId) return;
 
@@ -2385,7 +2390,7 @@ export default function Home() {
                 </button>
               </div>
 
-              {replyReviews[activeReplyEmailId] && (
+              {activeReplyReview && (
                 <div className="mt-4 rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <p className="text-sm font-semibold text-slate-800">
@@ -2394,16 +2399,30 @@ export default function Home() {
                     <button
                       type="button"
                       className={secondaryButton}
+                      disabled={!activeReplyReview.improvedBody}
                       onClick={() => {
+                        const improvedBody = (activeReplyReview.improvedBody || "").trim();
+                        const currentBody = (replies[activeReplyEmailId] || "").trim();
+
+                        if (!improvedBody) {
+                          setNotice({
+                            type: "error",
+                            message: "No AI-improved reply available yet.",
+                          });
+                          return;
+                        }
+
                         setReplies((prev) => ({
                           ...prev,
-                          [activeReplyEmailId]:
-                            replyReviews[activeReplyEmailId]?.improvedBody ||
-                            prev[activeReplyEmailId],
+                          [activeReplyEmailId]: improvedBody,
                         }));
+
                         setNotice({
                           type: "success",
-                          message: "AI-reviewed version applied to reply draft.",
+                          message:
+                            currentBody === improvedBody
+                              ? "You are already using the AI version."
+                              : "AI-reviewed version applied to reply draft.",
                         });
                       }}
                     >
@@ -2411,9 +2430,9 @@ export default function Home() {
                     </button>
                   </div>
 
-                  {(replyReviews[activeReplyEmailId]?.suggestions || []).length > 0 && (
+                  {(activeReplyReview.suggestions || []).length > 0 && (
                       <div className="mb-4 space-y-2">
-                        {(replyReviews[activeReplyEmailId]?.suggestions || []).map(
+                        {(activeReplyReview.suggestions || []).map(
                           (suggestion, index) => (
                             <div
                               key={`${suggestion}-${index}`}
@@ -2431,7 +2450,7 @@ export default function Home() {
                       Improved reply
                     </p>
                     <div className="whitespace-pre-wrap rounded-xl bg-white p-3 text-sm text-slate-800 shadow-sm">
-                      {replyReviews[activeReplyEmailId]?.improvedBody ||
+                      {activeReplyReview.improvedBody ||
                         replies[activeReplyEmailId]}
                     </div>
                   </div>
