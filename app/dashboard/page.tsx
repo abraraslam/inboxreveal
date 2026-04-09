@@ -272,6 +272,7 @@ export default function Home() {
 
   const isInTrial = isUserInTrial(trialEndAt);
   const trialDaysLeft = trialDaysRemaining(trialEndAt);
+  const showTrialBanner = isInTrial && planTier === "basic";
 
   const planCapabilities = useMemo(() => {
     // During an active trial every user gets Gold-level access.
@@ -1297,7 +1298,7 @@ export default function Home() {
       ? "Gold"
       : planTier === "premium"
       ? "Premium"
-      : "Basic";
+      : "Free";
 
   const priorityBadgeClass = (priority?: Analysis["priority"]) => {
     switch (priority) {
@@ -1356,7 +1357,7 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
       <div className="mx-auto max-w-7xl p-4 sm:p-6">
         {/* Free Trial Banner */}
-        {isInTrial && (
+        {showTrialBanner && (
           <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-3 shadow-sm">
             <div className="flex items-center gap-2">
               <span className="text-lg">🎁</span>
