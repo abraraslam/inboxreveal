@@ -1748,10 +1748,6 @@ export default function Home() {
                     </div>
 
                     <div className="p-5">
-                      <p className="text-sm leading-6 text-slate-600">
-                        {email.snippet}
-                      </p>
-
                       {isAnalyzingEmail && (
                         <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
                           Analyzing email...
