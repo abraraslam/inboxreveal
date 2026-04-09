@@ -8,6 +8,8 @@
     "build": "next typegen && next build",
     "start": "next start",
     "lint": "eslint",
+    "db:backup": "bash scripts/supabase-backup.sh",
+    "db:restore": "bash scripts/supabase-restore.sh",
     "electron:dev": "concurrently \"next dev\" \"wait-on tcp:3000 && electron .\"",
     "electron:build": "next build && electron-builder",
     "electron:guard:win": "node scripts/ensure-native-windows-build.js",
