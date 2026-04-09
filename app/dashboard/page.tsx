@@ -999,10 +999,12 @@ export default function Home() {
       }
 
       setComposeReview(data);
+      setComposeSubject(data.improvedSubject || composeSubject);
+      setComposeBody(data.improvedBody || composeBody);
 
       setNotice({
         type: "success",
-        message: "AI review completed for your new email.",
+        message: "AI review completed and applied to your compose draft.",
       });
     } catch {
       setNotice({
@@ -1172,10 +1174,14 @@ export default function Home() {
         ...prev,
         [email.id]: data,
       }));
+      setReplies((prev) => ({
+        ...prev,
+        [email.id]: data.improvedBody || prev[email.id],
+      }));
 
       setNotice({
         type: "success",
-        message: "AI reviewed the reply draft.",
+        message: "AI reviewed and applied updates to the reply draft.",
       });
     } catch {
       setNotice({
