@@ -1205,10 +1205,6 @@ export default function Home() {
         return;
       }
 
-      setReplyReviews((prev) => ({
-        ...prev,
-        [email.id]: data,
-      }));
       setReplies((prev) => ({
         ...prev,
         [email.id]: data.improvedBody || prev[email.id],
@@ -1216,7 +1212,7 @@ export default function Home() {
 
       setNotice({
         type: "success",
-        message: "AI reviewed and applied updates to the reply draft.",
+        message: "Reply updated.",
       });
     } catch {
       setNotice({
@@ -2390,72 +2386,7 @@ export default function Home() {
                 </button>
               </div>
 
-              {activeReplyReview && (
-                <div className="mt-4 rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4">
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-slate-800">
-                      AI reply review
-                    </p>
-                    <button
-                      type="button"
-                      className={secondaryButton}
-                      disabled={!activeReplyReview.improvedBody}
-                      onClick={() => {
-                        const improvedBody = (activeReplyReview.improvedBody || "").trim();
-                        const currentBody = (replies[activeReplyEmailId] || "").trim();
 
-                        if (!improvedBody) {
-                          setNotice({
-                            type: "error",
-                            message: "No AI-improved reply available yet.",
-                          });
-                          return;
-                        }
-
-                        setReplies((prev) => ({
-                          ...prev,
-                          [activeReplyEmailId]: improvedBody,
-                        }));
-
-                        setNotice({
-                          type: "success",
-                          message:
-                            currentBody === improvedBody
-                              ? "You are already using the AI version."
-                              : "AI-reviewed version applied to reply draft.",
-                        });
-                      }}
-                    >
-                      Use AI Version
-                    </button>
-                  </div>
-
-                  {(activeReplyReview.suggestions || []).length > 0 && (
-                      <div className="mb-4 space-y-2">
-                        {(activeReplyReview.suggestions || []).map(
-                          (suggestion, index) => (
-                            <div
-                              key={`${suggestion}-${index}`}
-                              className="rounded-xl bg-white px-3 py-2 text-sm text-slate-700 shadow-sm"
-                            >
-                              {suggestion}
-                            </div>
-                          )
-                        )}
-                      </div>
-                    )}
-
-                  <div>
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      Improved reply
-                    </p>
-                    <div className="whitespace-pre-wrap rounded-xl bg-white p-3 text-sm text-slate-800 shadow-sm">
-                      {activeReplyReview.improvedBody ||
-                        replies[activeReplyEmailId]}
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
