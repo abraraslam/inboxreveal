@@ -55,7 +55,7 @@ export function isUserInTrial(trialEndAt: string | null | undefined): boolean {
 /**
  * Returns remaining trial days as a calendar-day countdown.
  *
- * Example: signup day shows 7, next day shows 6, and so on.
+ * Example: signup day shows 14, next day shows 13, and so on.
  * While still active on the final calendar day, this returns 1.
  */
 export function trialDaysRemaining(trialEndAt: string | null | undefined): number {
