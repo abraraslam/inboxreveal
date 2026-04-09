@@ -2,6 +2,7 @@ import { google } from "googleapis";
 import {
   CreateDraftParams,
   CreateDraftResult,
+  EmailAttachment,
   EmailProvider,
   SendEmailParams,
   SendEmailResult,
@@ -79,17 +80,68 @@ function extractEmailAddress(value: string) {
   return plainEmailMatch?.[0] || "";
 }
 
-function buildRawMessage(to: string, subject: string, body: string) {
+function buildRawMessage(
+  to: string,
+  subject: string,
+  body: string,
+  cc?: string,
+  attachments?: EmailAttachment[]
+) {
   const safeTo = sanitizeHeaderValue(to);
   const safeSubject = sanitizeHeaderValue(subject || "No subject");
+  const safeCc = cc ? sanitizeHeaderValue(cc) : null;
+
+  if (!attachments || attachments.length === 0) {
+    const lines = [
+      `To: ${safeTo}`,
+      ...(safeCc ? [`Cc: ${safeCc}`] : []),
+      `Subject: ${safeSubject}`,
+      "Content-Type: text/plain; charset=utf-8",
+      "MIME-Version: 1.0",
+      "",
+      body,
+    ];
+    return toBase64Url(lines.join("\n"));
+  }
+
+  // multipart/mixed for attachments
+  const boundary = `----=_Part_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  const parts: string[] = [];
+
+  parts.push(
+    [
+      `--${boundary}`,
+      "Content-Type: text/plain; charset=utf-8",
+      "Content-Transfer-Encoding: 7bit",
+      "",
+      body,
+    ].join("\n")
+  );
+
+  for (const att of attachments) {
+    const safeName = sanitizeHeaderValue(att.name);
+    parts.push(
+      [
+        `--${boundary}`,
+        `Content-Type: ${att.type || "application/octet-stream"}; name="${safeName}"`,
+        "Content-Transfer-Encoding: base64",
+        `Content-Disposition: attachment; filename="${safeName}"`,
+        "",
+        att.data,
+      ].join("\n")
+    );
+  }
+
+  parts.push(`--${boundary}--`);
 
   const message = [
     `To: ${safeTo}`,
+    ...(safeCc ? [`Cc: ${safeCc}`] : []),
     `Subject: ${safeSubject}`,
-    "Content-Type: text/plain; charset=utf-8",
     "MIME-Version: 1.0",
+    `Content-Type: multipart/mixed; boundary="${boundary}"`,
     "",
-    body,
+    ...parts,
   ].join("\n");
 
   return toBase64Url(message);
@@ -167,7 +219,7 @@ export class GmailProvider implements EmailProvider {
   async createDraft(params: CreateDraftParams): Promise<CreateDraftResult> {
     const gmail = this.getClient();
 
-    const raw = buildRawMessage(params.to, params.subject, params.body);
+    const raw = buildRawMessage(params.to, params.subject, params.body, params.cc, params.attachments);
 
     const draft = await gmail.users.drafts.create({
       userId: "me",
@@ -189,7 +241,7 @@ export class GmailProvider implements EmailProvider {
   async sendEmail(params: SendEmailParams): Promise<SendEmailResult> {
     const gmail = this.getClient();
 
-    const raw = buildRawMessage(params.to, params.subject, params.body);
+    const raw = buildRawMessage(params.to, params.subject, params.body, params.cc, params.attachments);
 
     const sent = await gmail.users.messages.send({
       userId: "me",

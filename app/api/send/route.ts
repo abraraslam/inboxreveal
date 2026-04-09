@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { to, subject, body, threadId } = await req.json();
+    const { to, subject, body, threadId, cc, attachments } = await req.json();
 
     const safeTo = typeof to === "string" ? to.trim() : "";
     const safeBody = typeof body === "string" ? body.trim().slice(0, 20000) : "";
@@ -49,6 +49,22 @@ export async function POST(req: Request) {
         ? subject.trim().slice(0, 255)
         : "No subject";
     const safeThreadId = typeof threadId === "string" ? threadId.trim() : undefined;
+    const safeCc = typeof cc === "string" && cc.trim() ? cc.trim().slice(0, 500) : undefined;
+    const safeAttachments = Array.isArray(attachments)
+      ? attachments
+          .filter(
+            (a) =>
+              a &&
+              typeof a.name === "string" &&
+              typeof a.type === "string" &&
+              typeof a.data === "string"
+          )
+          .map((a) => ({
+            name: String(a.name).slice(0, 255),
+            type: String(a.type).slice(0, 100),
+            data: String(a.data).slice(0, 10 * 1024 * 1024), // 10MB base64 cap
+          }))
+      : undefined;
 
     if (!safeTo || !safeBody) {
       return NextResponse.json(
@@ -74,6 +90,8 @@ export async function POST(req: Request) {
       subject: safeSubject,
       body: safeBody,
       threadId: safeThreadId,
+      cc: safeCc,
+      attachments: safeAttachments,
     });
 
     return NextResponse.json({

@@ -163,6 +163,10 @@ export default function Home() {
   const [composeTo, setComposeTo] = useState("");
   const [composeSubject, setComposeSubject] = useState("");
   const [composeBody, setComposeBody] = useState("");
+  const [composeCc, setComposeCc] = useState("");
+  const [composeAttachments, setComposeAttachments] = useState<
+    Array<{ name: string; type: string; data: string }>
+  >([]);
   const [composeReviewLoading, setComposeReviewLoading] = useState(false);
   const [composeSaving, setComposeSaving] = useState(false);
   const [composeSending, setComposeSending] = useState(false);
@@ -171,6 +175,9 @@ export default function Home() {
   );
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeMinimized, setIsComposeMinimized] = useState(false);
+
+  const composeFileInputRef = useRef<HTMLInputElement | null>(null);
+  const replyFileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [isPreferencesMinimized, setIsPreferencesMinimized] = useState(false);
@@ -194,6 +201,20 @@ export default function Home() {
     null
   );
   const [isReplyModalMaximized, setIsReplyModalMaximized] = useState(false);
+  const [replySubjects, setReplySubjects] = useState<Record<string, string>>({});
+  const [replyCCs, setReplyCCs] = useState<Record<string, string>>({});
+  const [replyAttachments, setReplyAttachments] = useState<
+    Record<string, Array<{ name: string; type: string; data: string }>>
+  >({});
+
+  const readFileAsBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () =>
+        resolve((reader.result as string).split(",")[1] ?? "");
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
 
   const activeReplyEmail = useMemo(() => {
     if (!activeReplyEmailId) return null;
@@ -949,6 +970,24 @@ export default function Home() {
       return next;
     });
 
+    setReplySubjects((prev) => {
+      const next = { ...prev };
+      delete next[emailId];
+      return next;
+    });
+
+    setReplyCCs((prev) => {
+      const next = { ...prev };
+      delete next[emailId];
+      return next;
+    });
+
+    setReplyAttachments((prev) => {
+      const next = { ...prev };
+      delete next[emailId];
+      return next;
+    });
+
     if (activeReplyEmailId === emailId) {
       setActiveReplyEmailId(null);
     }
@@ -968,6 +1007,8 @@ export default function Home() {
     setComposeTo("");
     setComposeSubject("");
     setComposeBody("");
+    setComposeCc("");
+    setComposeAttachments([]);
     setComposeReview(null);
     setIsComposeOpen(false);
     setIsComposeMinimized(false);
@@ -1073,6 +1114,8 @@ export default function Home() {
           to: composeTo.trim(),
           subject: composeSubject.trim() || "No subject",
           body: composeBody,
+          cc: composeCc.trim() || undefined,
+          attachments: composeAttachments.length ? composeAttachments : undefined,
         }),
       });
 
@@ -1125,6 +1168,8 @@ export default function Home() {
           to: composeTo.trim(),
           subject: composeSubject.trim() || "No subject",
           body: composeBody,
+          cc: composeCc.trim() || undefined,
+          attachments: composeAttachments.length ? composeAttachments : undefined,
         }),
       });
 
@@ -1146,6 +1191,8 @@ export default function Home() {
       setComposeTo("");
       setComposeSubject("");
       setComposeBody("");
+      setComposeCc("");
+      setComposeAttachments([]);
       setComposeReview(null);
       setIsComposeOpen(false);
       setIsComposeMinimized(false);
@@ -2143,8 +2190,107 @@ export default function Home() {
                   : "max-h-[calc(88vh-56px)]"
               } overflow-y-auto p-4`}
             >
-              <div className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-                Subject: {buildReplySubject(activeReplyEmail.subject)}
+              {/* Subject */}
+              <div className="flex items-center gap-2">
+                <label className="w-16 shrink-0 text-xs font-medium text-slate-500">
+                  Subject
+                </label>
+                <input
+                  className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                  value={
+                    replySubjects[activeReplyEmailId] ??
+                    buildReplySubject(activeReplyEmail.subject)
+                  }
+                  onChange={(e) =>
+                    setReplySubjects((prev) => ({
+                      ...prev,
+                      [activeReplyEmailId]: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+
+              {/* CC */}
+              <div className="mt-2 flex items-center gap-2">
+                <label className="w-16 shrink-0 text-xs font-medium text-slate-500">
+                  CC
+                </label>
+                <input
+                  className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                  value={replyCCs[activeReplyEmailId] ?? ""}
+                  onChange={(e) =>
+                    setReplyCCs((prev) => ({
+                      ...prev,
+                      [activeReplyEmailId]: e.target.value,
+                    }))
+                  }
+                  placeholder="cc@example.com"
+                />
+              </div>
+
+              {/* Attachments */}
+              <div className="mt-2">
+                <input
+                  ref={replyFileInputRef}
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={async (e) => {
+                    const files = Array.from(e.target.files || []);
+                    if (!files.length) return;
+                    const newAtts = await Promise.all(
+                      files.map(async (f) => ({
+                        name: f.name,
+                        type: f.type || "application/octet-stream",
+                        data: await readFileAsBase64(f),
+                      }))
+                    );
+                    setReplyAttachments((prev) => ({
+                      ...prev,
+                      [activeReplyEmailId]: [
+                        ...(prev[activeReplyEmailId] || []),
+                        ...newAtts,
+                      ],
+                    }));
+                    e.target.value = "";
+                  }}
+                />
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm hover:bg-slate-50"
+                  onClick={() => replyFileInputRef.current?.click()}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                  Attach file
+                </button>
+                {(replyAttachments[activeReplyEmailId] || []).length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {(replyAttachments[activeReplyEmailId] || []).map(
+                      (att, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700"
+                        >
+                          <span className="max-w-[160px] truncate">{att.name}</span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setReplyAttachments((prev) => ({
+                                ...prev,
+                                [activeReplyEmailId]: (
+                                  prev[activeReplyEmailId] || []
+                                ).filter((_, j) => j !== i),
+                              }))
+                            }
+                            className="ml-1 text-slate-400 hover:text-red-500"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
               </div>
 
               <textarea
@@ -2266,9 +2412,16 @@ export default function Home() {
                         },
                         body: JSON.stringify({
                           to,
-                          subject: buildReplySubject(activeReplyEmail.subject),
+                          subject:
+                            replySubjects[activeReplyEmailId] ??
+                            buildReplySubject(activeReplyEmail.subject),
                           body: replies[activeReplyEmailId],
                           threadId: activeReplyEmail.threadId,
+                          cc: replyCCs[activeReplyEmailId] || undefined,
+                          attachments:
+                            replyAttachments[activeReplyEmailId]?.length
+                              ? replyAttachments[activeReplyEmailId]
+                              : undefined,
                         }),
                       });
 
@@ -2321,9 +2474,16 @@ export default function Home() {
                         },
                         body: JSON.stringify({
                           to,
-                          subject: buildReplySubject(activeReplyEmail.subject),
+                          subject:
+                            replySubjects[activeReplyEmailId] ??
+                            buildReplySubject(activeReplyEmail.subject),
                           body: replies[activeReplyEmailId],
                           threadId: activeReplyEmail.threadId,
+                          cc: replyCCs[activeReplyEmailId] || undefined,
+                          attachments:
+                            replyAttachments[activeReplyEmailId]?.length
+                              ? replyAttachments[activeReplyEmailId]
+                              : undefined,
                         }),
                       });
 
@@ -2355,6 +2515,24 @@ export default function Home() {
                       });
 
                       setReplyReviews((prev) => {
+                        const next = { ...prev };
+                        delete next[activeReplyEmailId];
+                        return next;
+                      });
+
+                      setReplySubjects((prev) => {
+                        const next = { ...prev };
+                        delete next[activeReplyEmailId];
+                        return next;
+                      });
+
+                      setReplyCCs((prev) => {
+                        const next = { ...prev };
+                        delete next[activeReplyEmailId];
+                        return next;
+                      });
+
+                      setReplyAttachments((prev) => {
                         const next = { ...prev };
                         delete next[activeReplyEmailId];
                         return next;
@@ -2441,6 +2619,18 @@ export default function Home() {
 
                     <div>
                       <label className="mb-2 block text-sm font-medium text-slate-700">
+                        CC
+                      </label>
+                      <input
+                        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                        value={composeCc}
+                        onChange={(e) => setComposeCc(e.target.value)}
+                        placeholder="cc@example.com, another@example.com"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-slate-700">
                         Subject
                       </label>
                       <input
@@ -2465,6 +2655,60 @@ export default function Home() {
                         }}
                         placeholder="Write your email here..."
                       />
+                    </div>
+
+                    {/* Attachments */}
+                    <div>
+                      <input
+                        ref={composeFileInputRef}
+                        type="file"
+                        multiple
+                        className="hidden"
+                        onChange={async (e) => {
+                          const files = Array.from(e.target.files || []);
+                          if (!files.length) return;
+                          const newAtts = await Promise.all(
+                            files.map(async (f) => ({
+                              name: f.name,
+                              type: f.type || "application/octet-stream",
+                              data: await readFileAsBase64(f),
+                            }))
+                          );
+                          setComposeAttachments((prev) => [...prev, ...newAtts]);
+                          e.target.value = "";
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm hover:bg-slate-50"
+                        onClick={() => composeFileInputRef.current?.click()}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                        Attach file
+                      </button>
+                      {composeAttachments.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {composeAttachments.map((att, i) => (
+                            <div
+                              key={i}
+                              className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700"
+                            >
+                              <span className="max-w-[160px] truncate">{att.name}</span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setComposeAttachments((prev) =>
+                                    prev.filter((_, j) => j !== i)
+                                  )
+                                }
+                                className="ml-1 text-slate-400 hover:text-red-500"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex flex-wrap gap-3">

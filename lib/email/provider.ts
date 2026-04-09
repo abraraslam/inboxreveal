@@ -1,10 +1,18 @@
 import { ListEmailsResult } from "./types";
 
+export type EmailAttachment = {
+  name: string;
+  type: string;
+  data: string; // base64
+};
+
 export type CreateDraftParams = {
   to: string;
   subject: string;
   body: string;
   threadId?: string;
+  cc?: string;
+  attachments?: EmailAttachment[];
 };
 
 export type SendEmailParams = {
@@ -12,6 +20,8 @@ export type SendEmailParams = {
   subject: string;
   body: string;
   threadId?: string;
+  cc?: string;
+  attachments?: EmailAttachment[];
 };
 
 export type CreateDraftResult = {

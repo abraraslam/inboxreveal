@@ -172,6 +172,7 @@ export class OutlookProvider implements EmailProvider {
 
   async createDraft(params: CreateDraftParams): Promise<CreateDraftResult> {
     const recipients = buildRecipientList(params.to);
+    const ccRecipients = params.cc ? buildRecipientList(params.cc) : [];
 
     if (recipients.length === 0) {
       throw new Error("Recipient is required");
@@ -189,6 +190,7 @@ export class OutlookProvider implements EmailProvider {
           content: params.body,
         },
         toRecipients: recipients,
+        ...(ccRecipients.length > 0 ? { ccRecipients } : {}),
       }),
     });
 
@@ -201,6 +203,7 @@ export class OutlookProvider implements EmailProvider {
 
   async sendEmail(params: SendEmailParams): Promise<SendEmailResult> {
     const recipients = buildRecipientList(params.to);
+    const ccRecipients = params.cc ? buildRecipientList(params.cc) : [];
 
     if (recipients.length === 0) {
       throw new Error("Recipient is required");
@@ -216,6 +219,7 @@ export class OutlookProvider implements EmailProvider {
             content: params.body,
           },
           toRecipients: recipients,
+          ...(ccRecipients.length > 0 ? { ccRecipients } : {}),
         },
         saveToSentItems: true,
       }),
