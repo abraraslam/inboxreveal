@@ -193,6 +193,7 @@ export default function Home() {
   const [activeReplyEmailId, setActiveReplyEmailId] = useState<string | null>(
     null
   );
+  const [isReplyModalMaximized, setIsReplyModalMaximized] = useState(false);
 
   const activeReplyEmail = useMemo(() => {
     if (!activeReplyEmailId) return null;
@@ -206,6 +207,12 @@ export default function Home() {
       setActiveReplyEmailId(null);
     }
   }, [activeReplyEmailId, replies]);
+
+  useEffect(() => {
+    if (!activeReplyEmailId) {
+      setIsReplyModalMaximized(false);
+    }
+  }, [activeReplyEmailId]);
 
   useEffect(() => {
     if (!notice) {
@@ -2085,8 +2092,20 @@ export default function Home() {
       </div>
 
       {activeReplyEmailId && activeReplyEmail && replies[activeReplyEmailId] && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
-          <div className="max-h-[88vh] w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+        <div
+          className={`fixed inset-0 z-50 flex bg-slate-900/45 ${
+            isReplyModalMaximized
+              ? "items-stretch justify-stretch p-2 sm:p-4"
+              : "items-center justify-center p-4"
+          }`}
+        >
+          <div
+            className={`${
+              isReplyModalMaximized
+                ? "h-full w-full max-w-none"
+                : "max-h-[88vh] w-full max-w-5xl"
+            } overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl`}
+          >
             <div className="flex items-center justify-between bg-slate-900 px-4 py-3 text-white">
               <div>
                 <p className="text-sm font-semibold">Reply Editor</p>
@@ -2095,16 +2114,34 @@ export default function Home() {
                 </p>
               </div>
 
-              <button
-                type="button"
-                className="rounded-lg px-2 py-1 text-sm hover:bg-white/10"
-                onClick={() => setActiveReplyEmailId(null)}
-              >
-                Close
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="rounded-lg px-2 py-1 text-sm hover:bg-white/10"
+                  onClick={() =>
+                    setIsReplyModalMaximized((prev) => !prev)
+                  }
+                >
+                  {isReplyModalMaximized ? "Restore" : "Maximize"}
+                </button>
+
+                <button
+                  type="button"
+                  className="rounded-lg px-2 py-1 text-sm hover:bg-white/10"
+                  onClick={() => setActiveReplyEmailId(null)}
+                >
+                  Close
+                </button>
+              </div>
             </div>
 
-            <div className="max-h-[calc(88vh-56px)] overflow-y-auto p-4">
+            <div
+              className={`${
+                isReplyModalMaximized
+                  ? "h-[calc(100%-56px)]"
+                  : "max-h-[calc(88vh-56px)]"
+              } overflow-y-auto p-4`}
+            >
               <div className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs text-slate-600">
                 Subject: {buildReplySubject(activeReplyEmail.subject)}
               </div>
