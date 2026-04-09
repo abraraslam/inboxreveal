@@ -190,6 +190,22 @@ export default function Home() {
   const [replyReviews, setReplyReviews] = useState<
     Record<string, DraftReviewResponse>
   >({});
+  const [activeReplyEmailId, setActiveReplyEmailId] = useState<string | null>(
+    null
+  );
+
+  const activeReplyEmail = useMemo(() => {
+    if (!activeReplyEmailId) return null;
+    return emails.find((email) => email.id === activeReplyEmailId) || null;
+  }, [emails, activeReplyEmailId]);
+
+  useEffect(() => {
+    if (!activeReplyEmailId) return;
+
+    if (!replies[activeReplyEmailId]) {
+      setActiveReplyEmailId(null);
+    }
+  }, [activeReplyEmailId, replies]);
 
   useEffect(() => {
     if (!notice) {
@@ -734,6 +750,7 @@ export default function Home() {
         setExpandedEmailId(null);
         setActiveFilter("all");
         setReplyReviews({});
+        setActiveReplyEmailId(null);
 
         const initialEmails = sortedEmails.slice(0, 15);
         const savedAnalysis = await loadSavedAnalysis(initialEmails);
@@ -890,6 +907,7 @@ export default function Home() {
         type: "success",
         message: `${mode.charAt(0).toUpperCase() + mode.slice(1)} reply generated.`,
       });
+      setActiveReplyEmailId(email.id);
     } catch {
       setNotice({
         type: "error",
@@ -918,6 +936,10 @@ export default function Home() {
       delete next[emailId];
       return next;
     });
+
+    if (activeReplyEmailId === emailId) {
+      setActiveReplyEmailId(null);
+    }
 
     setNotice({
       type: "success",
@@ -1688,8 +1710,6 @@ export default function Home() {
                 const isSending = sendId === email.id;
                 const isSummarizing = loadingId === email.id;
                 const isAnalyzingEmail = analyzingIds[email.id] === true;
-                const isReviewingReply = reviewingReplyId === email.id;
-                const reviewedReply = replyReviews[email.id];
 
                 return (
                   <div
@@ -2006,297 +2026,23 @@ export default function Home() {
 
                       {replies[email.id] && (
                         <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
-                          <div className="mb-3 flex items-center justify-between gap-3">
-                            <p className="text-sm font-semibold text-slate-800">
-                              {replyModeLabel(replyModeByEmail[email.id])}
-                            </p>
-                            <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600 shadow-sm">
-                              Editable draft
-                            </span>
-                          </div>
-
-                          <textarea
-                            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-                            rows={6}
-                            value={replies[email.id]}
-                            onChange={(e) => {
-                              const nextValue = e.target.value;
-                              setReplies((prev) => ({
-                                ...prev,
-                                [email.id]: nextValue,
-                              }));
-                              setReplyReviews((prev) => {
-                                const next = { ...prev };
-                                delete next[email.id];
-                                return next;
-                              });
-                            }}
-                          />
-
-                          <div className="mt-4 flex flex-wrap gap-2 sm:gap-3">
-                            <button
-                              type="button"
-                              className={secondaryButton}
-                              disabled={
-                                !planCapabilities.canUseAiDraftReview ||
-                                isReviewingReply ||
-                                isSavingDraft ||
-                                isSending
-                              }
-                              onClick={() => reviewReplyDraft(email, "general")}
-                            >
-                              {isReviewingReply ? "Reviewing..." : "AI Review Reply"}
-                            </button>
-
-                            <button
-                              type="button"
-                              className={secondaryButton}
-                              disabled={
-                                !planCapabilities.canUseAiDraftReview ||
-                                isReviewingReply ||
-                                isSavingDraft ||
-                                isSending
-                              }
-                              onClick={() => reviewReplyDraft(email, "professional")}
-                            >
-                              Make more professional
-                            </button>
-
-                            <button
-                              type="button"
-                              className={secondaryButton}
-                              disabled={
-                                !planCapabilities.canUseAiDraftReview ||
-                                isReviewingReply ||
-                                isSavingDraft ||
-                                isSending
-                              }
-                              onClick={() => reviewReplyDraft(email, "shorter")}
-                            >
-                              Make shorter
-                            </button>
-
-                            <button
-                              type="button"
-                              className={secondaryButton}
-                              disabled={
-                                !planCapabilities.canUseAiDraftReview ||
-                                isReviewingReply ||
-                                isSavingDraft ||
-                                isSending
-                              }
-                              onClick={() => reviewReplyDraft(email, "polite")}
-                            >
-                              Make polite
-                            </button>
-
-                            <button
-                              type="button"
-                              className={secondaryButton}
-                              disabled={
-                                !planCapabilities.canUseAiDraftReview ||
-                                isReviewingReply ||
-                                isSavingDraft ||
-                                isSending
-                              }
-                              onClick={() => reviewReplyDraft(email, "persuasive")}
-                            >
-                              Make persuasive
-                            </button>
-
-                            {!planCapabilities.canUseAiDraftReview && (
-                              <Link href="/pricing?feature=ai-review" className={upgradeLinkClass}>
-                                Upgrade for AI Review
-                              </Link>
-                            )}
-
+                          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                              <p className="text-sm font-semibold text-slate-800">
+                                {replyModeLabel(replyModeByEmail[email.id])} ready
+                              </p>
+                              <p className="text-xs text-slate-600">
+                                Open the reply window to edit, review, save, or send.
+                              </p>
+                            </div>
                             <button
                               type="button"
                               className={primaryButton}
-                              disabled={isSavingDraft || isSending}
-                              onClick={async () => {
-                                try {
-                                  setDraftId(email.id);
-                                  setNotice(null);
-
-                                  const to =
-                                    email.fromEmail || extractEmailAddress(email.from);
-
-                                  const res = await fetch("/api/draft", {
-                                    method: "POST",
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify({
-                                      to,
-                                      subject: buildReplySubject(email.subject),
-                                      body: replies[email.id],
-                                      threadId: email.threadId,
-                                    }),
-                                  });
-
-                                  const data = await res.json();
-
-                                  if (!res.ok) {
-                                    setNotice({
-                                      type: "error",
-                                      message:
-                                        data.error || "Failed to create draft.",
-                                    });
-                                    return;
-                                  }
-
-                                  setNotice({
-                                    type: "success",
-                                    message: "Draft saved to provider.",
-                                  });
-                                } catch {
-                                  setNotice({
-                                    type: "error",
-                                    message:
-                                      "Something went wrong while saving draft.",
-                                  });
-                                } finally {
-                                  setDraftId(null);
-                                }
-                              }}
+                              onClick={() => setActiveReplyEmailId(email.id)}
                             >
-                              {isSavingDraft ? "Saving..." : "Save Draft"}
-                            </button>
-
-                            <button
-                              type="button"
-                              className={successButton}
-                              disabled={isSavingDraft || isSending}
-                              onClick={async () => {
-                                try {
-                                  setSendId(email.id);
-                                  setNotice(null);
-
-                                  const to =
-                                    email.fromEmail || extractEmailAddress(email.from);
-
-                                  const res = await fetch("/api/send", {
-                                    method: "POST",
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify({
-                                      to,
-                                      subject: buildReplySubject(email.subject),
-                                      body: replies[email.id],
-                                      threadId: email.threadId,
-                                    }),
-                                  });
-
-                                  const data = await res.json();
-
-                                  if (!res.ok) {
-                                    setNotice({
-                                      type: "error",
-                                      message: data.error || "Failed to send email.",
-                                    });
-                                    return;
-                                  }
-
-                                  setNotice({
-                                    type: "success",
-                                    message: "Reply sent.",
-                                  });
-
-                                  setReplies((prev) => {
-                                    const next = { ...prev };
-                                    delete next[email.id];
-                                    return next;
-                                  });
-
-                                  setReplyModeByEmail((prev) => {
-                                    const next = { ...prev };
-                                    delete next[email.id];
-                                    return next;
-                                  });
-
-                                  setReplyReviews((prev) => {
-                                    const next = { ...prev };
-                                    delete next[email.id];
-                                    return next;
-                                  });
-                                } catch {
-                                  setNotice({
-                                    type: "error",
-                                    message:
-                                      "Something went wrong while sending reply.",
-                                  });
-                                } finally {
-                                  setSendId(null);
-                                }
-                              }}
-                            >
-                              {isSending ? "Sending..." : "Send Reply"}
-                            </button>
-
-                            <button
-                              type="button"
-                              className={dangerButton}
-                              disabled={isSavingDraft || isSending}
-                              onClick={() => discardReply(email.id)}
-                            >
-                              Discard
+                              Open Reply Window
                             </button>
                           </div>
-
-                          {reviewedReply && (
-                            <div className="mt-4 rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4">
-                              <div className="mb-3 flex items-center justify-between gap-3">
-                                <p className="text-sm font-semibold text-slate-800">
-                                  AI reply review
-                                </p>
-                                <button
-                                  type="button"
-                                  className={secondaryButton}
-                                  onClick={() => {
-                                    setReplies((prev) => ({
-                                      ...prev,
-                                      [email.id]:
-                                        reviewedReply.improvedBody || prev[email.id],
-                                    }));
-                                    setNotice({
-                                      type: "success",
-                                      message:
-                                        "AI-reviewed version applied to reply draft.",
-                                    });
-                                  }}
-                                >
-                                  Use AI Version
-                                </button>
-                              </div>
-
-                              {reviewedReply.suggestions &&
-                                reviewedReply.suggestions.length > 0 && (
-                                  <div className="mb-4 space-y-2">
-                                    {reviewedReply.suggestions.map(
-                                      (suggestion, index) => (
-                                        <div
-                                          key={`${suggestion}-${index}`}
-                                          className="rounded-xl bg-white px-3 py-2 text-sm text-slate-700 shadow-sm"
-                                        >
-                                          {suggestion}
-                                        </div>
-                                      )
-                                    )}
-                                  </div>
-                                )}
-
-                              <div>
-                                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                  Improved reply
-                                </p>
-                                <div className="whitespace-pre-wrap rounded-xl bg-white p-3 text-sm text-slate-800 shadow-sm">
-                                  {reviewedReply.improvedBody || replies[email.id]}
-                                </div>
-                              </div>
-                            </div>
-                          )}
                         </div>
                       )}
                     </div>
@@ -2337,6 +2083,327 @@ export default function Home() {
           </>
         )}
       </div>
+
+      {activeReplyEmailId && activeReplyEmail && replies[activeReplyEmailId] && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4">
+          <div className="max-h-[88vh] w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+            <div className="flex items-center justify-between bg-slate-900 px-4 py-3 text-white">
+              <div>
+                <p className="text-sm font-semibold">Reply Editor</p>
+                <p className="text-[11px] text-slate-300">
+                  {replyModeLabel(replyModeByEmail[activeReplyEmailId])} to {activeReplyEmail.from}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="rounded-lg px-2 py-1 text-sm hover:bg-white/10"
+                onClick={() => setActiveReplyEmailId(null)}
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="max-h-[calc(88vh-56px)] overflow-y-auto p-4">
+              <div className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                Subject: {buildReplySubject(activeReplyEmail.subject)}
+              </div>
+
+              <textarea
+                className="mt-3 w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                rows={10}
+                value={replies[activeReplyEmailId]}
+                onChange={(e) => {
+                  const nextValue = e.target.value;
+                  setReplies((prev) => ({
+                    ...prev,
+                    [activeReplyEmailId]: nextValue,
+                  }));
+                  setReplyReviews((prev) => {
+                    const next = { ...prev };
+                    delete next[activeReplyEmailId];
+                    return next;
+                  });
+                }}
+              />
+
+              <div className="mt-4 flex flex-wrap gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  className={secondaryButton}
+                  disabled={
+                    !planCapabilities.canUseAiDraftReview ||
+                    reviewingReplyId === activeReplyEmailId ||
+                    draftId === activeReplyEmailId ||
+                    sendId === activeReplyEmailId
+                  }
+                  onClick={() => reviewReplyDraft(activeReplyEmail, "general")}
+                >
+                  {reviewingReplyId === activeReplyEmailId
+                    ? "Reviewing..."
+                    : "AI Review Reply"}
+                </button>
+
+                <button
+                  type="button"
+                  className={secondaryButton}
+                  disabled={
+                    !planCapabilities.canUseAiDraftReview ||
+                    reviewingReplyId === activeReplyEmailId ||
+                    draftId === activeReplyEmailId ||
+                    sendId === activeReplyEmailId
+                  }
+                  onClick={() => reviewReplyDraft(activeReplyEmail, "professional")}
+                >
+                  Make more professional
+                </button>
+
+                <button
+                  type="button"
+                  className={secondaryButton}
+                  disabled={
+                    !planCapabilities.canUseAiDraftReview ||
+                    reviewingReplyId === activeReplyEmailId ||
+                    draftId === activeReplyEmailId ||
+                    sendId === activeReplyEmailId
+                  }
+                  onClick={() => reviewReplyDraft(activeReplyEmail, "shorter")}
+                >
+                  Make shorter
+                </button>
+
+                <button
+                  type="button"
+                  className={secondaryButton}
+                  disabled={
+                    !planCapabilities.canUseAiDraftReview ||
+                    reviewingReplyId === activeReplyEmailId ||
+                    draftId === activeReplyEmailId ||
+                    sendId === activeReplyEmailId
+                  }
+                  onClick={() => reviewReplyDraft(activeReplyEmail, "polite")}
+                >
+                  Make polite
+                </button>
+
+                <button
+                  type="button"
+                  className={secondaryButton}
+                  disabled={
+                    !planCapabilities.canUseAiDraftReview ||
+                    reviewingReplyId === activeReplyEmailId ||
+                    draftId === activeReplyEmailId ||
+                    sendId === activeReplyEmailId
+                  }
+                  onClick={() => reviewReplyDraft(activeReplyEmail, "persuasive")}
+                >
+                  Make persuasive
+                </button>
+
+                {!planCapabilities.canUseAiDraftReview && (
+                  <Link href="/pricing?feature=ai-review" className={upgradeLinkClass}>
+                    Upgrade for AI Review
+                  </Link>
+                )}
+
+                <button
+                  type="button"
+                  className={primaryButton}
+                  disabled={
+                    draftId === activeReplyEmailId || sendId === activeReplyEmailId
+                  }
+                  onClick={async () => {
+                    try {
+                      setDraftId(activeReplyEmailId);
+                      setNotice(null);
+
+                      const to =
+                        activeReplyEmail.fromEmail ||
+                        extractEmailAddress(activeReplyEmail.from);
+
+                      const res = await fetch("/api/draft", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          to,
+                          subject: buildReplySubject(activeReplyEmail.subject),
+                          body: replies[activeReplyEmailId],
+                          threadId: activeReplyEmail.threadId,
+                        }),
+                      });
+
+                      const data = await res.json();
+
+                      if (!res.ok) {
+                        setNotice({
+                          type: "error",
+                          message: data.error || "Failed to create draft.",
+                        });
+                        return;
+                      }
+
+                      setNotice({
+                        type: "success",
+                        message: "Draft saved to provider.",
+                      });
+                    } catch {
+                      setNotice({
+                        type: "error",
+                        message: "Something went wrong while saving draft.",
+                      });
+                    } finally {
+                      setDraftId(null);
+                    }
+                  }}
+                >
+                  {draftId === activeReplyEmailId ? "Saving..." : "Save Draft"}
+                </button>
+
+                <button
+                  type="button"
+                  className={successButton}
+                  disabled={
+                    draftId === activeReplyEmailId || sendId === activeReplyEmailId
+                  }
+                  onClick={async () => {
+                    try {
+                      setSendId(activeReplyEmailId);
+                      setNotice(null);
+
+                      const to =
+                        activeReplyEmail.fromEmail ||
+                        extractEmailAddress(activeReplyEmail.from);
+
+                      const res = await fetch("/api/send", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          to,
+                          subject: buildReplySubject(activeReplyEmail.subject),
+                          body: replies[activeReplyEmailId],
+                          threadId: activeReplyEmail.threadId,
+                        }),
+                      });
+
+                      const data = await res.json();
+
+                      if (!res.ok) {
+                        setNotice({
+                          type: "error",
+                          message: data.error || "Failed to send email.",
+                        });
+                        return;
+                      }
+
+                      setNotice({
+                        type: "success",
+                        message: "Reply sent.",
+                      });
+
+                      setReplies((prev) => {
+                        const next = { ...prev };
+                        delete next[activeReplyEmailId];
+                        return next;
+                      });
+
+                      setReplyModeByEmail((prev) => {
+                        const next = { ...prev };
+                        delete next[activeReplyEmailId];
+                        return next;
+                      });
+
+                      setReplyReviews((prev) => {
+                        const next = { ...prev };
+                        delete next[activeReplyEmailId];
+                        return next;
+                      });
+
+                      setActiveReplyEmailId(null);
+                    } catch {
+                      setNotice({
+                        type: "error",
+                        message: "Something went wrong while sending reply.",
+                      });
+                    } finally {
+                      setSendId(null);
+                    }
+                  }}
+                >
+                  {sendId === activeReplyEmailId ? "Sending..." : "Send Reply"}
+                </button>
+
+                <button
+                  type="button"
+                  className={dangerButton}
+                  disabled={
+                    draftId === activeReplyEmailId || sendId === activeReplyEmailId
+                  }
+                  onClick={() => discardReply(activeReplyEmailId)}
+                >
+                  Discard
+                </button>
+              </div>
+
+              {replyReviews[activeReplyEmailId] && (
+                <div className="mt-4 rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-slate-800">
+                      AI reply review
+                    </p>
+                    <button
+                      type="button"
+                      className={secondaryButton}
+                      onClick={() => {
+                        setReplies((prev) => ({
+                          ...prev,
+                          [activeReplyEmailId]:
+                            replyReviews[activeReplyEmailId]?.improvedBody ||
+                            prev[activeReplyEmailId],
+                        }));
+                        setNotice({
+                          type: "success",
+                          message: "AI-reviewed version applied to reply draft.",
+                        });
+                      }}
+                    >
+                      Use AI Version
+                    </button>
+                  </div>
+
+                  {(replyReviews[activeReplyEmailId]?.suggestions || []).length > 0 && (
+                      <div className="mb-4 space-y-2">
+                        {(replyReviews[activeReplyEmailId]?.suggestions || []).map(
+                          (suggestion, index) => (
+                            <div
+                              key={`${suggestion}-${index}`}
+                              className="rounded-xl bg-white px-3 py-2 text-sm text-slate-700 shadow-sm"
+                            >
+                              {suggestion}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    )}
+
+                  <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      Improved reply
+                    </p>
+                    <div className="whitespace-pre-wrap rounded-xl bg-white p-3 text-sm text-slate-800 shadow-sm">
+                      {replyReviews[activeReplyEmailId]?.improvedBody ||
+                        replies[activeReplyEmailId]}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {isComposeOpen && (
         <div className={`fixed bottom-0 left-0 right-0 z-50 w-full px-0 pb-[max(env(safe-area-inset-bottom),0.5rem)] sm:bottom-6 sm:left-auto sm:right-6 sm:px-4 sm:pb-0 ${composeReview ? "sm:max-w-6xl" : "sm:max-w-2xl"}`}>
