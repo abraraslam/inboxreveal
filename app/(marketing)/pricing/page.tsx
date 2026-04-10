@@ -174,9 +174,10 @@ export default function PricingPage() {
             <p className="mt-5 text-base text-slate-600 sm:text-lg md:text-xl">
               Pick the plan that matches your inbox volume. Upgrade anytime as your workflow grows.
             </p>
+            {/* Only show free trial banner for paid plans */}
             <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2">
               <span className="text-base">🎁</span>
-              <span className="text-sm font-semibold text-amber-800">All plans include a 14-day free trial — full Gold access from day one.</span>
+              <span className="text-sm font-semibold text-amber-800">Premium and Gold include a 14-day free trial — full access from day one.</span>
             </div>
           </div>
         </section>
@@ -195,9 +196,12 @@ export default function PricingPage() {
                       Most Popular
                     </span>
                   ) : null}
-                  <span className="absolute -top-3 left-5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 shadow-sm">
-                    14-day free trial
-                  </span>
+                  {/* Only show 14-day free trial badge for paid plans */}
+                  {plan.name !== "Basic" && (
+                    <span className="absolute -top-3 left-5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 shadow-sm">
+                      14-day free trial
+                    </span>
+                  )}
 
                   <div className={`mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${plan.accent}`}>
                     <Icon className="h-6 w-6 text-white" />
@@ -218,7 +222,6 @@ export default function PricingPage() {
                         <span>{feature}</span>
                       </li>
                     ))}
-                  </ul>
 
                   <Link
                     href={
@@ -232,6 +235,7 @@ export default function PricingPage() {
                   </Link>
                 </article>
               );
+            })}
             })}
           </div>
         </section>
