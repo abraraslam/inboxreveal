@@ -235,7 +235,7 @@ export default function PricingPage() {
                   </Link>
                 </article>
               );
-            })}
+            })
           </div>
         </section>
 
