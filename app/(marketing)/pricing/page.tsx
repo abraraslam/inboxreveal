@@ -16,9 +16,8 @@ type PricingPlan = {
   checkoutPlan?: "premium" | "gold";
   features: string[];
   popular?: boolean;
-};
-
-const plans: PricingPlan[] = [
+              );
+            })}
   {
     name: "Basic",
     price: "Free",
