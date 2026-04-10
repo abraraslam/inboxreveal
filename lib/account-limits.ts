@@ -122,7 +122,25 @@ export async function enforceAccountLimitsOnSignIn(params: {
 
   const canUseTwoProviders = shouldAllowTwoProviders(planTier, trialEndAt);
 
-  // Basic users can only access one Google account.
+  // Block cross-provider linking for all plans
+  if (
+    provider === "gmail" &&
+    connected.connected_outlook_account_email &&
+    connected.connected_outlook_account_email === normalizedEmail
+  ) {
+    // This email is already connected as Outlook, block Gmail
+    return { allowed: false, errorCode: "GoogleSlotAlreadyUsed" };
+  }
+  if (
+    provider === "outlook" &&
+    connected.connected_google_account_email &&
+    connected.connected_google_account_email === normalizedEmail
+  ) {
+    // This email is already connected as Gmail, block Outlook
+    return { allowed: false, errorCode: "OutlookSlotAlreadyUsed" };
+  }
+
+  // Basic users can only access Gmail
   if (!canUseTwoProviders) {
     if (provider !== "gmail") {
       return { allowed: false, errorCode: "PlanGoogleOnly" };
@@ -143,6 +161,7 @@ export async function enforceAccountLimitsOnSignIn(params: {
     return { allowed: true };
   }
 
+  // Premium/Gold/trial: allow both, but not cross-link
   if (
     provider === "gmail" &&
     connected.connected_google_account_email &&
