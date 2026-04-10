@@ -126,6 +126,13 @@ function buildForwardBody(email: Email) {
 }
 
 export default function Home() {
+  // DEBUG: Show plan tier and capabilities in UI
+  const debugPanel = (
+    <div style={{ background: '#f5f5f5', color: '#222', padding: 8, margin: 8, border: '1px solid #ccc', borderRadius: 4 }}>
+      <strong>DEBUG:</strong> planTier = <b>{planTier}</b>, isInTrial = <b>{String(isInTrial)}</b><br />
+      planCapabilities: <pre style={{ display: 'inline', margin: 0 }}>{JSON.stringify(planCapabilities, null, 2)}</pre>
+    </div>
+  );
   const { data: session } = useSession();
   const [isSigningIn, setIsSigningIn] = useState(false);
 
@@ -1431,6 +1438,8 @@ export default function Home() {
   }
 
   return (
+    <>
+      {debugPanel}
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
       <div className="mx-auto max-w-screen-2xl p-4 sm:p-6 2xl:p-8">
         {/* Free Trial Banner */}
@@ -3155,5 +3164,6 @@ export default function Home() {
         </div>
       )}
     </main>
+    </>
   );
 }

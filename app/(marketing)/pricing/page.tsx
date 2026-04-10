@@ -236,7 +236,6 @@ export default function PricingPage() {
                 </article>
               );
             })}
-            })}
           </div>
         </section>
 
