@@ -134,6 +134,19 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       const provider = normalizeSignInProvider(account?.provider);
 
+      // DEBUG LOGGING
+      console.log("[DEBUG][signIn] provider=", account?.provider, "normalized=", provider, "email=", extractOAuthEmail({
+        user: { email: user?.email ?? null },
+        profile: {
+          email: typeof profile?.email === "string" ? profile.email : null,
+          preferred_username:
+            typeof profile?.preferred_username === "string"
+              ? profile.preferred_username
+              : null,
+          upn: typeof profile?.upn === "string" ? profile.upn : null,
+        },
+      }));
+
       // Ignore unsupported providers and let NextAuth handle them.
       if (!provider) {
         return true;
@@ -163,6 +176,9 @@ export const authOptions: NextAuthOptions = {
           email,
           provider,
         });
+
+        // DEBUG LOGGING
+        console.log("[DEBUG][enforceAccountLimitsOnSignIn] decision=", decision);
 
         if (!decision.allowed) {
           const params = new URLSearchParams({
