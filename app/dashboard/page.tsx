@@ -1432,7 +1432,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
-      <div className="mx-auto max-w-7xl p-4 sm:p-6">
+      <div className="mx-auto max-w-screen-2xl p-4 sm:p-6 2xl:p-8">
         {/* Free Trial Banner */}
         {showTrialBanner && (
           <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-3 shadow-sm">
@@ -1580,7 +1580,7 @@ export default function Home() {
           </div>
         )}
 
-        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-6">
+        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <button
             type="button"
             className={`${statCardClass("all")} flex flex-col justify-between h-full`}
@@ -2151,7 +2151,7 @@ export default function Home() {
             className={`${
               isReplyModalMaximized
                 ? "h-full w-full max-w-none"
-                : "max-h-[88vh] w-full max-w-5xl"
+                : "flex max-h-[92vh] w-full max-w-5xl flex-col"
             } overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl`}
           >
             <div className="flex items-center justify-between bg-slate-900 px-4 py-3 text-white">
@@ -2187,7 +2187,7 @@ export default function Home() {
               className={`${
                 isReplyModalMaximized
                   ? "h-[calc(100%-56px)]"
-                  : "max-h-[calc(88vh-56px)]"
+                  : "flex-1"
               } overflow-y-auto p-4`}
             >
               {/* Subject */}
@@ -2295,7 +2295,7 @@ export default function Home() {
 
               <textarea
                 className="mt-3 w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-                rows={10}
+                rows={8}
                 value={replies[activeReplyEmailId]}
                 onChange={(e) => {
                   const nextValue = e.target.value;
@@ -2571,9 +2571,9 @@ export default function Home() {
       )}
 
       {isComposeOpen && (
-        <div className={`fixed bottom-0 left-0 right-0 z-50 w-full px-0 pb-[max(env(safe-area-inset-bottom),0.5rem)] sm:bottom-6 sm:left-auto sm:right-6 sm:px-4 sm:pb-0 ${composeReview ? "sm:max-w-6xl" : "sm:max-w-2xl"}`}>
-          <div className="max-h-[88vh] overflow-hidden rounded-t-2xl border border-slate-200 bg-white shadow-2xl sm:max-h-none sm:rounded-2xl">
-            <div className="flex items-center justify-between bg-slate-900 px-4 py-3 text-white">
+        <div className={`fixed bottom-0 left-0 right-0 z-50 w-full px-0 pb-[max(env(safe-area-inset-bottom),0.5rem)] sm:bottom-4 sm:left-auto sm:right-4 sm:px-0 sm:pb-0 ${composeReview ? "sm:max-w-[min(72rem,calc(100vw-2rem))]" : "sm:max-w-[min(42rem,calc(100vw-2rem))]"}`}>
+          <div className="flex max-h-[88vh] flex-col overflow-hidden rounded-t-2xl border border-slate-200 bg-white shadow-2xl sm:max-h-[calc(100vh-5rem)] sm:rounded-2xl">
+            <div className="flex shrink-0 items-center justify-between bg-slate-900 px-4 py-3 text-white">
               <div>
                 <p className="text-sm font-semibold">New Message</p>
                 <p className="text-[11px] text-slate-300">
@@ -2601,9 +2601,9 @@ export default function Home() {
             </div>
 
             {!isComposeMinimized && (
-              <div className={`flex flex-col xl:flex-row ${composeReview ? "gap-0" : ""}`}>
+              <div className={`flex min-h-0 flex-1 flex-col xl:flex-row ${composeReview ? "gap-0" : ""}`}>
                 {/* Compose Form - Left/Center */}
-                <div className={`p-4 ${composeReview ? "flex-1 xl:border-r xl:border-slate-200" : "w-full"}`}>
+                <div className={`overflow-y-auto p-4 ${composeReview ? "flex-1 xl:border-r xl:border-slate-200" : "w-full"}`}>
                   <div className="space-y-4">
                     <div>
                       <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -2647,7 +2647,7 @@ export default function Home() {
                       </label>
                       <textarea
                         className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-                        rows={10}
+                        rows={8}
                         value={composeBody}
                         onChange={(e) => {
                           setComposeBody(e.target.value);
@@ -2816,7 +2816,7 @@ export default function Home() {
 
                 {/* AI Review Panel - Right Sidebar */}
                 {composeReview && (
-                  <div className="max-h-[320px] w-full overflow-y-auto bg-indigo-50/70 p-4 xl:max-h-[600px] xl:w-96">
+                  <div className="max-h-[280px] w-full overflow-y-auto bg-indigo-50/70 p-4 xl:max-h-none xl:w-96">
                     <div className="mb-4 flex items-center justify-between gap-2 sticky top-0 bg-indigo-50/70 pb-2">
                       <p className="text-sm font-semibold text-slate-800">
                         AI suggestions

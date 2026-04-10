@@ -83,7 +83,7 @@ export default function Home() {
     <>
       <Navigation />
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
-        <section className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 md:py-32">
+        <section className="relative mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-20 md:py-32">
           <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-r from-blue-100/40 via-transparent to-indigo-100/40 blur-3xl" />
 
           <div className="grid items-center gap-12 md:grid-cols-2">
@@ -156,7 +156,7 @@ export default function Home() {
         </section>
 
         <section id="how-it-works" className="bg-white px-4 py-14 sm:px-6 sm:py-16 md:py-24">
-          <div className="mx-auto max-w-7xl">
+          <div className="mx-auto max-w-screen-2xl">
             <div className="mb-10 text-center">
               <h2 className="mb-4 text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">How It Works</h2>
               <p className="mx-auto max-w-3xl text-base text-slate-600 sm:text-lg">
@@ -210,7 +210,7 @@ export default function Home() {
         </section>
 
         <section className="bg-white/50 px-4 py-14 sm:px-6 sm:py-16 md:py-24">
-          <div className="mx-auto max-w-7xl">
+          <div className="mx-auto max-w-screen-2xl">
             <div className="mb-12 text-center">
               <h2 className="mb-4 text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">Why Traditional Email Falls Short</h2>
               <p className="mx-auto max-w-2xl text-base text-slate-600 sm:text-lg md:text-xl">
@@ -246,7 +246,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 md:py-24">
+        <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-16 md:py-24">
           <div className="mb-12 text-center">
             <h2 className="mb-4 text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">How InboxReveal Helps</h2>
             <p className="mx-auto max-w-2xl text-base text-slate-600 sm:text-lg md:text-xl">
@@ -306,7 +306,7 @@ export default function Home() {
         </section>
 
         <section className="bg-slate-900 px-4 py-14 sm:px-6 sm:py-16 md:py-24">
-          <div className="mx-auto max-w-7xl">
+          <div className="mx-auto max-w-screen-2xl">
             <div className="mb-12 text-center">
               <h2 className="mb-4 text-2xl font-bold text-white sm:text-3xl md:text-4xl">Built for Professionals Who Live in Email</h2>
             </div>
@@ -344,7 +344,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 md:py-24">
+        <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-16 md:py-24">
           <div className="relative overflow-hidden rounded-2xl">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-95" />
             <div className="relative px-5 py-12 text-center sm:px-8 sm:py-16 md:py-20">

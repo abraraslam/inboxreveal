@@ -21,7 +21,7 @@ export default function Navigation() {
   return (
     <>
     <header className="border-b border-slate-200 bg-white shadow-sm sticky top-0 z-40">
-      <nav className="mx-auto max-w-7xl px-6 py-4">
+      <nav className="mx-auto max-w-screen-2xl px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">

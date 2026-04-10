@@ -166,7 +166,7 @@ export default function PricingPage() {
     <>
       <Navigation />
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
-        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+        <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-3xl font-bold text-slate-900 sm:text-5xl md:text-6xl">
               Simple Pricing, <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Clear Value</span>
@@ -181,7 +181,7 @@ export default function PricingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 sm:pb-24">
+        <section className="mx-auto max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24">
           <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
             {plans.map((plan) => {
               const Icon = plan.icon;
@@ -236,7 +236,7 @@ export default function PricingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 sm:pb-24">
+        <section className="mx-auto max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24">
           <div className="mb-10 text-center">
             <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">
               Planned Paid Features
@@ -270,7 +270,7 @@ export default function PricingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 sm:pb-24">
+        <section className="mx-auto max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24">
           <div className="mb-10 text-center">
             <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">
               Compare Plans At A Glance

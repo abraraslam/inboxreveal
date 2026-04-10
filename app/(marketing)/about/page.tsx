@@ -10,7 +10,7 @@ export default function About() {
       <Navigation />
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
         {/* Hero Section */}
-        <section className="px-4 py-14 max-w-7xl mx-auto sm:px-6 sm:py-20">
+        <section className="px-4 py-14 max-w-screen-2xl mx-auto sm:px-6 sm:py-20">
           <div className="text-center mb-12">
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6">
               About <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">InboxReveal</span>
@@ -82,7 +82,7 @@ export default function About() {
 
         {/* Vision & Values */}
         <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 bg-white">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-screen-2xl mx-auto">
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="p-8 rounded-xl border border-slate-200 text-center">
                 <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-4">
@@ -171,7 +171,7 @@ export default function About() {
 
         {/* Target Audience */}
         <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 bg-white">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-screen-2xl mx-auto">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-8 text-center">Who Uses InboxReveal?</h2>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">

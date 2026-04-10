@@ -74,7 +74,7 @@ export default function Services() {
       <Navigation />
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
         {/* Hero Section */}
-        <section className="px-4 py-14 max-w-7xl mx-auto sm:px-6 sm:py-20">
+        <section className="px-4 py-14 max-w-screen-2xl mx-auto sm:px-6 sm:py-20">
           <div className="text-center mb-12">
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6">
               Features That Make a <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Difference</span>
@@ -87,7 +87,7 @@ export default function Services() {
 
         {/* Features Grid */}
         <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-screen-2xl mx-auto">
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {features.map((feature, index) => {
                 const Icon = feature.icon;
@@ -127,7 +127,7 @@ export default function Services() {
 
         {/* Core Pillars */}
         <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 bg-white">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-screen-2xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4">
                 Built on Four Core Pillars
@@ -238,7 +238,7 @@ export default function Services() {
         </section>
 
         {/* Use Cases */}
-        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 max-w-7xl mx-auto">
+        <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24 max-w-screen-2xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               Real-World Use Cases
@@ -377,7 +377,7 @@ export default function Services() {
         </section>
 
         {/* CTA */}
-        <section className="px-6 py-16 md:py-24 max-w-7xl mx-auto">
+        <section className="px-6 py-16 md:py-24 max-w-screen-2xl mx-auto">
           <div className="relative rounded-2xl overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-90" />
             <div className="relative p-12 text-center text-white">

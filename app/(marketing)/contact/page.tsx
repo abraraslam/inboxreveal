@@ -42,7 +42,7 @@ export default function Contact() {
       <Navigation />
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
         {/* Hero Section */}
-        <section className="px-4 py-14 max-w-7xl mx-auto sm:px-6 sm:py-20">
+        <section className="px-4 py-14 max-w-screen-2xl mx-auto sm:px-6 sm:py-20">
           <div className="text-center mb-12">
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6">
               Get in <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Touch</span>
