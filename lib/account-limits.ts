@@ -142,6 +142,14 @@ export async function enforceAccountLimitsOnSignIn(params: {
 
   // Basic users can only access Gmail
   if (!canUseTwoProviders) {
+    // If user is downgraded to basic after trial, clear any previously connected Outlook account
+    if (connected.connected_outlook_account_email) {
+      await persistConnectedAccounts(supabase, normalizedEmail, {
+        connected_google_account_email: connected.connected_google_account_email,
+        connected_outlook_account_email: null,
+      });
+    }
+
     if (provider !== "gmail") {
       return { allowed: false, errorCode: "PlanGoogleOnly" };
     }
