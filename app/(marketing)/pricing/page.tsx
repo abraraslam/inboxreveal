@@ -222,6 +222,7 @@ export default function PricingPage() {
                         <span>{feature}</span>
                       </li>
                     ))}
+                  </ul>
 
                   <Link
                     href={
