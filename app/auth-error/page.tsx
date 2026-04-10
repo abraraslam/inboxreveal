@@ -16,6 +16,14 @@ function ErrorContent() {
     AccessDenied: "Access was denied. If the app is in Testing mode, make sure your Google account is added as a Test User in Google Cloud Console.",
     Verification: "Sign-in link expired or already used.",
     Configuration: "Server configuration error. NEXTAUTH_SECRET or credentials may be missing.",
+    MissingProviderEmail:
+      "We could not read an email address from your provider profile. Please use an account with a valid email.",
+    PlanGoogleOnly:
+      "Free plan allows one Google account only. Upgrade to Premium to use both Google and Outlook.",
+    GoogleSlotAlreadyUsed:
+      "Your Google account slot is already in use for this profile.",
+    OutlookSlotAlreadyUsed:
+      "Your Outlook account slot is already in use for this profile.",
     Default: "An unexpected sign-in error occurred.",
     google: "Google OAuth callback failed. This usually means NEXTAUTH_SECRET is missing in Vercel, or a state cookie mismatch. Check Vercel environment variables.",
   };

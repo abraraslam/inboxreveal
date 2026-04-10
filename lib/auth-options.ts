@@ -1,6 +1,12 @@
 import GoogleProvider from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";
-import type { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions, JWT } from "next-auth";
+import {
+  enforceAccountLimitsOnSignIn,
+  extractOAuthEmail,
+  normalizeSignInProvider,
+} from "@/lib/account-limits";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -57,7 +63,7 @@ if (
   );
 }
 
-async function refreshGoogleAccessToken(token: any) {
+async function refreshGoogleAccessToken(token: JWT) {
   const response = await fetch("https://oauth2.googleapis.com/token", {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
@@ -83,7 +89,7 @@ async function refreshGoogleAccessToken(token: any) {
   };
 }
 
-async function refreshAzureAccessToken(token: any) {
+async function refreshAzureAccessToken(token: JWT) {
   const tenant = isConfigured(azureTenantId) ? azureTenantId!.trim() : "common";
 
   const response = await fetch(
@@ -125,6 +131,54 @@ export const authOptions: NextAuthOptions = {
   providers,
 
   callbacks: {
+    async signIn({ user, account, profile }) {
+      const provider = normalizeSignInProvider(account?.provider);
+
+      // Ignore unsupported providers and let NextAuth handle them.
+      if (!provider) {
+        return true;
+      }
+
+      const email = extractOAuthEmail({
+        user: { email: user?.email ?? null },
+        profile: {
+          email: typeof profile?.email === "string" ? profile.email : null,
+          preferred_username:
+            typeof profile?.preferred_username === "string"
+              ? profile.preferred_username
+              : null,
+          upn: typeof profile?.upn === "string" ? profile.upn : null,
+        },
+      });
+
+      if (!email) {
+        const params = new URLSearchParams({ error: "MissingProviderEmail" });
+        return `/auth-error?${params.toString()}`;
+      }
+
+      try {
+        const supabase = getSupabaseServerClient({ requireServiceRole: true });
+        const decision = await enforceAccountLimitsOnSignIn({
+          supabase,
+          email,
+          provider,
+        });
+
+        if (!decision.allowed) {
+          const params = new URLSearchParams({
+            error: decision.errorCode || "AccessDenied",
+          });
+          return `/auth-error?${params.toString()}`;
+        }
+
+        return true;
+      } catch (error) {
+        console.error("[NextAuth][signIn limit enforcement error]", error);
+        const params = new URLSearchParams({ error: "Configuration" });
+        return `/auth-error?${params.toString()}`;
+      }
+    },
+
     async jwt({ token, account, user }) {
       // Initial sign in
       if (account && user) {
