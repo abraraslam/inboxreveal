@@ -118,6 +118,7 @@ export default function Home() {
                   Explore Features
                 </a>
               </div>
+              
 
               <p className="mt-6 text-sm text-slate-500">
                 Google Workspace and Microsoft 365 support • Dashboard alerts • AI summaries • No credit card required
