@@ -76,10 +76,10 @@ export default function Services() {
         {/* Hero Section */}
         <section className="px-4 py-14 max-w-screen-2xl mx-auto sm:px-6 sm:py-20">
           <div className="text-center mb-12">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6 text-center">
               Features That Make a <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Difference</span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto text-center">
               Discover the powerful tools that transform your email communication into action-driven intelligence.
             </p>
           </div>
@@ -102,11 +102,11 @@ export default function Services() {
                       <Icon className="w-6 h-6 text-blue-600" />
                     </div>
 
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">
+                    <h3 className="text-lg font-bold text-slate-900 mb-2 text-center">
                       {feature.title}
                     </h3>
 
-                    <p className="text-slate-600 text-sm mb-4">
+                    <p className="text-slate-600 text-sm mb-4 text-center">
                       {feature.description}
                     </p>
 

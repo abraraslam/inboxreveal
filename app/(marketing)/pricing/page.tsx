@@ -164,20 +164,20 @@ const comparisonRows = [
   },
 ];
 
-export default function PricingPage() {
+export default function Pricing() {
   return (
     <>
       <Navigation />
-
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
-        <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-20">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-3xl font-bold text-slate-900 sm:text-5xl md:text-6xl">
-              Simple Pricing,{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Clear Value
-              </span>
+        <section className="px-4 py-14 max-w-screen-2xl mx-auto sm:px-6 sm:py-20">
+          <div className="text-center mb-12">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6 text-center">
+              Pricing <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Plans</span>
             </h1>
+            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto text-center">
+              Choose the plan that fits your needs. Start for free, upgrade anytime.
+            </p>
+          </div>
 
             <p className="mt-5 text-base text-slate-600 sm:text-lg md:text-xl">
               Pick the plan that matches your inbox volume. Upgrade anytime as
