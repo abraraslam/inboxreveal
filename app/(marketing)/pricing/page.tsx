@@ -191,7 +191,6 @@ export default function Pricing() {
                 day one.
               </span>
             </div>
-          </div>
         </section>
 
         <section className="mx-auto max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24">
