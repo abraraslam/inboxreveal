@@ -174,7 +174,7 @@ export default function Pricing() {
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6 text-center">
               Pricing <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Plans</span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto text-center">
+            <p className="mt-5 text-base text-slate-600 sm:text-lg md:text-xl text-center">
               Choose the plan that fits your needs. Start for free, upgrade anytime.
             </p>
           </div>
