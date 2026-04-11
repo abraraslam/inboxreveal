@@ -79,7 +79,7 @@ export default function Services() {
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6 text-center">
               Features That Make a <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Difference</span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto text-center">
+            <p className="mb-6 text-lg text-slate-700 text-center w-full">
               Discover the powerful tools that transform your email communication into action-driven intelligence.
             </p>
           </div>
@@ -382,7 +382,7 @@ export default function Services() {
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-90" />
             <div className="relative p-12 text-center text-white">
               <h2 className="text-4xl font-bold mb-4">Experience Email Intelligence Today</h2>
-              <p className="text-xl text-blue-100 mb-6">
+              <p className="mb-6 text-lg text-slate-700 text-center w-full">
                 Sign up for free and see how InboxReveal transforms your inbox
               </p>
               <button className="px-8 py-3 rounded-lg bg-white text-blue-600 font-semibold hover:shadow-lg hover:scale-105 transition inline-flex items-center gap-2">
