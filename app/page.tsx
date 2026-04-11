@@ -194,7 +194,7 @@ export default function Home() {
         <section className="bg-white/50 px-4 py-14 sm:px-6 sm:py-16 md:py-24">
           <div className="mx-auto max-w-screen-2xl">
             <div className="mb-12 text-center">
-              <h2 className="mb-4 text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">Why Traditional Email Falls Short</h2>
+              <h2 className="mb-4 text-center text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">Why Traditional Email Falls Short</h2>
               <p className="mx-auto max-w-2xl text-base text-slate-600 sm:text-lg md:text-xl">
                 Important intent is usually hidden in the message body, not the subject line.
               </p>
@@ -230,7 +230,7 @@ export default function Home() {
 
         <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-16 md:py-24">
           <div className="mb-12 text-center">
-            <h2 className="mb-4 text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">How InboxReveal Helps</h2>
+            <h2 className="mb-4 text-center text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">How InboxReveal Helps</h2>
             <p className="mx-auto max-w-2xl text-base text-slate-600 sm:text-lg md:text-xl">
               Understand every email faster by answering three questions clearly.
             </p>
@@ -290,7 +290,7 @@ export default function Home() {
         <section className="bg-slate-900 px-4 py-14 sm:px-6 sm:py-16 md:py-24">
           <div className="mx-auto max-w-screen-2xl">
             <div className="mb-12 text-center">
-              <h2 className="mb-4 text-2xl font-bold text-white sm:text-3xl md:text-4xl">Built for Professionals Who Live in Email</h2>
+              <h2 className="mb-4 text-center text-2xl font-bold text-white sm:text-3xl md:text-4xl">Built for Professionals Who Live in Email</h2>
             </div>
 
             <div className="grid gap-8 md:grid-cols-2">
@@ -330,7 +330,7 @@ export default function Home() {
           <div className="relative overflow-hidden rounded-2xl">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-95" />
             <div className="relative px-5 py-12 text-center sm:px-8 sm:py-16 md:py-20">
-              <h2 className="mb-6 text-2xl font-bold text-white sm:text-3xl md:text-5xl">Turn your inbox into a decision engine</h2>
+              <h2 className="mb-6 text-center text-2xl font-bold text-white sm:text-3xl md:text-5xl">Turn your inbox into a decision engine</h2>
               <p className="mx-auto mb-8 max-w-2xl text-base text-blue-100 sm:text-lg md:text-xl">Connect Google Workspace or Microsoft 365 in minutes and start seeing what your emails are really telling you.</p>
 
               <button
@@ -358,7 +358,7 @@ export default function Home() {
 
             <div className="mb-6 text-center">
               <BrandLogo size="lg" showText={false} className="mb-4 justify-center" />
-              <h2 className="text-2xl font-bold text-slate-900">Sign in to InboxReveal</h2>
+              <h2 className="text-2xl font-bold text-center text-slate-900">Sign in to InboxReveal</h2>
               <p className="mt-2 text-sm text-slate-600">Connect your email account to start using AI-powered inbox intelligence.</p>
               <p className="mt-1 text-xs text-slate-500">Supports both consumer and business accounts.</p>
             </div>
