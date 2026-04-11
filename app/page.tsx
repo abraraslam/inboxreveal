@@ -221,61 +221,47 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-16 md:py-24">
-          <div className="mb-12 text-center">
-            <h2 className="mb-4 text-center text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">How InboxReveal Helps</h2>
-            <p className="mx-auto max-w-2xl text-center text-base text-slate-600 sm:text-lg md:text-xl">
-              Understand every email faster by answering three questions clearly.
-            </p>
+        <section className="mx-auto max-w-4xl px-4 py-14">
+          <h2 className="mb-6 text-center text-3xl font-extrabold text-blue-900 sm:text-4xl md:text-5xl">How InboxReveal Helps</h2>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="mb-6 text-lg text-slate-700">Understand every email faster by answering three questions clearly.</p>
           </div>
-
-          <div className="grid gap-8 md:grid-cols-3">
-            <div className="relative">
-              <div className="absolute -inset-1 -z-10 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 opacity-10 blur" />
-              <div className="rounded-xl border border-slate-200 bg-white/80 p-8">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-                  <Mail className="h-6 w-6 text-blue-600" />
-                </div>
-                <h3 className="mb-3 text-lg font-semibold text-slate-900">What is hidden?</h3>
-                <p className="mb-4 text-slate-600">Scan full email bodies for phrases, patterns, and meaning that ordinary inbox tools miss.</p>
-                <ul className="space-y-2 text-sm text-slate-700">
-                  <li>Keyword detection</li>
-                  <li>Phrase matching</li>
-                  <li>Semantic understanding</li>
-                </ul>
+          <div className="mx-auto mt-8 grid max-w-3xl gap-10 md:grid-cols-3">
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-blue-100">
+                <Mail className="h-7 w-7 text-blue-600" />
               </div>
+              <h3 className="mb-2 text-lg font-semibold text-slate-800">What is hidden?</h3>
+              <p className="text-sm text-slate-600">Scan full email bodies for phrases, patterns, and meaning that ordinary inbox tools miss.</p>
+              <ul className="space-y-2 text-sm text-slate-700">
+                <li>Keyword detection</li>
+                <li>Phrase matching</li>
+                <li>Semantic understanding</li>
+              </ul>
             </div>
-
-            <div className="relative">
-              <div className="absolute -inset-1 -z-10 rounded-xl bg-gradient-to-r from-sky-600 to-cyan-500 opacity-10 blur" />
-              <div className="rounded-xl border border-slate-200 bg-white/80 p-8">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-sky-100">
-                  <Zap className="h-6 w-6 text-sky-600" />
-                </div>
-                <h3 className="mb-3 text-lg font-semibold text-slate-900">How important is it?</h3>
-                <p className="mb-4 text-slate-600">Detect urgency, complaints, refund requests, and sales signals so you know what needs attention first.</p>
-                <ul className="space-y-2 text-sm text-slate-700">
-                  <li>Intent classification</li>
-                  <li>Priority tagging</li>
-                  <li>Risk assessment</li>
-                </ul>
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-sky-100">
+                <Zap className="h-7 w-7 text-sky-600" />
               </div>
+              <h3 className="mb-2 text-lg font-semibold text-slate-800">How important is it?</h3>
+              <p className="text-sm text-slate-600">Detect urgency, complaints, refund requests, and sales signals so you know what needs attention first.</p>
+              <ul className="space-y-2 text-sm text-slate-700">
+                <li>Intent classification</li>
+                <li>Priority tagging</li>
+                <li>Risk assessment</li>
+              </ul>
             </div>
-
-            <div className="relative">
-              <div className="absolute -inset-1 -z-10 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 opacity-10 blur" />
-              <div className="rounded-xl border border-slate-200 bg-white/80 p-8">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100">
-                  <CheckCircle2 className="h-6 w-6 text-emerald-600" />
-                </div>
-                <h3 className="mb-3 text-lg font-semibold text-slate-900">What should I do next?</h3>
-                <p className="mb-4 text-slate-600">Get summaries, recommended actions, and faster response paths for the messages that matter most.</p>
-                <ul className="space-y-2 text-sm text-slate-700">
-                  <li>Action recommendations</li>
-                  <li>AI summaries</li>
-                  <li>Faster replies</li>
-                </ul>
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
+                <CheckCircle2 className="h-7 w-7 text-emerald-600" />
               </div>
+              <h3 className="mb-2 text-lg font-semibold text-slate-800">What should I do next?</h3>
+              <p className="text-sm text-slate-600">Get summaries, recommended actions, and faster response paths for the messages that matter most.</p>
+              <ul className="space-y-2 text-sm text-slate-700">
+                <li>Action recommendations</li>
+                <li>AI summaries</li>
+                <li>Faster replies</li>
+              </ul>
             </div>
           </div>
         </section>
