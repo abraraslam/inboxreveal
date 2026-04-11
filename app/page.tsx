@@ -192,38 +192,31 @@ export default function Home() {
 
 
         <section className="bg-white/50 px-4 py-14 sm:px-6 sm:py-16 md:py-24">
-          <div className="mx-auto max-w-screen-2xl">
-            <div className="mb-12 text-center">
-              <h2 className="mb-4 text-center text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">Why Traditional Email Falls Short</h2>
-              <p className="mx-auto max-w-2xl text-center text-base text-slate-600 sm:text-lg md:text-xl">
-                Important intent is usually hidden in the message body, not the subject line.
-              </p>
+          <h2 className="mb-6 text-center text-3xl font-extrabold text-blue-900 sm:text-4xl md:text-5xl">Why Traditional Email Falls Short</h2>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="mb-6 text-lg text-slate-700">Important intent is usually hidden in the message body, not the subject line.</p>
+          </div>
+          <div className="mx-auto mt-8 grid max-w-3xl gap-10 md:grid-cols-3">
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
+                <AlertCircle className="h-7 w-7 text-red-600" />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-slate-800">Subject: "Thanks"</h3>
+              <p className="text-sm text-slate-600">Body: "I would like a refund."</p>
             </div>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              <div className="rounded-xl border border-slate-200 bg-white p-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
-                  <AlertCircle className="h-6 w-6 text-red-600" />
-                </div>
-                <h3 className="mb-2 text-lg font-semibold text-slate-900">Subject: "Thanks"</h3>
-                <p className="text-sm text-slate-600">Body: "I would like a refund."</p>
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-amber-100">
+                <Clock className="h-7 w-7 text-amber-600" />
               </div>
-
-              <div className="rounded-xl border border-slate-200 bg-white p-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-amber-100">
-                  <Clock className="h-6 w-6 text-amber-600" />
-                </div>
-                <h3 className="mb-2 text-lg font-semibold text-slate-900">Subject: "Update"</h3>
-                <p className="text-sm text-slate-600">Body: "We are not satisfied with the service."</p>
+              <h3 className="mb-2 text-lg font-semibold text-slate-800">Subject: "Update"</h3>
+              <p className="text-sm text-slate-600">Body: "We are not satisfied with the service."</p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
+                <TrendingUp className="h-7 w-7 text-green-600" />
               </div>
-
-              <div className="rounded-xl border border-slate-200 bg-white p-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-                  <TrendingUp className="h-6 w-6 text-green-600" />
-                </div>
-                <h3 className="mb-2 text-lg font-semibold text-slate-900">Subject: "Quick question"</h3>
-                <p className="text-sm text-slate-600">Body: "Can you send pricing details for the team plan?"</p>
-              </div>
+              <h3 className="mb-2 text-lg font-semibold text-slate-800">Subject: "Quick question"</h3>
+              <p className="text-sm text-slate-600">Body: "Can you send pricing details for the team plan?"</p>
             </div>
           </div>
         </section>
