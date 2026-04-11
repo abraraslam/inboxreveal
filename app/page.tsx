@@ -156,6 +156,40 @@ export default function Home() {
           </div>
         </section>
 
+        {/* How It Works Section */}
+        <section className="mx-auto max-w-4xl px-4 py-14">
+          <h2 className="mb-6 text-center text-3xl font-extrabold text-blue-900 sm:text-4xl md:text-5xl">How It Works</h2>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="mb-6 text-lg text-slate-700">Get clarity and control over your inbox in three simple steps. InboxReveal is built to save you time and help you act on what matters most.</p>
+          </div>
+          <div className="mx-auto mt-8 grid max-w-3xl gap-10 md:grid-cols-3">
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-blue-100">
+                <Mail className="h-7 w-7 text-blue-600" />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-slate-800">Connect Your Email</h3>
+              <p className="text-sm text-slate-600">Sign in with Google or Microsoft. InboxReveal uses secure OAuth—no passwords, ever.</p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-amber-100">
+                <Settings2 className="h-7 w-7 text-amber-600" />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-slate-800">Personalize Your Experience</h3>
+              <p className="text-sm text-slate-600">Set your summary style, tone, and alert preferences. InboxReveal adapts to your workflow instantly.</p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
+                <Sparkles className="h-7 w-7 text-emerald-600" />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-slate-800">See Smart Results</h3>
+              <p className="text-sm text-slate-600">Get instant summaries, intent analysis, and AI-powered replies—tailored to your choices, every day.</p>
+            </div>
+          </div>
+          <div className="mx-auto mt-10 max-w-2xl text-center">
+            <p className="text-base text-slate-700">InboxReveal works quietly in the background. Change your preferences anytime—your experience updates instantly.</p>
+          </div>
+        </section>
+
 
         <section className="bg-white/50 px-4 py-14 sm:px-6 sm:py-16 md:py-24">
           <div className="mx-auto max-w-screen-2xl">
