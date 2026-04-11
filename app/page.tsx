@@ -156,59 +156,6 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="how-it-works" className="bg-white px-4 py-14 sm:px-6 sm:py-16 md:py-24">
-          <div className="mx-auto max-w-screen-2xl">
-            <div className="mb-10 text-center">
-              <h2 className="mb-4 text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">How It Works</h2>
-              <p className="mx-auto max-w-3xl text-base text-slate-600 sm:text-lg">
-                InboxReveal is designed to be fully useful in minutes. Connect your mailbox,
-                set your preferences once, and the app applies your choices to every summary,
-                analysis, and draft.
-              </p>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
-                <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-blue-100">
-                  <PlayCircle className="h-6 w-6 text-blue-700" />
-                </div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-blue-700">Step 1</p>
-                <h3 className="mb-2 text-lg font-semibold text-slate-900">Connect your account</h3>
-                <p className="text-sm text-slate-600">
-                  Sign in with Google Workspace or Microsoft 365, then allow access so InboxReveal can read and process
-                  your inbox securely.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
-                <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100">
-                  <Settings2 className="h-6 w-6 text-emerald-700" />
-                </div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-emerald-700">Step 2</p>
-                <h3 className="mb-2 text-lg font-semibold text-slate-900">Set up Preferences</h3>
-                <ul className="space-y-2 text-sm text-slate-600">
-                  <li>Open Dashboard and click Preferences.</li>
-                  <li>Choose default reply tone: Professional, Friendly, or Direct.</li>
-                  <li>Select summary depth and preferred draft length.</li>
-                  <li>Turn auto-analyze on if you want instant intent detection.</li>
-                  <li>Save once to apply across summaries and drafts.</li>
-                </ul>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
-                <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-violet-100">
-                  <CheckCircle2 className="h-6 w-6 text-violet-700" />
-                </div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-violet-700">Step 3</p>
-                <h3 className="mb-2 text-lg font-semibold text-slate-900">Review and respond faster</h3>
-                <p className="text-sm text-slate-600">
-                  InboxReveal now uses your saved preferences to rank priorities, generate clearer summaries,
-                  and suggest replies in your chosen style.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
 
         <section className="bg-white/50 px-4 py-14 sm:px-6 sm:py-16 md:py-24">
           <div className="mx-auto max-w-screen-2xl">
