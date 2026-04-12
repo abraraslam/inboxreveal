@@ -83,28 +83,28 @@ export default function Home() {
     <>
       <Navigation />
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
-        <section className="relative mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-20 md:py-32">
+        <section className="relative mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-20 md:py-24">
           <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-r from-blue-100/40 via-transparent to-indigo-100/40 blur-3xl" />
 
           <div className="grid items-center gap-16 md:grid-cols-2">
             <div>
-              <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2">
                 <Sparkles className="h-4 w-4 text-blue-600" />
                 <span className="text-sm font-medium text-blue-600">
                   AI-Powered Email Intelligence
                 </span>
               </div>
 
-              <h1 className="mb-8 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl md:text-6xl">
+              <h1 className="mb-6 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl md:text-6xl">
                 See what emails really <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">mean</span>
               </h1>
 
-              <p className="mb-10 text-base leading-relaxed text-slate-600 sm:text-lg md:text-xl">
+              <p className="mb-6 text-base leading-relaxed text-slate-600 sm:text-lg md:text-xl">
                 InboxReveal detects hidden intent inside email bodies and helps you act faster. Spot risk, uncover opportunity, and respond with confidence before important emails slip past you.
               </p>
 
               {/* Add extra margin before and after the button group */}
-              <div className="mt-8 mb-8 flex flex-col gap-6 sm:flex-row">
+              <div className="mt-6 mb-6 flex flex-col gap-6 sm:flex-row">
                 <button
                   onClick={() => setShowLoginModal(true)}
                   className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 font-semibold text-white shadow-lg transition hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl sm:px-8"
@@ -120,7 +120,7 @@ export default function Home() {
                 </a>
               </div>
 
-              <p className="mt-8 text-base font-semibold text-blue-700 tracking-wide bg-blue-50 rounded-lg px-4 py-2 shadow-sm animate-pulse">
+              <p className="mt-8 mb-6 text-base font-semibold text-blue-700 tracking-wide bg-blue-50 rounded-lg px-4 py-2 shadow-sm animate-pulse">
                 Google Workspace and Microsoft 365 support • Dashboard alerts • AI summaries • No credit card required
               </p>
             </div>
@@ -157,7 +157,7 @@ export default function Home() {
         </section>
 
         {/* How It Works Section */}
-        <section className="mx-auto max-w-4xl px-4 py-14">
+        <section className="mx-auto max-w-4xl px-4 py-14 sm:py-20 md:py-24">
           <h2 className="mb-6 text-center text-3xl font-extrabold text-blue-900 sm:text-4xl md:text-5xl">How It Works</h2>
           <div className="mx-auto max-w-2xl text-center">
             <p className="mb-6 text-lg text-slate-700">Get clarity and control over your inbox in three simple steps. InboxReveal is built to save you time and help you act on what matters most.</p>
@@ -191,7 +191,7 @@ export default function Home() {
         </section>
 
 
-        <section className="bg-white/50 px-4 py-14 sm:px-6 sm:py-16 md:py-24">
+        <section className="bg-white/50 px-4 py-14 sm:px-6 sm:py-20 md:py-24">
           <h2 className="mb-6 text-center text-3xl font-extrabold text-blue-900 sm:text-4xl md:text-5xl">Why Traditional Email Falls Short</h2>
           <div className="mx-auto max-w-2xl text-center">
             <p className="mb-6 text-lg text-slate-700">Important intent is usually hidden in the message body, not the subject line.</p>
@@ -221,7 +221,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-4xl px-4 py-14">
+        <section className="mx-auto max-w-4xl px-4 py-14 sm:py-20 md:py-24">
           <h2 className="mb-6 text-center text-3xl font-extrabold text-blue-900 sm:text-4xl md:text-5xl">How InboxReveal Helps</h2>
           <div className="mx-auto max-w-2xl text-center">
             <p className="mb-6 text-lg text-slate-700">Understand every email faster by answering three questions clearly.</p>
@@ -266,7 +266,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-slate-900 px-4 py-14 sm:px-6 sm:py-16 md:py-24">
+        <section className="bg-slate-900 px-4 py-14 sm:px-6 sm:py-20 md:py-24">
           <div className="mx-auto max-w-screen-2xl">
             <div className="mb-12 text-center">
               <h2 className="mb-4 text-center text-2xl font-bold text-white sm:text-3xl md:text-4xl">Built for Professionals Who Live in Email</h2>
@@ -305,7 +305,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-16 md:py-24 flex items-center justify-center min-h-[40vh]">
+        <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-20 md:py-24 flex items-center justify-center min-h-[40vh]">
           <div className="relative overflow-hidden rounded-2xl w-full">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-95" />
             <div className="relative flex flex-col items-center justify-center px-5 py-12 text-center sm:px-8 sm:py-16 md:py-20">

@@ -169,37 +169,35 @@ export default function Pricing() {
     <>
         <Navigation />
         <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
-          <section className="px-4 py-14 max-w-screen-2xl mx-auto sm:px-6 sm:py-20">
-            <div className="text-center mb-12">
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6 text-center">
+
+          <section className="px-4 py-14 max-w-screen-2xl mx-auto sm:px-6 sm:py-20 md:py-24">
+            <div className="text-center mb-10">
+              <h1 className="mb-6 text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 text-center">
                 Pricing <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Plans</span>
               </h1>
-              <p className="mt-5 text-base text-slate-600 sm:text-lg md:text-xl text-center">
+              <p className="mb-4 text-base text-slate-600 sm:text-lg md:text-xl text-center">
                 Choose the plan that fits your needs. Start for free, upgrade anytime.
               </p>
-            </div>
-            <p className="mt-5 text-base text-slate-600 sm:text-lg md:text-xl text-center">
-              Pick the plan that matches your inbox volume. Upgrade anytime as
-              your workflow grows.
-            </p>
-
-            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 justify-center w-full">
-              <span className="text-base">🎁</span>
-              <span className="text-sm font-semibold text-amber-800">
-                Premium and Gold include a 14-day free trial — full access from
-                day one.
-              </span>
+              <p className="mb-6 text-base text-slate-600 sm:text-lg md:text-xl text-center">
+                Pick the plan that matches your inbox volume. Upgrade anytime as your workflow grows.
+              </p>
+              <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 justify-center w-full">
+                <span className="text-base">81</span>
+                <span className="text-sm font-semibold text-amber-800">
+                  Premium and Gold include a 14-day free trial  full access from day one.
+                </span>
+              </div>
             </div>
           </section>
 
-          {/* Centered roadmap info paragraph with less space after */}
-          <section className="mb-6">
-            <p className="my-16 text-center text-base text-slate-700 sm:text-lg md:text-xl">
+          {/* Centered roadmap info paragraph with consistent spacing */}
+          <section className="mb-10">
+            <p className="mb-6 text-center text-base text-slate-700 sm:text-lg md:text-xl">
               These ideas are intentionally shown as roadmap items, not features that are already live in the dashboard today.
             </p>
           </section>
 
-        <section className="mx-auto max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24 mt-4">
+        <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-20 md:py-24">
           <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
             {plans.map((plan) => {
               const Icon = plan.icon;
@@ -272,14 +270,13 @@ export default function Pricing() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24">
+        <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-20 md:py-24">
           <div className="flex flex-col items-center justify-center min-h-[30vh] mb-10 text-center">
-            <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">
+            <h2 className="mb-6 text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">
               Planned Paid Features
             </h2>
-            <p className="mx-auto mt-4 max-w-3xl text-base text-slate-600 sm:text-lg">
-              These ideas are intentionally shown as roadmap items, not features
-              that are already live in the dashboard today.
+            <p className="mb-6 mx-auto max-w-3xl text-base text-slate-600 sm:text-lg">
+              These ideas are intentionally shown as roadmap items, not features that are already live in the dashboard today.
             </p>
           </div>
 
@@ -289,15 +286,15 @@ export default function Pricing() {
                 key={group.title}
                 className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
               >
-                <h3 className="text-xl font-bold text-slate-900">
+                <h3 className="mb-4 text-xl font-bold text-slate-900">
                   {group.title}
                 </h3>
 
-                <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
+                <p className="mb-4 text-sm leading-6 text-slate-600 sm:text-base">
                   {group.description}
                 </p>
 
-                <ul className="mt-6 space-y-3">
+                <ul className="mt-6 mb-4 space-y-3">
                   {group.items.map((item) => (
                     <li
                       key={item}
@@ -313,12 +310,12 @@ export default function Pricing() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24">
+        <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-20 md:py-24">
           <div className="flex flex-col items-center justify-center min-h-[30vh] mb-10 text-center">
-            <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">
+            <h2 className="mb-6 text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">
               Compare Plans At A Glance
             </h2>
-            <p className="mx-auto mt-4 max-w-3xl text-base text-slate-600 sm:text-lg">
+            <p className="mb-6 mx-auto max-w-3xl text-base text-slate-600 sm:text-lg">
               A quick side-by-side breakdown of what each plan unlocks.
             </p>
           </div>
