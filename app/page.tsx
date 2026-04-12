@@ -120,7 +120,7 @@ export default function Home() {
               </div>
               
 
-              <p className="mt-6 text-sm text-slate-500">
+              <p className="mt-6 text-base font-semibold text-blue-700 tracking-wide bg-blue-50 rounded-lg px-4 py-2 shadow-sm animate-pulse">
                 Google Workspace and Microsoft 365 support • Dashboard alerts • AI summaries • No credit card required
               </p>
             </div>
