@@ -1,0 +1,45 @@
+Gmail App – User Guide: Plans & Preferences
+============================================
+
+Plans Overview
+--------------
+- **Free Plan:** Basic features, limited usage, trial period applies.
+- **Paid Plans:** Unlock advanced features, higher limits, and priority support. (See pricing page for details.)
+
+How to Set User Preferences
+---------------------------
+1. **Keywords:**
+   - Add words or phrases to filter and prioritize emails.
+   - Example: “urgent”, “invoice”, “meeting”.
+
+2. **Alerts:**
+   - `alert_urgent`: Enable to get alerts for urgent emails.
+   - `alert_complaint`: Enable to get alerts for complaint-related emails.
+   - `alert_sales`: Enable to get alerts for sales-related emails.
+
+3. **Hide Preferences Prompt:**
+   - Enable to stop seeing the preferences setup prompt.
+
+4. **Plan Tier:**
+   - Automatically set based on your subscription (e.g., “free”, “pro”, “business”).
+
+5. **Trial Period:**
+   - Trial starts on account creation and ends after the specified period.
+   - After the trial, upgrade to a paid plan to continue using premium features.
+
+6. **Connected Accounts:**
+   - `connected_google_account_email`: Shows your linked Google account.
+   - `connected_outlook_account_email`: Shows your linked Outlook account.
+
+7. **Subscription Details:**
+   - `stripe_customer_id`, `stripe_subscription_id`: Used for billing (auto-managed).
+   - `subscription_status`: Shows if your subscription is active, canceled, or past due.
+   - `current_period_end`: Date your current billing period ends.
+
+How to Change Preferences
+-------------------------
+- Go to the dashboard.
+- Open “Preferences” or “Settings”.
+- Update your desired fields and save.
+
+For more details, visit the Pricing or About page on our website.
