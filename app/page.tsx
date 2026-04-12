@@ -305,10 +305,10 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-16 md:py-24">
-          <div className="relative overflow-hidden rounded-2xl">
+        <section className="mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-16 md:py-24 flex items-center justify-center min-h-[40vh]">
+          <div className="relative overflow-hidden rounded-2xl w-full">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-95" />
-            <div className="relative px-5 py-12 text-center sm:px-8 sm:py-16 md:py-20">
+            <div className="relative flex flex-col items-center justify-center px-5 py-12 text-center sm:px-8 sm:py-16 md:py-20">
               <h2 className="mb-6 text-center text-2xl font-bold text-white sm:text-3xl md:text-5xl">Turn your inbox into a decision engine</h2>
               <p className="mx-auto mb-8 max-w-2xl text-center text-base text-blue-100 sm:text-lg md:text-xl">Connect Google Workspace or Microsoft 365 in minutes and start seeing what your emails are really telling you.</p>
 
