@@ -112,6 +112,11 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <a href="/UserGuide.pdf" className="text-sm text-slate-600 hover:text-blue-600 transition" download>
+                  User Guide (PDF)
+                </a>
+              </li>
+              <li>
                 <a href="#" className="text-sm text-slate-600 hover:text-blue-600 transition">
                   Status
                 </a>
