@@ -182,9 +182,9 @@ export default function Pricing() {
                 Pick the plan that matches your inbox volume. Upgrade anytime as your workflow grows.
               </p>
               <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 justify-center w-full">
-                <span className="text-base">81</span>
+                <span className="text-base">🎁</span>
                 <span className="text-sm font-semibold text-amber-800">
-                  Premium and Gold include a 14-day free trial  full access from day one.
+                  Premium and Gold include a 14-day free trial — full access from day one.
                 </span>
               </div>
             </div>
