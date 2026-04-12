@@ -166,19 +166,19 @@ const comparisonRows = [
 
 export default function Pricing() {
   return (
-    <>
-      <Navigation />
-      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
-        <section className="px-4 py-14 max-w-screen-2xl mx-auto sm:px-6 sm:py-20">
-          <div className="text-center mb-12">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6 text-center">
-              Pricing <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Plans</span>
-            </h1>
-            <p className="mt-5 text-base text-slate-600 sm:text-lg md:text-xl text-center">
-              Choose the plan that fits your needs. Start for free, upgrade anytime.
-            </p>
-          </div>
-
+    return (
+      <>
+        <Navigation />
+        <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
+          <section className="px-4 py-14 max-w-screen-2xl mx-auto sm:px-6 sm:py-20">
+            <div className="text-center mb-12">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6 text-center">
+                Pricing <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Plans</span>
+              </h1>
+              <p className="mt-5 text-base text-slate-600 sm:text-lg md:text-xl text-center">
+                Choose the plan that fits your needs. Start for free, upgrade anytime.
+              </p>
+            </div>
             <p className="mt-5 text-base text-slate-600 sm:text-lg md:text-xl text-center">
               Pick the plan that matches your inbox volume. Upgrade anytime as
               your workflow grows.
@@ -191,7 +191,14 @@ export default function Pricing() {
                 day one.
               </span>
             </div>
-        </section>
+          </section>
+
+          {/* Centered roadmap info paragraph */}
+          <section>
+            <p className="my-16 text-center text-base text-slate-700 sm:text-lg md:text-xl">
+              These ideas are intentionally shown as roadmap items, not features that are already live in the dashboard today.
+            </p>
+          </section>
 
         <section className="mx-auto max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24">
           <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
