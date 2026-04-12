@@ -192,9 +192,9 @@ export default function Pricing() {
             </div>
           </section>
 
-          {/* Centered roadmap info paragraph */}
-          <section>
-            <p className="my-16 text-center text-base text-slate-700 sm:text-lg md:text-xl">
+          {/* Truly centered roadmap info paragraph */}
+          <section className="flex items-center justify-center min-h-[40vh] w-full">
+            <p className="text-center text-base text-slate-700 sm:text-lg md:text-xl max-w-2xl">
               These ideas are intentionally shown as roadmap items, not features that are already live in the dashboard today.
             </p>
           </section>
