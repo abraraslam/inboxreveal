@@ -166,8 +166,7 @@ const comparisonRows = [
 
 export default function Pricing() {
   return (
-    return (
-      <>
+    <>
         <Navigation />
         <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
           <section className="px-4 py-14 max-w-screen-2xl mx-auto sm:px-6 sm:py-20">
