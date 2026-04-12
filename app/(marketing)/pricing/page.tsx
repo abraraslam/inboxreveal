@@ -192,14 +192,14 @@ export default function Pricing() {
             </div>
           </section>
 
-          {/* Centered roadmap info paragraph with extra space after */}
-          <section className="mb-16">
+          {/* Centered roadmap info paragraph with less space after */}
+          <section className="mb-6">
             <p className="my-16 text-center text-base text-slate-700 sm:text-lg md:text-xl">
               These ideas are intentionally shown as roadmap items, not features that are already live in the dashboard today.
             </p>
           </section>
 
-        <section className="mx-auto max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24">
+        <section className="mx-auto max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24 mt-4">
           <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
             {plans.map((plan) => {
               const Icon = plan.icon;
