@@ -103,7 +103,8 @@ export default function Home() {
                 InboxReveal detects hidden intent inside email bodies and helps you act faster. Spot risk, uncover opportunity, and respond with confidence before important emails slip past you.
               </p>
 
-              <div className="flex flex-col gap-6 sm:flex-row">
+              {/* Add extra margin before and after the button group */}
+              <div className="mt-8 mb-8 flex flex-col gap-6 sm:flex-row">
                 <button
                   onClick={() => setShowLoginModal(true)}
                   className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 font-semibold text-white shadow-lg transition hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl sm:px-8"
@@ -118,7 +119,6 @@ export default function Home() {
                   Explore Features
                 </a>
               </div>
-              
 
               <p className="mt-8 text-base font-semibold text-blue-700 tracking-wide bg-blue-50 rounded-lg px-4 py-2 shadow-sm animate-pulse">
                 Google Workspace and Microsoft 365 support • Dashboard alerts • AI summaries • No credit card required
