@@ -273,11 +273,10 @@ export default function Pricing() {
         </section>
 
         <section className="mx-auto max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24">
-          <div className="mb-10 text-center">
+          <div className="flex flex-col items-center justify-center min-h-[30vh] mb-10 text-center">
             <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl md:text-4xl">
               Planned Paid Features
             </h2>
-
             <p className="mx-auto mt-4 max-w-3xl text-base text-slate-600 sm:text-lg">
               These ideas are intentionally shown as roadmap items, not features
               that are already live in the dashboard today.
