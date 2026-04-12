@@ -86,24 +86,24 @@ export default function Home() {
         <section className="relative mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-20 md:py-32">
           <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-r from-blue-100/40 via-transparent to-indigo-100/40 blur-3xl" />
 
-          <div className="grid items-center gap-12 md:grid-cols-2">
+          <div className="grid items-center gap-16 md:grid-cols-2">
             <div>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2">
+              <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2">
                 <Sparkles className="h-4 w-4 text-blue-600" />
                 <span className="text-sm font-medium text-blue-600">
                   AI-Powered Email Intelligence
                 </span>
               </div>
 
-              <h1 className="mb-6 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl md:text-6xl">
+              <h1 className="mb-8 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl md:text-6xl">
                 See what emails really <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">mean</span>
               </h1>
 
-              <p className="mb-8 text-base leading-relaxed text-slate-600 sm:text-lg md:text-xl">
+              <p className="mb-10 text-base leading-relaxed text-slate-600 sm:text-lg md:text-xl">
                 InboxReveal detects hidden intent inside email bodies and helps you act faster. Spot risk, uncover opportunity, and respond with confidence before important emails slip past you.
               </p>
 
-              <div className="flex flex-col gap-4 sm:flex-row">
+              <div className="flex flex-col gap-6 sm:flex-row">
                 <button
                   onClick={() => setShowLoginModal(true)}
                   className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 font-semibold text-white shadow-lg transition hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl sm:px-8"
@@ -120,7 +120,7 @@ export default function Home() {
               </div>
               
 
-              <p className="mt-6 text-base font-semibold text-blue-700 tracking-wide bg-blue-50 rounded-lg px-4 py-2 shadow-sm animate-pulse">
+              <p className="mt-8 text-base font-semibold text-blue-700 tracking-wide bg-blue-50 rounded-lg px-4 py-2 shadow-sm animate-pulse">
                 Google Workspace and Microsoft 365 support • Dashboard alerts • AI summaries • No credit card required
               </p>
             </div>
