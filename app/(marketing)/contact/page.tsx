@@ -42,15 +42,15 @@ export default function Contact() {
       <Navigation />
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
         {/* Hero Section */}
-        <section className="px-4 py-14 max-w-screen-2xl mx-auto sm:px-6 sm:py-20">
-          <div className="text-center mb-12">
+        <section className="flex flex-col items-center justify-center min-h-[40vh] px-4 py-14 max-w-screen-2xl mx-auto sm:px-6 sm:py-20">
+          <div className="text-center mb-12 w-full">
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-6 text-center">
               Get in <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Touch</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto text-center">
               Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
             </p>
-            <div className="mt-6 text-center">
+            <div className="flex items-center justify-center w-full mt-12">
               <a
                 href={supportUrl}
                 className="inline-flex items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-5 py-2.5 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-100"
