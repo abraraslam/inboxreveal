@@ -84,10 +84,6 @@ export default function Home() {
     <>
       <Navigation />
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
-        {/* Demo: Compact Email Analysis Card */}
-        <section className="mx-auto max-w-2xl py-8">
-          <EmailAnalysisCard />
-        </section>
         <section className="relative mx-auto max-w-screen-2xl px-4 py-14 sm:px-6 sm:py-20 md:py-24">
           <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-r from-blue-100/40 via-transparent to-indigo-100/40 blur-3xl" />
 
