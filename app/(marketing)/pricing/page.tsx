@@ -320,7 +320,7 @@ export default function Pricing() {
             </p>
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm mb-12">
             <div className="overflow-x-auto">
               <table className="min-w-full border-collapse text-left">
                 <thead className="bg-slate-50">
@@ -360,6 +360,60 @@ export default function Pricing() {
                       </td>
                     </tr>
                   ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* New: Comparison with Outlook and Other Email Apps */}
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="min-w-full border-collapse text-left">
+                <thead className="bg-slate-50">
+                  <tr>
+                    <th className="px-4 py-4 text-sm font-semibold text-slate-900 sm:px-6">Key Capability</th>
+                    <th className="px-4 py-4 text-sm font-semibold text-slate-900 sm:px-6">InboxReveal</th>
+                    <th className="px-4 py-4 text-sm font-semibold text-slate-900 sm:px-6">Outlook</th>
+                    <th className="px-4 py-4 text-sm font-semibold text-slate-900 sm:px-6">Other Email Apps</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-white">
+                    <td className="px-4 py-4 text-sm font-medium text-slate-900 sm:px-6">AI-Powered Intent Detection</td>
+                    <td className="px-4 py-4 text-sm text-emerald-700 sm:px-6 font-semibold">Yes (full body, context-aware)</td>
+                    <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">No (basic rules/filters)</td>
+                    <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">Rarely</td>
+                  </tr>
+                  <tr className="bg-slate-50/60">
+                    <td className="px-4 py-4 text-sm font-medium text-slate-900 sm:px-6">Action Recommendations</td>
+                    <td className="px-4 py-4 text-sm text-emerald-700 sm:px-6 font-semibold">Yes (AI-driven)</td>
+                    <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">No</td>
+                    <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">No</td>
+                  </tr>
+                  <tr className="bg-white">
+                    <td className="px-4 py-4 text-sm font-medium text-slate-900 sm:px-6">Unified Google & Microsoft Support</td>
+                    <td className="px-4 py-4 text-sm text-emerald-700 sm:px-6 font-semibold">Yes</td>
+                    <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">Microsoft only</td>
+                    <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">Usually one provider</td>
+                  </tr>
+                  <tr className="bg-slate-50/60">
+                    <td className="px-4 py-4 text-sm font-medium text-slate-900 sm:px-6">No Ads or Data Selling</td>
+                    <td className="px-4 py-4 text-sm text-emerald-700 sm:px-6 font-semibold">Yes</td>
+                    <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">No</td>
+                    <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">Rarely</td>
+                  </tr>
+                  <tr className="bg-white">
+                    <td className="px-4 py-4 text-sm font-medium text-slate-900 sm:px-6">Customizable Workflow</td>
+                    <td className="px-4 py-4 text-sm text-emerald-700 sm:px-6 font-semibold">Yes</td>
+                    <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">Limited</td>
+                    <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">Limited</td>
+                  </tr>
+                  <tr className="bg-slate-50/60">
+                    <td className="px-4 py-4 text-sm font-medium text-slate-900 sm:px-6">Professional-Grade Features</td>
+                    <td className="px-4 py-4 text-sm text-emerald-700 sm:px-6 font-semibold">Yes (AI, risk, productivity)</td>
+                    <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">No (general email client)</td>
+                    <td className="px-4 py-4 text-sm text-slate-600 sm:px-6">No</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
