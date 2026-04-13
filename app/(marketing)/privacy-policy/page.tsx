@@ -42,6 +42,22 @@ export default function PrivacyPolicyPage() {
                   <li>To protect the rights, property, or safety of InboxReveal, our users, or the public, as required or permitted by law.</li>
                 </ul>
                 We do not allow any third party to access your Google user data except as necessary to provide the core functionality of InboxReveal, and only under strict confidentiality and security obligations.
+                <br /><br />
+                <span className="font-semibold">No Advertising or Marketing Use:</span> We do not use your Google user data for advertising or marketing purposes.
+                <br /><br />
+                <span className="font-semibold">No Human Access:</span> No human will read your Google user data except as necessary for security, support, or to comply with applicable law.
+              </p>
+            </section>
+            <section>
+              <h2 className="mb-4 text-xl font-semibold text-slate-900 text-center">Children's Privacy</h2>
+              <p className="mb-6 text-center">
+                InboxReveal is not intended for children under 13. We do not knowingly collect or solicit personal information from anyone under the age of 13. If you believe a child under 13 has provided us with personal information, please contact us and we will promptly delete such information.
+              </p>
+            </section>
+            <section>
+              <h2 className="mb-4 text-xl font-semibold text-slate-900 text-center">Google API Services User Data Policy</h2>
+              <p className="mb-6 text-center">
+                InboxReveal’s use and transfer of information received from Google APIs to any other app will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">Google API Services User Data Policy</a>, including the Limited Use requirements.
               </p>
             </section>
 
